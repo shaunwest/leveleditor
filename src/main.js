@@ -1,17 +1,18 @@
 /**
  * Created by shaunwest on 8/19/15.
  */
-import Ractive from 'ractive';
-//import hello from './components/hello.js';
 
-Ractive.components.BackgroundLayer = Ractive.extend({
-  template: '#backgroundLayer',
-  data: {
-    message: 'Hello, Foobar'
+import store from './store.js';
+import { fetchLevels } from './actions.js';
+import Ractive from 'ractive';
+import LevelSelect from './components/LevelSelect.js';
+
+const ractive = new Ractive({
+  el: '[data-app]',
+  template: '#levelSelectView',
+  components: {
+    LevelSelect: LevelSelect
   }
 });
 
-var ractive = new Ractive({
-  el: '[data-app]',
-  template: '#editor'
-});
+store.dispatch(fetchLevels('data/levels.json'));

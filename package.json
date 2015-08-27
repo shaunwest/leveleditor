@@ -8,16 +8,20 @@
     "make-public": "npm run clean && mkdirp public/js && mkdirp public/css",
     "copy": "copyup 'src/views/**/*.html' public",
     "serve": "http-server",
-    "build-js": "browserify -t babelify src/main.js -o public/js/bundle.js",
-    "watch-js": "watchify -t babelify src/main.js -o public/js/bundle.js",
+    "build-js": "browserify -t [ babelify --plugins object-assign ] src/main.js -o public/js/bundle.js",
+    "watch-js": "watchify -t [ babelify --plugins object-assign ] src/main.js -o public/js/bundle.js",
+    "build-js-foo": "node ./tasks/browserify.js",
+    "watch-js-foo": "node ./tasks/watchify.js",
     "watch-html": "watch 'npm run copy' src/views",
     "build": "npm run make-public && npm run copy && npm run build-js",
     "livereload": "livereload public",
-    "start": "npm run build && (npm run watch-js & npm run watch-html & npm run serve & npm run livereload)"
+    "start": "npm run build && (npm run watch-js & npm run serve & npm run livereload)"
   },
   "author": "Shaun West",
   "license": "ISC",
   "devDependencies": {
+    "babel-core": "^5.8.22",
+    "babel-plugin-object-assign": "^1.2.1",
     "babelify": "^6.1.3",
     "browserify": "^11.0.1",
     "copyfiles": "^0.2.1",
@@ -31,6 +35,10 @@
   },
   "dependencies": {
     "babel": "^5.8.21",
-    "isomorphic-fetch": "^2.1.1"
+    "immutable": "^3.7.4",
+    "isomorphic-fetch": "^2.1.1",
+    "redux": "^1.0.1",
+    "redux-logger": "^1.0.5",
+    "redux-thunk": "^0.1.0"
   }
 }
