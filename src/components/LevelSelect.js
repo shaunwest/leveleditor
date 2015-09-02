@@ -5,27 +5,27 @@
 import Ractive from 'ractive';
 
 import store from '../store.js';
-
 const LevelSelect = Ractive.extend({
   template: '#levelSelect',
   oninit: function () {
     store.subscribe(() => {
-      const levels = store.getState().levels;
+      const items = store.getState().levels.get('items');
+      const sourceLevels = items;
+      const destLevels =
+        sourceLevels
+        .reduce((dest, level, key) => {
+          dest[key] = (level.thumbnail) ?
+            { thumbnail: level.thumbnail } :
+            { thumbnail: 'default-thumbnail.png' };
+          return dest;
+        }, {});
 
-      levels.items.forEach((item, index) => {
-        this.set(`levels[${index}].name`, levels.items[index].name);
-
-        if (levels.items[index].thumbnail) {
-          this.set(`levels[${index}].thumbnail`, levels.items[index].thumbnail);
-        } else {
-          this.set(`levels[${index}].thumbnail`, 'default_thumbnail.png');
-        }
-      });
+      this.set('levels', Object.assign({}, this.get('levels'), destLevels));
     });
   },
   data: function () {
     return {
-      levels: []
+      levels: {}
     };
   }
 });

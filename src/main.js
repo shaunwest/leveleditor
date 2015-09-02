@@ -3,7 +3,7 @@
  */
 
 import store from './store.js';
-import { fetchLevels } from './actions.js';
+import { fetchLevels, fetchLevel } from './actions.js';
 import Ractive from 'ractive';
 import LevelSelect from './components/LevelSelect.js';
 
@@ -15,4 +15,12 @@ const ractive = new Ractive({
   }
 });
 
-store.dispatch(fetchLevels('data/levels.json'));
+store.dispatch(fetchLevels('data/levels.json'))
+  .then(() => {
+    const levels = store.getState().levels.get('items');
+    levels
+      .toSeq()
+      .forEach((level, src) => {
+        store.dispatch(fetchLevel(src));
+      });
+  });

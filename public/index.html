@@ -22,7 +22,7 @@
 
 <script id="levelSelect" type="text/ractive">
   <ul>
-  {{#levels}}
+  {{#levels:name}}
     <li><a href="#"><img class="thumbnail" src="img/{{ thumbnail }}">{{ name }}</a></li>
   {{/levels}}
   </ul>

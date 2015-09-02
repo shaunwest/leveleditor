@@ -1,8 +1,4 @@
-[
-  {
-    "name": "Kitty World"
-  },
-  {
-    "name": "Foo Level"
-  }
-]
+{
+  "kitty-world": {},
+  "fooo-level": {}
+}

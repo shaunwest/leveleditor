@@ -25,6 +25,16 @@ export function receiveLevels(src, json) {
   };
 }
 
+export const RECEIVE_LEVELS_ERROR = 'RECEIVE_LEVELS_ERROR';
+
+export function receiveLevelsError(src, json) {
+  return {
+    type: RECEIVE_LEVELS_ERROR,
+    src: src,
+    error: json,
+    receivedAt: Date.now()
+  };
+}
 
 // LEVEL
 export const SELECT_LEVEL = 'SELECT_LEVEL';
@@ -56,12 +66,43 @@ export function receiveLevel(src, json) {
   };
 }
 
+export const RECEIVE_LEVEL_ERROR = 'RECEIVE_LEVEL_ERROR';
+
+export function receiveLevelError(src, json) {
+  return {
+    type: RECEIVE_LEVEL_ERROR,
+    src: src,
+    error: json,
+    receivedAt: Date.now()
+  };
+}
+
 export function fetchLevels(src) {
   return dispatch => {
     dispatch(requestLevels(src));
     return fetch(src)
-      .then(response => response.json())
-      .then(json => dispatch(receiveLevels(src, json)));
+      .then(
+        response => response.json(),
+        response => response.text()
+      )
+      .then(
+        json => dispatch(receiveLevels(src, json)),
+        json => dispatch(receiveLevelsError(src, json))
+      );
   };
 }
 
+export function fetchLevel(src) {
+  return dispatch => {
+    dispatch(requestLevel(src));
+    return fetch('data/' + src + '.json')
+      .then(
+        response => response.json(),
+        response => response.text()
+      )
+      .then(
+        json => dispatch(receiveLevel(src, json)),
+        json => dispatch(receiveLevelError(src, json))
+      );
+  };
+}
