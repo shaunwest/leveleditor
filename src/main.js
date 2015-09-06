@@ -2,21 +2,13 @@
  * Created by shaunwest on 8/19/15.
  */
 
+import page from 'page';
 import store from './store.js';
 import { fetchLevels, fetchLevel } from './actions.js';
 import { Map } from 'immutable';
 import Ractive from 'ractive';
 import LevelSelect from './components/LevelSelect.js';
 import Provider from './components/Provider.js';
-
-const ractive = new Ractive({
-  el: '[data-app]',
-  template: '#levelSelectView',
-  components: {
-    LevelSelect: LevelSelect,
-    Provider: Provider
-  }
-});
 
 store.dispatch(fetchLevels('data/levels.json'))
   .then(() => {
@@ -29,3 +21,24 @@ store.dispatch(fetchLevels('data/levels.json'))
         store.dispatch(fetchLevel(src));
       });
   });
+
+
+function getView(template) {
+  return function () {
+    return new Ractive({
+      el: '[data-app]',
+      template: template,
+      components: {
+        LevelSelect: LevelSelect,
+        Provider: Provider
+      }
+    });
+  };
+}
+
+page('/', getView('#levelSelectView'));
+page('/level', function () {
+
+});
+
+page();

@@ -5,37 +5,19 @@
 import store from '../store.js';
 import Ractive from 'ractive';
 import { Map } from 'immutable';
-
-const mapAdaptor = {
-  filter: function (object) {
-    return object instanceof Map;
-  },
-
-  // If an object passes the filter, we wrap it.
-  wrap: function (ractive, map, keypath, prefixer) {
-    return {
-      get: function () {
-        return map.toObject();
-      },
-      set: function (property, value) {
-        map.set(property, value);
-        ractive.set(keypath, value);
-      },
-      teardown: function () {
-        // immutable objects have no teardown (?)
-      }
-    }
-  }
-};
+import { mapAdaptor } from '../adaptors.js';
 
 const Provider = Ractive.extend({
   template: '{{>content}}',
   oninit: function () {
-    store.subscribe(() => {
-      if (!this.get('source')) {
+    const getData = this.get.bind(this),
+      setData = this.set.bind(this);
+
+    store.subscribe(function () {
+      if (!getData('source')) {
         throw 'Provider requires a source.';
       }
-      const source = store.getState()[this.get('source')];
+      const source = store.getState()[getData('source')];
       const sourceData = (source.has('items')) ?
         source.get('items') :
         source;
@@ -45,7 +27,7 @@ const Provider = Ractive.extend({
       }
 
       //this.set('data', Object.assign({}, this.get('data'), sourceData.toObject()));
-      this.set('data', this.get('data').merge(sourceData));
+      setData('data', getData('data').merge(sourceData));
     });
   },
   data: function () {

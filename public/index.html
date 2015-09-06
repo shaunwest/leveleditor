@@ -14,7 +14,9 @@
 <body>
 <h1>Level Select</h1>
 
-<div data-app></div>
+<div data-app>
+
+</div>
 
 <script id="levelSelectView" type="text/ractive">
   <Provider source="levels">
@@ -25,7 +27,7 @@
 <script id="levelSelect" type="text/ractive">
   <ul>
   {{#levels:name}}
-    <li><a href="#"><img class="thumbnail" src="img/{{ thumbnail }}">{{ name }}</a></li>
+    <li><a href="/level/{{ name }}"><img class="thumbnail" src="img/{{ thumbnail }}">{{ name }}</a></li>
   {{/levels}}
   </ul>
 </script>
