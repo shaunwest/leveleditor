@@ -17,7 +17,9 @@
 <div data-app></div>
 
 <script id="levelSelectView" type="text/ractive">
-  <LevelSelect></LevelSelect>
+  <Provider source="levels">
+    <LevelSelect levels="{{data}}"></LevelSelect>
+  </Provider>
 </script>
 
 <script id="levelSelect" type="text/ractive">

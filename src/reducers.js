@@ -5,8 +5,11 @@
 import { combineReducers } from 'redux';
 import { Map } from 'immutable';
 import {
-  REQUEST_LEVELS, RECEIVE_LEVELS, SELECT_LEVEL, REQUEST_LEVEL, RECEIVE_LEVEL
+  REQUEST_LEVELS, RECEIVE_LEVELS, SELECT_LEVEL,
+  REQUEST_LEVEL, RECEIVE_LEVEL, RECEIVE_LEVEL_ERROR
 } from './actions.js';
+
+const DEFAULT_THUMB = 'default-thumbnail.png';
 
 function selectedLevel(state = 'foo', action) {
   switch (action.type) {
@@ -24,8 +27,7 @@ function levels(state = Map({
   switch (action.type) {
     case REQUEST_LEVEL:
     case REQUEST_LEVELS:
-      const newState = state.set('isFetching', true);
-      return newState;
+      return state.set('isFetching', true);
     case RECEIVE_LEVELS:
       return state.merge({
         isFetching: false,
@@ -33,41 +35,14 @@ function levels(state = Map({
         lastUpdated: action.receivedAt
       });
     case RECEIVE_LEVEL:
-      return state.setIn(['items', action.src], {thumbnail: 'smb.png'});
+      return state.setIn(['items', action.src], { thumbnail: action.level.thumbnail });
+    case RECEIVE_LEVEL_ERROR:
+      return state.setIn(['items', action.src], { thumbnail: DEFAULT_THUMB });
     default:
       return state;
   }
 }
-/*
-function levels(state = {
-  isFetching: false,
-  items: Map()
-}, action) {
-  switch (action.type) {
-    case REQUEST_LEVEL:
-    case REQUEST_LEVELS:
-      return Object.assign({}, state, {
-        isFetching: true
-      });
-    case RECEIVE_LEVELS:
-      return Object.assign({}, state, {
-        isFetching: false,
-        //items: Object.assign({}, state.items, action.levels),
-        items: state.items.merge(action.levels),
-        lastUpdated: action.receivedAt
-      });
-    case RECEIVE_LEVEL:
-      //const item = Object.assign({}, state.items[action.src], { thumbnail: 'smb.png' });
-      const item = Object.assign({}, state.items[action.src], { thumbnail: 'smb.png' });
-      return Object.assign({}, state, {
-        //items: Object.assign({}, state.items, {[action.src]: item})
-        items: state.items.set(action.src, item)
-      });
-    default:
-      return state;
-  }
-}
-*/
+
 const rootReducer = combineReducers({
   levels
 });
