@@ -16,8 +16,9 @@ export const mapAdaptor = {
         return map.toObject();
       },
       set: function (property, value) {
+        console.log(property, value);
         map.set(property, value);
-        ractive.set(keypath, value);
+        //ractive.set(keypath, value); // Is this needed??
       },
       teardown: function () {
         // immutable objects have no teardown (?)

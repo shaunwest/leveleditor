@@ -6,8 +6,10 @@ import Ractive from 'ractive';
 
 const BackgroundLayer = Ractive.extend({
   template: '#backgroundLayer',
-  data: {
-    message: 'Hello, Foobar'
+  data: function () {
+    return {
+      background: {}
+    };
   }
 });
 

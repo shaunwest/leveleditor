@@ -11,6 +11,7 @@ import page from 'page';
 import LevelSelect from './components/LevelSelect.js';
 import LevelsProvider from './components/LevelsProvider.js';
 import LevelProvider from './components/LevelProvider.js';
+import BackgroundLayer from './components/BackgroundLayer.js';
 
 page('/', setView('#levelSelectView', {
   LevelSelect,
@@ -18,7 +19,8 @@ page('/', setView('#levelSelectView', {
 }));
 
 page('/level/:levelId', setView('#levelView', {
-  LevelProvider
+  LevelProvider,
+  BackgroundLayer
 }));
 
 page();

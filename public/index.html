@@ -34,9 +34,10 @@
 
 <script id="levelView" type="text/ractive">
   <LevelProvider src="{{ route.params.levelId }}">
-  Hello
+    <BackgroundLayer background="{{ data.background }}"></BackgroundLayer>
   </LevelProvider>
 </script>
+
 <script id="levelSelect" type="text/ractive">
   <ul>
   {{#levels:name}}
@@ -61,13 +62,8 @@
   </ul>
 </script>
 
-<script id="editor" type="text/ractive">
-  <BackgroundLayer></BackgroundLayer>
-</script>
-
 <script id="backgroundLayer" type="text/ractive">
-  <h2>Background</h2>
-  <p>{{message}}</p>
+  <img src="/data/{{ background.backgroundUrl }}" >
 </script>
 
 <script src="/js/bundle.js"></script>

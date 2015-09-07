@@ -14,7 +14,7 @@ const Provider = Ractive.extend({
   data: function () {
     return {
       store
-    }
+    };
   }
 });
 
