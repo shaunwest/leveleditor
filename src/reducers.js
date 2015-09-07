@@ -11,7 +11,7 @@ import {
 
 const DEFAULT_THUMB = 'default-thumbnail.png';
 
-function selectedLevel(state = 'foo', action) {
+function selectedLevel(state = 'foo', action = {}) {
   switch (action.type) {
     case SELECT_LEVEL:
       return action.src;
@@ -23,21 +23,26 @@ function selectedLevel(state = 'foo', action) {
 function levels(state = Map({
   isFetching: false,
   items: Map()
-}), action) {
+}), action = {}) {
   switch (action.type) {
-    case REQUEST_LEVEL:
     case REQUEST_LEVELS:
       return state.set('isFetching', true);
     case RECEIVE_LEVELS:
-      return state.merge({
+      return state.mergeDeep({
         isFetching: false,
         items: action.levels,
         lastUpdated: action.receivedAt
       });
+    case REQUEST_LEVEL:
+      return state.setIn(['items', action.src], { isFetching: true });
     case RECEIVE_LEVEL:
-      return state.setIn(['items', action.src], { thumbnail: action.level.thumbnail });
+      return state.mergeDeepIn(['items', action.src], { isFetching: false }, action.level);
     case RECEIVE_LEVEL_ERROR:
-      return state.setIn(['items', action.src], { thumbnail: DEFAULT_THUMB });
+      return state.setIn(['items', action.src], {
+        isFetching: false,
+        isError: true,
+        thumbnail: DEFAULT_THUMB
+      });
     default:
       return state;
   }

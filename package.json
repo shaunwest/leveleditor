@@ -7,7 +7,7 @@
     "clean": "rimraf public/js public/css",
     "make-public": "npm run clean && mkdirp public/js && mkdirp public/css",
     "copy": "copyup 'src/views/**/*.html' public",
-    "serve": "http-server",
+    "serve": "nodemon server.js",
     "build-js": "browserify -t [ babelify --plugins object-assign ] src/main.js -o public/js/bundle.js",
     "watch-js": "watchify -t [ babelify --plugins object-assign ] src/main.js -o public/js/bundle.js",
     "build-js-foo": "node ./tasks/browserify.js",
@@ -35,6 +35,7 @@
   },
   "dependencies": {
     "babel": "^5.8.21",
+    "express": "^4.13.3",
     "immutable": "^3.7.4",
     "isomorphic-fetch": "^2.1.1",
     "page": "^1.6.3",

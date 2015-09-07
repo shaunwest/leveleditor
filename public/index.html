@@ -4,30 +4,59 @@
   <meta charset="UTF-8">
   <title>Level Editor</title>
   <style>
+    html, body {
+      font-family: "Helvetica Neue", Helvetica, Arial, sans-serif;
+    }
     .thumbnail {
-      background-color: #000000;
       width: 64px;
       height: 64px;
+    }
+
+    .levelSelectOption {
+      width: 200px;
+      height: 67px;
+      background: lightgrey;
+      margin: 10px 0;
+      padding: 5px 5px;
     }
   </style>
 </head>
 <body>
 <h1>Level Select</h1>
 
-<div data-app>
-
-</div>
+<div data-app>...</div>
 
 <script id="levelSelectView" type="text/ractive">
-  <Provider source="levels">
-    <LevelSelect levels="{{data}}"></LevelSelect>
-  </Provider>
+  <LevelsProvider>
+    <LevelSelect levels="{{ data }}"></LevelSelect>
+  </LevelsProvider>
 </script>
 
+<script id="levelView" type="text/ractive">
+  <LevelProvider src="{{ route.params.levelId }}">
+  Hello
+  </LevelProvider>
+</script>
 <script id="levelSelect" type="text/ractive">
   <ul>
   {{#levels:name}}
-    <li><a href="/level/{{ name }}"><img class="thumbnail" src="img/{{ thumbnail }}">{{ name }}</a></li>
+    <li class="levelSelectOption">
+      {{#isFetching}}
+      ...
+      {{/isFetching}}
+
+      {{^isFetching}}
+        {{#isError}}
+        Error!!
+        {{/isError}}
+
+        {{^isError}}
+        <a href="/level/{{ name }}" on-click="select">
+          <img class="thumbnail" src="/img/{{ thumbnail }}">{{ description }}
+        </a>
+        {{/isError}}
+      {{/isFetching}}
+    </li>
   {{/levels}}
   </ul>
 </script>
@@ -41,7 +70,7 @@
   <p>{{message}}</p>
 </script>
 
-<script src="js/bundle.js"></script>
+<script src="/js/bundle.js"></script>
 <script>document.write('<script src="http://' + (location.host || 'localhost').split(':')[0] + ':35729/livereload.js?snipver=1"></' + 'script>')</script>
 </body>
 </html>

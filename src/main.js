@@ -2,43 +2,23 @@
  * Created by shaunwest on 8/19/15.
  */
 
-import page from 'page';
-import store from './store.js';
-import { fetchLevels, fetchLevel } from './actions.js';
-import { Map } from 'immutable';
 import Ractive from 'ractive';
+
+import { setView } from './view.js';
+
+import page from 'page';
+
 import LevelSelect from './components/LevelSelect.js';
-import Provider from './components/Provider.js';
+import LevelsProvider from './components/LevelsProvider.js';
+import LevelProvider from './components/LevelProvider.js';
 
-store.dispatch(fetchLevels('data/levels.json'))
-  .then(() => {
-    store
-      .getState()
-      .levels
-      .get('items')
-      .toSeq()
-      .forEach((level, src) => {
-        store.dispatch(fetchLevel(src));
-      });
-  });
+page('/', setView('#levelSelectView', {
+  LevelSelect,
+  LevelsProvider
+}));
 
-
-function getView(template) {
-  return function () {
-    return new Ractive({
-      el: '[data-app]',
-      template: template,
-      components: {
-        LevelSelect: LevelSelect,
-        Provider: Provider
-      }
-    });
-  };
-}
-
-page('/', getView('#levelSelectView'));
-page('/level', function () {
-
-});
+page('/level/:levelId', setView('#levelView', {
+  LevelProvider
+}));
 
 page();

@@ -6,7 +6,7 @@ import Ractive from 'ractive';
 
 const LevelSelect = Ractive.extend({
   template: '#levelSelect',
-  data: () => {
+  data: function () {
     return {
       levels: {}
     };

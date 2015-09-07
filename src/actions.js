@@ -37,6 +37,10 @@ export function receiveLevelsError(src, json) {
 }
 
 // LEVEL
+
+// selectLevel currently does nothing
+// because level selection is handled
+// by a hyperlink and the router
 export const SELECT_LEVEL = 'SELECT_LEVEL';
 
 export function selectLevel(src) {
@@ -77,6 +81,9 @@ export function receiveLevelError(src, json) {
   };
 }
 
+
+// FETCH
+
 export function fetchLevels(src) {
   return dispatch => {
     dispatch(requestLevels(src));
@@ -95,7 +102,7 @@ export function fetchLevels(src) {
 export function fetchLevel(src) {
   return dispatch => {
     dispatch(requestLevel(src));
-    return fetch('data/' + src + '.json')
+    return fetch('/data/' + src + '.json')
       .then(
         response => response.json(),
         response => response.text()
