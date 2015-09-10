@@ -8,6 +8,13 @@
   "background": {
     "backgroundUrl": "assets/background.png"
   },
+  "tileSheet": "demo-tiles",
+  "layers": {
+    "background": {
+      "tileSheet": "demo-tiles",
+      "tiles": []
+    }
+  },
   "colliders": [
     { "x": 20, "y": 200, "width": 200, "height": 100 },
     { "x": 20, "y": 300, "width": 200, "height": 100 },

@@ -1,0 +1,10 @@
+{
+  "id": "demo-tiles",
+  "description": "Demo Tiles",
+  "thumbnail": "demo-tiles-thumb.png",
+  "src": "demo-tiles.png",
+  "tiles": [
+    {"xRange": 4, "x": 0, "y": 0, "width": 16, "height": 16},
+    {"xRange": 4, "x": 0, "y": 16, "width": 16, "height": 16}
+  ]
+}

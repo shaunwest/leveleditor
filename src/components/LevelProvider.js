@@ -3,7 +3,7 @@
  */
 
 import { Map } from 'immutable';
-import { fetchLevel } from '../actions.js';
+import { fetchLevel } from '../actions/levels.js';
 import Provider from './Provider.js';
 
 const LevelProvider = Provider.extend({
@@ -17,11 +17,11 @@ const LevelProvider = Provider.extend({
         levels.get('items') :
         levels;
 
-      if (!items) {
+      if (!items.size) {
         return;
       }
 
-      this.set('data', this.get('data').merge(items.get(src)));
+      this.set('levelProvider', this.get('levelProvider').merge(items.get(src)));
     });
 
     store.dispatch(fetchLevel(src));
@@ -29,7 +29,7 @@ const LevelProvider = Provider.extend({
   data: function () {
     return {
       src: null,
-      data: Map()
+      levelProvider: Map()
     };
   }
 });

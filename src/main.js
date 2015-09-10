@@ -12,15 +12,24 @@ import LevelSelect from './components/LevelSelect.js';
 import LevelsProvider from './components/LevelsProvider.js';
 import LevelProvider from './components/LevelProvider.js';
 import BackgroundLayer from './components/BackgroundLayer.js';
+import TileSheetSelect from './components/TileSheetSelect.js';
+
+import LevelsController from './controllers/levels.js';
+import LevelController from './controllers/level.js';
+import TileSheetsController from './controllers/tile-sheets.js';
 
 page('/', setView('#levelSelectView', {
   LevelSelect,
-  LevelsProvider
-}));
+}, [
+  LevelsController
+]));
 
 page('/level/:levelId', setView('#levelView', {
-  LevelProvider,
-  BackgroundLayer
-}));
+  BackgroundLayer,
+  TileSheetSelect
+}, [
+  LevelController,
+  TileSheetsController
+]));
 
 page();

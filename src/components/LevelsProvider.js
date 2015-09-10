@@ -3,7 +3,7 @@
  */
 
 import { Map } from 'immutable';
-import { fetchLevels, fetchLevel, selectLevel } from '../actions.js';
+import { fetchLevels, fetchLevel, selectLevel } from '../actions/levels.js';
 import Provider from './Provider.js';
 
 const LevelsProvider = Provider.extend({
@@ -16,7 +16,7 @@ const LevelsProvider = Provider.extend({
         source.get('items') :
         source;
 
-      if (!sourceData) {
+      if (!sourceData.size) {
         return;
       }
 
