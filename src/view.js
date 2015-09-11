@@ -5,9 +5,9 @@
 import store from './store.js';
 import Ractive from 'ractive';
 
-export function setView(template, components, controllers = []) {
+export function getView(template, components, controllers = []) {
   return function (ctx, next) {
-    controllers.forEach(controller => controller(ctx, next));
+    controllers.forEach(controller => controller());
 
     return new Ractive({
       el: '[data-app]',

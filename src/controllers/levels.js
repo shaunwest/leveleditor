@@ -5,7 +5,7 @@
 import store from '../store.js';
 import { fetchLevels, fetchLevel } from '../actions/levels.js';
 
-export default function LevelsController(route) {
+export default function LevelsController() {
   store.dispatch(fetchLevels('/data/levels.json'))
     .then(() => {
       store

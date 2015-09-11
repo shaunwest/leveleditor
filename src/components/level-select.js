@@ -5,6 +5,7 @@
 import store from '../store.js';
 import Ractive from 'ractive';
 import { selectLevel } from '../actions/levels.js';
+import { navigateTo } from '../actions/routes.js';
 
 const LevelSelect = Ractive.extend({
   template: '#levelSelect',
@@ -20,13 +21,18 @@ const LevelSelect = Ractive.extend({
       this.set('levels', Object.assign({}, this.get('levels'), items.toJS()));
     });
 
+    /*
     this.on('select', (event) => {
       store.dispatch(selectLevel(event.context.id));
+    });*/
+
+    this.on('selectLevel', (event, levelId) => {
+      store.dispatch(navigateTo('/level/' + levelId));
     });
   },
   data: function () {
     return {
-      levels: {}
+      levels: {} // replace with Map, use adaptor (?)
     };
   }
 });

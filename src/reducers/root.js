@@ -6,9 +6,10 @@ import { combineReducers } from 'redux';
 import { Map } from 'immutable';
 import levels from './levels.js';
 import tileSheets from './tile-sheets.js';
+import routes from './routes.js';
 
 const rootReducer = combineReducers({
-  levels, tileSheets
+  levels, tileSheets, routes
 });
 
 export default rootReducer;

@@ -55,9 +55,12 @@
         {{/isError}}
 
         {{^isError}}
-        <a href="/level/{{ name }}" on-click="select">
+        <!--<a href="/level/{{ name }}" on-click="select">
           <img class="thumbnail" src="/img/{{ thumbnail }}">{{ description }}
-        </a>
+        </a>-->
+        <button on-click="selectLevel:{{ name }}">
+          <img class="thumbnail" src="/img/{{ thumbnail }}">{{ description }}
+        </button>
         {{/isError}}
       {{/isFetching}}
     </li>
