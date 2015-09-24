@@ -25,7 +25,7 @@
 <h1>Editor</h1>
 <nav>
   <ul>
-    <a href="/">Home</a>
+    <li><a href="/">Home</a></li>
   </ul>
 </nav>
 
@@ -36,15 +36,15 @@
 </script>
 
 <script id="levelView" type="text/ractive">
-  <BackgroundLayer levelId="{{ route.params.levelId }}"></BackgroundLayer>
+  <BackgroundLayer></BackgroundLayer>
   <TileSheetSelect></TileSheetSelect>
-  <!--<TileSelect selected="{{ levelProvider.tileSheet }}"></TileSelect>-->
+  <TileSelect></TileSelect>
 </script>
 
 <script id="levelSelect" type="text/ractive">
   <ul>
   {{#levels:name}}
-    <li class="levelSelectOption">
+    <li>
       {{#isFetching}}
       ...
       {{/isFetching}}
@@ -55,9 +55,6 @@
         {{/isError}}
 
         {{^isError}}
-        <!--<a href="/level/{{ name }}" on-click="select">
-          <img class="thumbnail" src="/img/{{ thumbnail }}">{{ description }}
-        </a>-->
         <button on-click="selectLevel:{{ name }}">
           <img class="thumbnail" src="/img/{{ thumbnail }}">{{ description }}
         </button>
@@ -92,8 +89,23 @@
   </ul>
 </script>
 
+<!-- need a component that draws a canvas to the page? -->
+<script id="tileSelect" type="text/ractive">
+  {{#isFetching}}
+  ...
+  {{/isFetching}}
+  {{^isFetching}}
+    <!--<img src="/data/assets/{{ tileSheet.src }}">-->
+    {{#tileImages:i}}
+        <img src="{{ tiles[0] }}" on-click="selectTile:{{ i }}">
+    {{/tileImages}}
+  {{/isFetching}}
+  <ul>
+  </ul>
+</script>
+
 <script id="backgroundLayer" type="text/ractive">
-  <img src="/data/{{ backgroundUrl }}" >
+  <img src="/data/{{ backgroundUrl }}">
 </script>
 
 <script src="/js/bundle.js"></script>

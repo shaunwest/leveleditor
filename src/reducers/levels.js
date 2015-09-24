@@ -7,6 +7,7 @@ import {
   REQUEST_LEVELS, RECEIVE_LEVELS, SELECT_LEVEL,
   REQUEST_LEVEL, RECEIVE_LEVEL, RECEIVE_LEVEL_ERROR
   } from '../actions/levels.js';
+import { RECEIVE_ROUTE } from '../actions/routes.js';
 
 const DEFAULT_THUMB = 'default-thumbnail.png';
 
@@ -33,6 +34,11 @@ export default function levels(state = Map({
         isError: true,
         thumbnail: DEFAULT_THUMB
       });
+    case RECEIVE_ROUTE:
+      const levelId = action.context.params.levelId;
+      return (levelId) ?
+        state.set('currentLevelId', levelId) :
+        state;
     default:
       return state;
   }

@@ -25,16 +25,16 @@ export function receiveRoute(path, context) {
   };
 }
 
-export function addRoute(path, config) {
-  const view = getView(config.template, config.components, config.controllers);
+export function initRouting(routes) {
+  routes.forEach(function (route) {
+    const view = getView(route.template, route.components, route.controllers);
 
-  page(path, function (context, next) {
-    store.dispatch(receiveRoute(context.path, context));
-    view(context, next);
+    page(route.path, function (context, next) {
+      store.dispatch(receiveRoute(context.path, context));
+      view();
+    });
   });
-}
 
-export function initRouting() {
   page();
 }
 

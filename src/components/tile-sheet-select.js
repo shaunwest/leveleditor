@@ -10,16 +10,13 @@ const TileSheetSelect = Ractive.extend({
   template: '#tileSheetSelect',
   oninit: function () {
     store.subscribe(() => {
-      const source = store.getState().tileSheets;
-      const sourceData = (source.has('items')) ?
-        source.get('items') :
-        source;
+      const tileSheets = store.getState().tileSheets.get('items');
 
-      if (!sourceData.size) {
+      if (!tileSheets.size) {
         return;
       }
 
-      this.set('tileSheets', Object.assign({}, this.get('tileSheets'), sourceData.toJS()));
+      this.set('tileSheets', Object.assign({}, this.get('tileSheets'), tileSheets.toJS()));
     });
 
     this.on('select', (event) => {

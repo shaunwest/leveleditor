@@ -9,22 +9,21 @@ const BackgroundLayer = Ractive.extend({
   template: '#backgroundLayer',
   oninit: function () {
     store.subscribe(() => {
-      const levelId = this.get('levelId');
+      const levelId = store.getState().levels.get('currentLevelId');
       if (!levelId) {
         return;
       }
 
-      const level = store.getState().levels.get('items').get(levelId);
+      const level = store.getState().levels.getIn(['items', levelId]);
       if (!level || !level.size) {
         return;
       }
 
-      this.set('backgroundUrl', level.get('background').get('backgroundUrl'));
+      this.set('backgroundUrl', level.getIn(['background', 'backgroundUrl']));
     });
   },
   data: function () {
     return {
-      levelId: null,
       backgroundUrl: null
     };
   }

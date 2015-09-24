@@ -6,7 +6,7 @@ import store from './store.js';
 import Ractive from 'ractive';
 
 export function getView(template, components, controllers = []) {
-  return function (ctx, next) {
+  return function () {
     controllers.forEach(controller => controller());
 
     return new Ractive({
@@ -14,8 +14,7 @@ export function getView(template, components, controllers = []) {
       template,
       components,
       data: {
-        route: ctx,
-        next: next
+        store: store
       }
     });
   };

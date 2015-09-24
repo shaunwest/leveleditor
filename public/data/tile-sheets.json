@@ -1,4 +1,4 @@
 {
-  "demo-tiles": {},
+  "demo-tiles": { "default": true },
   "foo-tiles": {}
 }

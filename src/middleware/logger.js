@@ -11,7 +11,7 @@ const logger = store => next => action => {
   const nextState = Object
     .keys(state)
     .reduce((nextState, key) => {
-      nextState[key] = state[key]; //.toJS();
+      nextState[key] = state[key].toJS();
       return nextState;
     }, {});
 

@@ -21,11 +21,6 @@ const LevelSelect = Ractive.extend({
       this.set('levels', Object.assign({}, this.get('levels'), items.toJS()));
     });
 
-    /*
-    this.on('select', (event) => {
-      store.dispatch(selectLevel(event.context.id));
-    });*/
-
     this.on('selectLevel', (event, levelId) => {
       store.dispatch(navigateTo('/level/' + levelId));
     });

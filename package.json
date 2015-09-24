@@ -7,7 +7,7 @@
     "clean": "rimraf public/js public/css",
     "make-public": "npm run clean && mkdirp public/js && mkdirp public/css",
     "copy": "copyup 'src/views/**/*.html' public",
-    "serve": "nodemon server.js",
+    "serve": "nodemon server.js -i src -i public",
     "prod-js": "browserify -t [ babelify --plugins object-assign ] src/main.js -o public/js/bundle.js",
     "minify-js": "uglifyjs -o public/js/bundle.min.js public/js/bundle.js",
     "build-js": "browserify -d -t [ babelify --plugins object-assign ] src/main.js -o public/js/bundle.js",
