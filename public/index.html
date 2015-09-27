@@ -19,6 +19,10 @@
       margin: 10px 0;
       padding: 5px 5px;
     }
+
+    canvas {
+      background-color: #ededed;
+    }
   </style>
 </head>
 <body>
@@ -36,7 +40,8 @@
 </script>
 
 <script id="levelView" type="text/ractive">
-  <BackgroundLayer></BackgroundLayer>
+<!--<BackgroundLayer></BackgroundLayer>-->
+  <Layers></Layers>
   <TileSheetSelect></TileSheetSelect>
   <TileSelect></TileSelect>
 </script>
@@ -89,19 +94,31 @@
   </ul>
 </script>
 
-<!-- need a component that draws a canvas to the page? -->
 <script id="tileSelect" type="text/ractive">
   {{#isFetching}}
   ...
   {{/isFetching}}
   {{^isFetching}}
-    <!--<img src="/data/assets/{{ tileSheet.src }}">-->
     {{#tileImages:i}}
         <img src="{{ tiles[0] }}" on-click="selectTile:{{ i }}">
     {{/tileImages}}
   {{/isFetching}}
   <ul>
   </ul>
+</script>
+
+<script id="layers" type="text/ractive">
+  {{#layers}}
+    <Layer></Layer>
+  {{/layers}}
+</script>
+
+<script id="layer" type="text/ractive">
+  <canvas 
+  on-mousedown="mouseDown"
+  on-mousemove="mouseMove" 
+  on-mouseup="mouseUp" 
+  width="400" height="400"></canvas>
 </script>
 
 <script id="backgroundLayer" type="text/ractive">

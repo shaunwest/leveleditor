@@ -20,17 +20,11 @@ export default function tileSheets(state = Map({
     case REQUEST_TILE_SHEETS:
       return state.set('isFetching', true);
     case RECEIVE_TILE_SHEETS:
-      const tileSheets = action.tileSheets;
-      const currentId = Object.keys(tileSheets)
-        .reduce((currentId, tileSheetId) => {
-          const tileSheet = tileSheets[tileSheetId];
-          return (tileSheet.default) ? tileSheetId : currentId;
-        });
       return state.merge({
         isFetching: false,
         items: action.tileSheets,
         lastUpdated: action.receivedAt,
-        currentTileSheetId: currentId
+        currentTileSheetId: action.defaultId
       });
     case REQUEST_TILE_SHEET:
       return state.mergeIn(['items', action.src], { isFetching: true });
@@ -48,10 +42,10 @@ export default function tileSheets(state = Map({
       return state.mergeIn(['items', action.src], { isFetching: false, image: action.image });
     case MADE_TILES:
       return state.mergeDeepIn(['items', action.src], { tileImages: action.tileImages });
-    case SELECT_TILE_SHEET:
+    /*case SELECT_TILE_SHEET:
       return state.set('currentTileSheetId', action.id);
     case SELECT_TILE:
-      return state.set('currentTileIndex', action.tileIndex);
+      return state.set('currentTileIndex', action.tileIndex);*/
     default:
       return state;
   }

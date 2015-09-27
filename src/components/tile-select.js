@@ -3,35 +3,23 @@
  */
 
 import Ractive from 'ractive';
-import store from '../store.js';
+import store from '../store/store.js';
 import { Map } from 'immutable';
 import { selectTile } from '../actions/tile-sheets.js';
-
 
 const TileSelect = Ractive.extend({
   template: '#tileSelect',
   oninit: function () {
     store.subscribe(() => {
-      const tileSheetState = store.getState().tileSheets;
-      const tileSheets = tileSheetState.get('items');
-      const tileSheetId = tileSheetState.get('currentTileSheetId');
+      const tileSet = store.getState().currentTileSet,
+        tileImages = tileSet.get('tileImages');
 
-      if (!tileSheets.size || !tileSheetId) {
-        return;
-      }
-
-      const tileSheet = tileSheets.get(tileSheetId);
-      if (!tileSheet.size) {
-        return;
-      }
-      this.set('tileSheet', Object.assign({}, this.get('tileSheet'), tileSheet.toJS()));
-
-      const tileImages = tileSheet.get('tileImages');
       if (!tileImages || !tileImages.size) {
         return;
       }
 
-      const newTileImages = tileImages.map(function (tileImageSet) {
+      // convert images to data urls for use with <img src>
+      const dataUrls = tileImages.map(function (tileImageSet) {
         return Map({ 
           tiles: tileImageSet.map(function (tileImage) {
             return tileImage.toDataURL();
@@ -39,7 +27,7 @@ const TileSelect = Ractive.extend({
         });
       });
 
-      this.set('tileImages', newTileImages.toJS());
+      this.set('tileImages', dataUrls.toJS());
     });
 
     this.on('selectTile', (event, tileIndex) => {
@@ -48,9 +36,7 @@ const TileSelect = Ractive.extend({
   },
   data: function () {
     return {
-      tileSheet: {},
-      tileImages: [],
-			foobar: ''
+      tileImages: []
     };
   }
 });

@@ -2,7 +2,7 @@
  * Created by shaunwest on 8/22/15.
  */
 
-import store from '../store.js';
+import store from '../store/store.js';
 import Ractive from 'ractive';
 
 const BackgroundLayer = Ractive.extend({

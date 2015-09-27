@@ -9,14 +9,13 @@ import Ractive from 'ractive';
 import { initRouting } from './actions/routes.js';
 
 import LevelSelect from './components/level-select.js';
-import BackgroundLayer from './components/background-layer.js';
+import Layers from './components/layers.js';
+import Layer from './components/layer.js';
 import TileSheetSelect from './components/tile-sheet-select.js';
 import TileSelect from './components/tile-select.js';
 
-import LevelsController from './controllers/levels.js';
-import LevelController from './controllers/level.js';
-import TileSheetsController from './controllers/tile-sheets.js';
-import CanvasImage from './components/canvas-image.js';
+import LevelSelectController from './controllers/level-select.js';
+import LevelViewController from './controllers/level-view.js';
 
 const routes = [
   {
@@ -25,23 +24,18 @@ const routes = [
     components: {
       LevelSelect
     },
-    controllers: [
-      LevelsController
-    ]
+    controller: LevelSelectController
   },
   {
     path: '/level/:levelId',
     template: '#levelView',
     components: {
-      BackgroundLayer,
+      Layers,
+      Layer,
       TileSheetSelect,
-      TileSelect,
-			CanvasImage
+      TileSelect
     },
-    controllers: [
-      LevelController,
-      TileSheetsController
-    ]
+    controller: LevelViewController
   }
 ];
 

@@ -84,6 +84,21 @@ export function receiveLevelError(src, json) {
 
 // FETCH
 
+export function fetchAll(src) {
+  return (dispatch, getState) => {
+    return dispatch(fetchLevels(src))
+      .then(action => {
+        getState()
+          .levels
+          .get('items')
+          .toSeq()
+          .forEach((level, src) => {
+            dispatch(fetchLevel(src));
+          });
+      });
+  }
+}
+
 export function fetchLevels(src) {
   return dispatch => {
     dispatch(requestLevels(src));

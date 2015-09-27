@@ -3,7 +3,7 @@
  */
 
 import page from 'page';
-import store from '../store.js';
+import store from '../store/store.js';
 import { getView } from '../view.js';
 
 export const REQUEST_ROUTE = 'REQUEST_ROUTE';
@@ -27,7 +27,7 @@ export function receiveRoute(path, context) {
 
 export function initRouting(routes) {
   routes.forEach(function (route) {
-    const view = getView(route.template, route.components, route.controllers);
+    const view = getView(route.template, route.components, route.controller);
 
     page(route.path, function (context, next) {
       store.dispatch(receiveRoute(context.path, context));

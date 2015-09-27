@@ -3,7 +3,7 @@
  */
 
 import Ractive from 'ractive';
-import store from '../store.js';
+import store from '../store/store.js';
 import { selectTileSheet } from '../actions/tile-sheets.js';
 
 const TileSheetSelect = Ractive.extend({

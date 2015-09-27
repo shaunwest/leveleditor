@@ -7,6 +7,7 @@ import {
   REQUEST_LEVELS, RECEIVE_LEVELS, SELECT_LEVEL,
   REQUEST_LEVEL, RECEIVE_LEVEL, RECEIVE_LEVEL_ERROR
   } from '../actions/levels.js';
+import { ADD_TILE } from '../actions/layer.js';
 import { RECEIVE_ROUTE } from '../actions/routes.js';
 
 const DEFAULT_THUMB = 'default-thumbnail.png';
@@ -39,6 +40,8 @@ export default function levels(state = Map({
       return (levelId) ?
         state.set('currentLevelId', levelId) :
         state;
+    /*case ADD_TILE:
+      return state.setIn(['items', action.src, 'layers', 0, 'tiles', action.index], action.id);*/
     default:
       return state;
   }

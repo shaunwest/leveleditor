@@ -3,8 +3,8 @@
  */
 
 import 'isomorphic-fetch';
-import getImage from '../image-loader.js';
-import { processTiles } from '../tilesheet-processor.js';
+import getImage from '../util/image-loader.js';
+import { processTiles } from './helpers/tile-sheet-processor.js';
 
 // Probably should make these immutable Maps...
 
@@ -20,11 +20,12 @@ export function requestTileSheets(src) {
 
 export const RECEIVE_TILE_SHEETS = 'RECEIVE_TILE_SHEETS';
 
-export function receiveTileSheets(src, json) {
+export function receiveTileSheets(src, tileSheets, defaultId) {
   return {
     type: RECEIVE_TILE_SHEETS,
-    src: src,
-    tileSheets: json,
+    src,
+    tileSheets,
+    defaultId,
     receivedAt: Date.now()
   };
 }
@@ -41,23 +42,16 @@ export function receiveTileSheetsError(src, json) {
 }
 
 
-// TILE SHEET
+// GET TILE SHEET
 
-export const SELECT_TILE_SHEET = 'SELECT_TILE_SHEET';
 
-export function selectTileSheet(id) {
-  return {
-    type: SELECT_TILE_SHEET,
-    id: id
-  };
-}
 
 export const REQUEST_TILE_SHEET = 'REQUEST_TILE_SHEET';
 
 export function requestTileSheet(src) {
   return {
     type: REQUEST_TILE_SHEET,
-    src: src
+    src
   };
 }
 
@@ -66,7 +60,7 @@ export const RECEIVE_TILE_SHEET = 'RECEIVE_TILE_SHEET';
 export function receiveTileSheet(src, json) {
   return {
     type: RECEIVE_TILE_SHEET,
-    src: src,
+    src,
     tileSheet: json,
     receivedAt: Date.now()
   };
@@ -77,8 +71,8 @@ export const RECEIVE_TILE_SHEET_ERROR = 'RECEIVE_TILE_SHEET_ERROR';
 export function receiveTileSheetError(src, error) {
   return {
     type: RECEIVE_TILE_SHEET_ERROR,
-    src: src,
-    error: error,
+    src,
+    error,
     receivedAt: Date.now()
   };
 }
@@ -88,8 +82,8 @@ export const REQUEST_TILE_SHEET_IMAGE = 'REQUEST_TILE_SHEET_IMAGE';
 export function requestTileSheetImage(src, imageSrc) {
   return {
     type: REQUEST_TILE_SHEET_IMAGE,
-    src: src,
-    imageSrc: imageSrc
+    src,
+    imageSrc
   }
 }
 
@@ -98,9 +92,9 @@ export const RECEIVE_TILE_SHEET_IMAGE = 'RECEIVE_TILE_SHEET_IMAGE';
 export function receiveTileSheetImage(src, imageSrc, image) {
   return {
     type: RECEIVE_TILE_SHEET_IMAGE,
-    src: src,
-    imageSrc: imageSrc,
-    image: image,
+    src,
+    imageSrc,
+    image,
     receivedAt: Date.now()
   }
 }
@@ -110,7 +104,7 @@ export const RECEIVE_TILE_SHEET_IMAGE_ERROR = 'RECEIVE_TILE_SHEET_IMAGE_ERROR';
 export function receiveTileSheetImageError(src) {
   return {
     type: RECEIVE_TILE_SHEET_IMAGE_ERROR,
-    src: src
+    src
   }
 }
 
@@ -119,25 +113,66 @@ export const MADE_TILES = 'MADE_TILES';
 export function madeTiles(src, tileImages) {
   return {
     type: MADE_TILES,
-    src: src,
-    tileImages: tileImages
+    src,
+    tileImages
   };
 }
 
-// TILE
+
+// SELECTED
+export const SELECTED_TILE_SHEET = 'SELECTED_TILE_SHEET';
+
+export function selectedTileSheet(tileImages) {
+  return {
+    type: SELECTED_TILE_SHEET,
+    tileImages
+  };
+}
 
 export const SELECT_TILE = 'SELECT_TILE';
 
 export function selectTile(tileIndex) {
   return {
     type: SELECT_TILE,
-    tileIndex: tileIndex
+    tileIndex
   };
 }
 
+// SELECT
+export function selectTileSheet(id) {
+  return (dispatch, getState) => {
+    const tileSheet = getState().tileSheets.get('items').get(id);
 
+    /*
+    const tileSheets = getState().tileSheets,
+      tileSheet = tileSheets.getIn(['items', src]),
+      tileImages = processTiles(tileSheet.get('image'), tileSheet.get('tiles'));
+    
+    dispatch(madeTiles(src, tileImages));
+    */
+
+    dispatch(selectedTileSheet(tileSheet.get('tileImages')));
+  };
+}
 
 // FETCH
+
+export function fetchAll(src) {
+  return (dispatch, getState) => {
+    return dispatch(fetchTileSheets(src))
+      .then(
+        action => {
+          getState().tileSheets.get('items').toSeq()
+            .forEach((tileSheet, src) => {
+              dispatch(getTileSheet(src));
+            });
+        },
+        error => {
+          return error;
+        }
+      );
+  };
+}
 
 export function fetchTileSheets(src) {
   return dispatch => {
@@ -148,7 +183,16 @@ export function fetchTileSheets(src) {
         response => response.json()
       )
       .then(
-        json => dispatch(receiveTileSheets(src, json)),
+        tileSheets => {
+          const defaultId = Object.keys(tileSheets)
+            .reduce((defaultId, tileSheetId) => {
+              return (tileSheets[tileSheetId].default) ? 
+                tileSheetId : 
+                defaultId;
+            });
+
+          dispatch(receiveTileSheets(src, tileSheets, defaultId));
+        },
         json => {
           dispatch(receiveTileSheetsError(src, json));
           return Promise.reject(json);
@@ -190,23 +234,6 @@ export function fetchTileSheetImage(src, imageSrc) {
   };
 }
 
-export function fetchAll(src) {
-  return (dispatch, getState) => {
-    return dispatch(fetchTileSheets(src))
-      .then(
-        action => {
-          getState().tileSheets.get('items').toSeq()
-            .forEach((tileSheet, src) => {
-              dispatch(getTileSheet(src));
-            });
-        },
-        error => {
-          return error;
-        }
-      );
-  };
-}
-
 function getTileSheet(src) {
   return (dispatch, getState) => {
     dispatch(fetchTileSheet(src))
@@ -227,10 +254,15 @@ function getTileSheetImage(src, imageSrc) {
     dispatch(fetchTileSheetImage(src, imageSrc))
       .then(
         action => {
-          const image = getState().tileSheets.getIn(['items', src, 'image']);
-          const tiles = getState().tileSheets.getIn(['items', src, 'tiles']);
-          const tileImages = processTiles(image, tiles);
-          return dispatch(madeTiles(src, tileImages));
+          const tileSheets = getState().tileSheets,
+            tileSheet = tileSheets.getIn(['items', src]),
+            tileImages = processTiles(tileSheet.get('image'), tileSheet.get('tiles'));
+          
+          dispatch(madeTiles(src, tileImages));
+
+          if (tileSheet.get('default')) {
+            dispatch(selectTileSheet(src));
+          }
         },
         error => {
           console.log('Error fetching tile sheet image', error);
