@@ -30,7 +30,7 @@ export const RECEIVE_LEVELS_ERROR = 'RECEIVE_LEVELS_ERROR';
 export function receiveLevelsError(src, json) {
   return {
     type: RECEIVE_LEVELS_ERROR,
-    src: src,
+    src,
     error: json,
     receivedAt: Date.now()
   };
@@ -43,10 +43,10 @@ export function receiveLevelsError(src, json) {
 // by a hyperlink and the router
 export const SELECT_LEVEL = 'SELECT_LEVEL';
 
-export function selectLevel(src) {
+export function selectLevel(level) {
   return {
     type: SELECT_LEVEL,
-    src: src
+    level
   };
 }
 
@@ -55,17 +55,17 @@ export const REQUEST_LEVEL = 'REQUEST_LEVEL';
 export function requestLevel(src) {
   return {
     type: REQUEST_LEVEL,
-    src: src
+    src
   };
 }
 
 export const RECEIVE_LEVEL = 'RECEIVE_LEVEL';
 
-export function receiveLevel(src, json) {
+export function receiveLevel(src, level) {
   return {
     type: RECEIVE_LEVEL,
-    src: src,
-    level: json,
+    src,
+    level,
     receivedAt: Date.now()
   };
 }
@@ -129,5 +129,9 @@ export function fetchLevel(src) {
   };
 }
 
-
-
+export function fetchAndSelectLevel(src) {
+  return dispatch => {
+    return dispatch(fetchLevel(src))
+      .then(action => dispatch(selectLevel(action.level)));
+  };
+}

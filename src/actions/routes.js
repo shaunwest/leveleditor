@@ -27,10 +27,18 @@ export function receiveRoute(path, context) {
 
 export function initRouting(routes) {
   routes.forEach(function (route) {
-    const view = getView(route.template, route.components, route.controller);
+    //const view = getView(route.template, route.components, route.controller);
+    const view = getView(route.template, route.components);
 
     page(route.path, function (context, next) {
+      // In the controller is where "selectLevel" can be called
+      // When selectLevel is called, current-tile-set reducer can set it's state based on it
+      
       store.dispatch(receiveRoute(context.path, context));
+      if (typeof route.controller === 'function') {
+        route.controller();
+      }
+
       view();
     });
   });

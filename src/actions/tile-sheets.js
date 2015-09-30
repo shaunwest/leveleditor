@@ -20,12 +20,11 @@ export function requestTileSheets(src) {
 
 export const RECEIVE_TILE_SHEETS = 'RECEIVE_TILE_SHEETS';
 
-export function receiveTileSheets(src, tileSheets, defaultId) {
+export function receiveTileSheets(src, tileSheets) {
   return {
     type: RECEIVE_TILE_SHEETS,
     src,
     tileSheets,
-    defaultId,
     receivedAt: Date.now()
   };
 }
@@ -43,8 +42,6 @@ export function receiveTileSheetsError(src, json) {
 
 
 // GET TILE SHEET
-
-
 
 export const REQUEST_TILE_SHEET = 'REQUEST_TILE_SHEET';
 
@@ -122,10 +119,10 @@ export function madeTiles(src, tileImages) {
 // SELECTED
 export const SELECTED_TILE_SHEET = 'SELECTED_TILE_SHEET';
 
-export function selectedTileSheet(tileImages) {
+export function selectedTileSheet(id) {
   return {
     type: SELECTED_TILE_SHEET,
-    tileImages
+    id
   };
 }
 
@@ -141,17 +138,11 @@ export function selectTile(tileIndex) {
 // SELECT
 export function selectTileSheet(id) {
   return (dispatch, getState) => {
-    const tileSheet = getState().tileSheets.get('items').get(id);
-
-    /*
-    const tileSheets = getState().tileSheets,
-      tileSheet = tileSheets.getIn(['items', src]),
+    const tileSheet = getState().tileSheets.get('items').get(id),
       tileImages = processTiles(tileSheet.get('image'), tileSheet.get('tiles'));
-    
-    dispatch(madeTiles(src, tileImages));
-    */
 
-    dispatch(selectedTileSheet(tileSheet.get('tileImages')));
+    dispatch(selectedTileSheet(id));   
+    dispatch(madeTiles(id, tileImages));
   };
 }
 
@@ -184,14 +175,14 @@ export function fetchTileSheets(src) {
       )
       .then(
         tileSheets => {
-          const defaultId = Object.keys(tileSheets)
+          /*const defaultId = Object.keys(tileSheets)
             .reduce((defaultId, tileSheetId) => {
               return (tileSheets[tileSheetId].default) ? 
                 tileSheetId : 
                 defaultId;
-            });
+            });*/
 
-          dispatch(receiveTileSheets(src, tileSheets, defaultId));
+          dispatch(receiveTileSheets(src, tileSheets));
         },
         json => {
           dispatch(receiveTileSheetsError(src, json));
@@ -255,10 +246,10 @@ function getTileSheetImage(src, imageSrc) {
       .then(
         action => {
           const tileSheets = getState().tileSheets,
-            tileSheet = tileSheets.getIn(['items', src]),
-            tileImages = processTiles(tileSheet.get('image'), tileSheet.get('tiles'));
+            tileSheet = tileSheets.getIn(['items', src]);
+            //tileImages = processTiles(tileSheet.get('image'), tileSheet.get('tiles'));
           
-          dispatch(madeTiles(src, tileImages));
+          //dispatch(madeTiles(src, tileImages));
 
           if (tileSheet.get('default')) {
             dispatch(selectTileSheet(src));

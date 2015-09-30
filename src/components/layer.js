@@ -6,6 +6,7 @@ import Ractive from 'ractive';
 import { addTile } from '../actions/layer.js';
 import store from '../store/store.js';
 import { getCurrentLevelId } from '../store/helpers.js';
+import { frame } from '../util/frame.js';
 
 const Layer = Ractive.extend({
   template: '#layer',
@@ -27,17 +28,42 @@ const Layer = Ractive.extend({
         return;
       }
       const mouseEvent = event.original;
-      console.log(mouseEvent.offsetX, mouseEvent.offsetY);
+      const width = 400;
+      const tilePosition = (mouseEvent.offsetY * width) + mouseEvent.offsetX;
+      const tileIndex = 1;
 
-      store.dispatch(addTile(currentLevelId, 5, 1));
+      store.dispatch(addTile(currentLevelId, tilePosition, tileIndex));
     });
   },
   oncomplete: function () {
     const canvas = this.find('canvas');
+    const context = canvas.getContext('2d');
+    const getFrame = frame();
+
+/*
+    getFrame((elapsed, fps) => {
+      
+    });
+*/
 
     store.subscribe(() => {
-      const state = store.getState();
-      // draw tiles 
+      const layers = store.getState().layers;
+      const tileSet = store.getState().currentTileSet;
+      const tileImages = tileSet.get('tileImages');
+      const activeLayerIndex = layers.get('activeLayerIndex');
+      const layer = layers.get('items').get(activeLayerIndex);
+      const tiles = layer.get('tiles');
+      const width = 400;
+      
+      for(let i = 0; i < tiles.size; i++) {
+        let x = i % width;
+        let y = Math.floor(i / width);
+        let tileIndex = tiles.get(i);
+        if (typeof tileIndex !== 'undefined') {
+          let tileImage = tileImages.get(tileIndex).get(0);
+          context.drawImage(tileImage, x, y);
+        }
+      }
     });
   },
   data: function () {

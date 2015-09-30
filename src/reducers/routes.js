@@ -14,6 +14,7 @@ export default function routes(state = Map({
     case RECEIVE_ROUTE:
       return state.mergeDeep({
         isFetching: false,
+        // TODO: does this need to be an Object.assign()?
         context: Object.assign({}, action.context),
         path: action.path
       });
