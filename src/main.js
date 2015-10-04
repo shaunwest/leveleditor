@@ -6,36 +6,19 @@ import 'babel-core/polyfill.js';
 
 import Ractive from 'ractive';
 
-import { initRouting } from './actions/routes.js';
+import { initRouting } from './modules/routes/handle-routes.js';
 
-import LevelSelect from './components/level-select.js';
-import Layers from './components/layers.js';
-import Layer from './components/layer.js';
-import TileSheetSelect from './components/tile-sheet-select.js';
-import TileSelect from './components/tile-select.js';
-
-import LevelSelectController from './controllers/level-select.js';
-import LevelViewController from './controllers/level-view.js';
+import levelSelectView from './containers/level-select.js';
+import levelView from './containers/level-view.js';
 
 const routes = [
   {
     path: '/',
-    template: '#levelSelectView',
-    components: {
-      LevelSelect
-    },
-    controller: LevelSelectController
+    view: levelSelectView
   },
   {
     path: '/level/:levelId',
-    template: '#levelView',
-    components: {
-      Layers,
-      Layer,
-      TileSheetSelect,
-      TileSelect
-    },
-    controller: LevelViewController
+    view: levelView
   }
 ];
 

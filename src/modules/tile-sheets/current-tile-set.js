@@ -5,7 +5,7 @@
 import { Map } from 'immutable';
 import {
   SELECTED_TILE_SHEET, SELECT_TILE, MADE_TILES
-  } from '../actions/tile-sheets.js';
+  } from './fetch-tile-sheets.js';
 
 const DEFAULT_THUMB = 'default-thumbnail.png';
 

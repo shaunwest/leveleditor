@@ -3,12 +3,12 @@
  */
 
 import Ractive from 'ractive';
-import store from '../store/store.js';
-import { selectTileSheet } from '../actions/tile-sheets.js';
 
 const TileSheetSelect = Ractive.extend({
   template: '#tileSheetSelect',
   oninit: function () {
+    const store = this.get('store');
+
     store.subscribe(() => {
       const tileSheets = store.getState().tileSheets.get('items');
 
@@ -17,10 +17,6 @@ const TileSheetSelect = Ractive.extend({
       }
 
       this.set('tileSheets', Object.assign({}, this.get('tileSheets'), tileSheets.toJS()));
-    });
-
-    this.on('select', (event) => {
-      store.dispatch(selectTileSheet(event.context.id));
     });
   },
   data: function () {

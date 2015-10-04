@@ -6,8 +6,8 @@ import { Map } from 'immutable';
 import {
   REQUEST_LEVELS, RECEIVE_LEVELS, SELECT_LEVEL,
   REQUEST_LEVEL, RECEIVE_LEVEL, RECEIVE_LEVEL_ERROR
-  } from '../actions/levels.js';
-import { RECEIVE_ROUTE } from '../actions/routes.js';
+  } from './fetch-levels.js';
+import { RECEIVE_ROUTE } from '../routes/handle-routes.js';
 
 const DEFAULT_THUMB = 'default-thumbnail.png';
 

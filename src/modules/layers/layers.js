@@ -3,8 +3,8 @@
  */
 
 import { Map } from 'immutable';
-import { ADD_TILE } from '../actions/layer.js';
-import { SELECT_LEVEL } from '../actions/levels.js';
+import { ADD_TILE } from './update-layer.js';
+import { SELECT_LEVEL } from '../levels/fetch-levels.js';
 
 const DEFAULT_THUMB = 'default-thumbnail.png';
 

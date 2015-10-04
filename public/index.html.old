@@ -35,13 +35,16 @@
 
 <div data-app>...</div>
 
-<script id="layer" type="text/ractive">
-  <canvas 
-  on-mousedown="mouseDown"
-  on-mousemove="mouseMove" 
-  on-mouseup="mouseUp" 
-  width="400" height="400"></canvas>
+<script id="levelSelectView" type="text/ractive">
+  <LevelSelect store="{{ store }}"></LevelSelect>
 </script>
+
+<script id="levelView" type="text/ractive">
+  <Layers store="{{ store }}"></Layers>
+  <TileSheetSelect store="{{ store }}"></TileSheetSelect>
+  <TileSelect store="{{ store }}"></TileSelect>
+</script>
+
 <script id="levelSelect" type="text/ractive">
   <ul>
   {{#levels:name}}
@@ -63,18 +66,6 @@
       {{/isFetching}}
     </li>
   {{/levels}}
-  </ul>
-</script>
-<script id="tileSelect" type="text/ractive">
-  {{#isFetching}}
-  ...
-  {{/isFetching}}
-  {{^isFetching}}
-    {{#tileImages:i}}
-        <img src="{{ tiles[0] }}" on-click="select:{{ i }}">
-    {{/tileImages}}
-  {{/isFetching}}
-  <ul>
   </ul>
 </script>
 
@@ -102,23 +93,32 @@
   </ul>
 </script>
 
+<script id="tileSelect" type="text/ractive">
+  {{#isFetching}}
+  ...
+  {{/isFetching}}
+  {{^isFetching}}
+    {{#tileImages:i}}
+        <img src="{{ tiles[0] }}" on-click="select:{{ i }}">
+    {{/tileImages}}
+  {{/isFetching}}
+  <ul>
+  </ul>
+</script>
+
 <script id="layers" type="text/ractive">
   {{#layers:i}}
-    <Layer layer="{{ layers[i] }}" tileImages="{{ tileImages }}" width="{{ width }}"></Layer>
+    <Layer layer="{{ layers[i] }}" tileImages="{{ tileImages }}"></Layer>
   {{/layers}}
 </script>
 
-<script id="levelSelectView" type="text/ractive">
-  <LevelSelect store="{{ store }}"></LevelSelect>
+<script id="layer" type="text/ractive">
+  <canvas 
+  on-mousedown="mouseDown"
+  on-mousemove="mouseMove" 
+  on-mouseup="mouseUp" 
+  width="400" height="400"></canvas>
 </script>
-
-<script id="levelView" type="text/ractive">
-  <Layers store="{{ store }}"></Layers>
-  <TileSheetSelect store="{{ store }}"></TileSheetSelect>
-  <TileSelect store="{{ store }}"></TileSelect>
-</script>
-
-
 
 <script src="/js/bundle.js"></script>
 <script>document.write('<script src="http://' + (location.host || 'localhost').split(':')[0] + ':35729/livereload.js?snipver=1"></' + 'script>')</script>

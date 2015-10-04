@@ -4,9 +4,9 @@
 
 import thunkMiddleware from 'redux-thunk';
 //import loggerMiddleware from 'redux-logger';
-import logger from '../middleware/logger.js';
+import logger from './middleware/logger.js';
 import { createStore, applyMiddleware } from 'redux';
-import rootReducer from '../reducers/root.js';
+import rootReducer from './modules/root-reducer.js';
 import { Map } from 'immutable';
 
 const createStoreWithMiddleware = applyMiddleware(

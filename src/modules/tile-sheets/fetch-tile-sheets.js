@@ -3,8 +3,8 @@
  */
 
 import 'isomorphic-fetch';
-import getImage from '../util/image-loader.js';
-import { processTiles } from './helpers/tile-sheet-processor.js';
+import getImage from '../lib/image-loader.js';
+import { processTiles } from './lib/tile-sheet-processor.js';
 
 // Probably should make these immutable Maps...
 

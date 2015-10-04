@@ -3,8 +3,7 @@
  */
 
 import page from 'page';
-import store from '../store/store.js';
-import { getView } from '../view.js';
+import store from '../../store.js';
 
 export const REQUEST_ROUTE = 'REQUEST_ROUTE';
 
@@ -25,26 +24,20 @@ export function receiveRoute(path, context) {
   };
 }
 
+// TODO: can this be called with dispatch so we don't need to import store here?
 export function initRouting(routes) {
   routes.forEach(function (route) {
-    //const view = getView(route.template, route.components, route.controller);
-    const view = getView(route.template, route.components);
-
     page(route.path, function (context, next) {
-      // In the controller is where "selectLevel" can be called
-      // When selectLevel is called, current-tile-set reducer can set it's state based on it
-      
       store.dispatch(receiveRoute(context.path, context));
-      if (typeof route.controller === 'function') {
-        route.controller();
+      if (typeof route.view === 'function') {
+        route.view(store);
       }
-
-      view();
     });
   });
 
   page();
 }
+
 
 export function navigateTo(path) {
   return dispatch => {

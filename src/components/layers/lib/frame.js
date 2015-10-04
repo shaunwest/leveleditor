@@ -37,10 +37,10 @@ function frameLoop(start) {
 }
 
 export default function frame() {
-  const frameLoop = frameLoop(+new Date());
+  const loop = frameLoop(+new Date());
 
   return function (cb) {
-    frameLoop(function (fps, lastUpdateTime) {
+    loop(function (fps, lastUpdateTime) {
       const elapsed = getDeltaTime(+new Date(), lastUpdateTime);
       return cb(elapsed, fps);
     });

@@ -3,13 +3,12 @@
  */
 
 import Ractive from 'ractive';
-import store from '../store/store.js';
 import { Map } from 'immutable';
-import { selectTile } from '../actions/tile-sheets.js';
 
 const TileSelect = Ractive.extend({
   template: '#tileSelect',
   oninit: function () {
+    const store = this.get('store');
     store.subscribe(() => {
       const tileSet = store.getState().currentTileSet,
         tileImages = tileSet.get('tileImages');
@@ -28,10 +27,6 @@ const TileSelect = Ractive.extend({
       });
 
       this.set('tileImages', dataUrls.toJS());
-    });
-
-    this.on('selectTile', (event, tileIndex) => {
-      store.dispatch(selectTile(tileIndex));
     });
   },
   data: function () {

@@ -7,7 +7,7 @@ import {
   REQUEST_TILE_SHEETS, RECEIVE_TILE_SHEETS,
   REQUEST_TILE_SHEET, RECEIVE_TILE_SHEET, RECEIVE_TILE_SHEET_ERROR,
   REQUEST_TILE_SHEET_IMAGE, RECEIVE_TILE_SHEET_IMAGE
-  } from '../actions/tile-sheets.js';
+  } from './fetch-tile-sheets.js';
 
 const DEFAULT_THUMB = 'default-thumbnail.png';
 
