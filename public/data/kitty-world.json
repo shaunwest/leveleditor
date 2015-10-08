@@ -12,7 +12,7 @@
     {
       "id": "background",
       "tileSheet": "demo-tiles",
-      "tiles": []
+      "tiles": [1, 0]
     }
   ],
   "colliders": [

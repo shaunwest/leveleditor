@@ -9,6 +9,8 @@ function getDeltaTime(now, lastUpdateTime) {
 }
 
 // STATEFUL
+// TODO: I don't think this multi-callback functionality
+// is even being used
 function frameLoop(start) {
   let cbs = [], last = start, fps = 0, frameCount = 0;
   let intervalId = setInterval(function () {
@@ -39,8 +41,8 @@ function frameLoop(start) {
 export default function frame() {
   const loop = frameLoop(+new Date());
 
-  return function (cb) {
-    loop(function (fps, lastUpdateTime) {
+  return (cb) => {
+    loop((fps, lastUpdateTime) => {
       const elapsed = getDeltaTime(+new Date(), lastUpdateTime);
       return cb(elapsed, fps);
     });

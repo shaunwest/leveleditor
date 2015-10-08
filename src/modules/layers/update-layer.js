@@ -5,13 +5,19 @@
 // TILES
 export const ADD_TILE = 'ADD_TILE';
 
-export function addTile(src, index, id) {
+export function addTile(index, id) {
   return {
-    src,
     type: ADD_TILE,
     index,
     id
   };
 }
 
+export const REMOVE_TILE = 'REMOVE_TILE';
 
+export function removeTile(index) {
+  return {
+    type: REMOVE_TILE,
+    index
+  };
+}

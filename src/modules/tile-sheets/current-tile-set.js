@@ -7,8 +7,6 @@ import {
   SELECTED_TILE_SHEET, SELECT_TILE, MADE_TILES
   } from './fetch-tile-sheets.js';
 
-const DEFAULT_THUMB = 'default-thumbnail.png';
-
 export default function currentTileSet(state = Map({
   tileImages: Map()
 }), action = {}) {
@@ -16,7 +14,7 @@ export default function currentTileSet(state = Map({
     case SELECTED_TILE_SHEET:
       return state.set('tileSetId', action.id);
     case MADE_TILES:
-      return state.set('tileImages', action.tileImages);
+      return state.merge({currentTileIndex: 0, tileImages: action.tileImages});
     case SELECT_TILE:
       return state.set('currentTileIndex', action.tileIndex);
     default:

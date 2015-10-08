@@ -5,10 +5,11 @@
 import Ractive from 'ractive';
 import { Map } from 'immutable';
 
-const TileSelect = Ractive.extend({
+export default Ractive.extend({
   template: '#tileSelect',
   oninit: function () {
     const store = this.get('store');
+
     store.subscribe(() => {
       const tileSet = store.getState().currentTileSet,
         tileImages = tileSet.get('tileImages');
@@ -18,6 +19,8 @@ const TileSelect = Ractive.extend({
       }
 
       // convert images to data urls for use with <img src>
+      // TODO: don't do this anymore. Access the elements directly
+      // instead
       const dataUrls = tileImages.map(function (tileImageSet) {
         return Map({ 
           tiles: tileImageSet.map(function (tileImage) {
@@ -35,5 +38,3 @@ const TileSelect = Ractive.extend({
     };
   }
 });
-
-export default TileSelect;

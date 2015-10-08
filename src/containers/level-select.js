@@ -9,7 +9,7 @@ import LevelSelect from '../components/selectors/level-select.js';
 
 export default function levelSelectView(store) {
   return new Ractive({
-    el: '[data-app]',
+    el: '[data-view]',
     template: '#levelSelectView',
     components: {
       LevelSelect

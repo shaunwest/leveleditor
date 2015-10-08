@@ -3,14 +3,14 @@
  */
 
 import { Map } from 'immutable';
-import { ADD_TILE } from './update-layer.js';
+import { ADD_TILE, REMOVE_TILE } from './update-layer.js';
 import { SELECT_LEVEL } from '../levels/fetch-levels.js';
-
-const DEFAULT_THUMB = 'default-thumbnail.png';
 
 export default function layers(state = Map({
   items: Map()
 }), action = {}) {
+  const activeIndex = state.get('activeLayerIndex');
+
   switch (action.type) {
     case SELECT_LEVEL:
       return state.merge({
@@ -18,8 +18,9 @@ export default function layers(state = Map({
         activeLayerIndex: 0
       });
     case ADD_TILE:
-      const activeIndex = state.get('activeLayerIndex');
       return state.setIn(['items', activeIndex, 'tiles', action.index], action.id);
+    case REMOVE_TILE:
+      return state.setIn(['items', activeIndex, 'tiles', action.index], undefined);
     default:
       return state;
   }

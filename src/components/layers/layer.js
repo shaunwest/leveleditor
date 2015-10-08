@@ -5,54 +5,102 @@
 import Ractive from 'ractive';
 import frame from './lib/frame.js';
 
-function drawTiles(context, tiles, tileImages, width) {
-  for(let i = 0; i < tiles.size; i++) {
-    const x = i % width,
-      y = Math.floor(i / width),
-      tileIndex = tiles.get(i);
+const TILE_SIZE = 16,
+  MAX_TILE_FRAMES = 16,
+  CONTINUE = true;
 
-    if (typeof tileIndex !== 'undefined') {
-      const tileImage = tileImages.get(tileIndex).get(0);
-      context.drawImage(tileImage, x, y);
+function clearLayer(context, width, height) {
+  context.clearRect(0, 0, width, height);
+}
+
+function drawTiles(context, tiles, tileImages, width, frameCount) {
+  for(let i = 0; i < tiles.length; i++) {
+    const tileIndex = tiles[i];
+
+    if (typeof tileIndex === 'undefined') {
+      continue;
     }
+
+    const tileData = tileImages[tileIndex];
+    if (!tileData) {
+      continue;
+    }
+
+    const numImages = tileData.length,
+      tileDataIndex = frameCount % numImages,
+      tileImage = tileData[tileDataIndex],
+      widthInTiles = Math.floor(width / TILE_SIZE),
+      x = i % widthInTiles,
+      y = Math.floor(i / widthInTiles);
+
+    context.drawImage(tileImage, x * TILE_SIZE, y * TILE_SIZE);
   }
 }
 
-const CONTINUE = true;
-
-const Layer = Ractive.extend({
+export default Ractive.extend({
   template: '#layer',
-  oninit: function () {
-    let isMouseDown = false;
+  oncomplete: function () {
+    const canvas = this.find('canvas'),
+      context = canvas.getContext('2d'),
+      getRenderFrame = frame(),
+      getInputFrame = frame();
+
+    let frameCount = 0,
+      isMouseDown = false,
+      mouseLocation;
 
     this.on('mouseDown', event => {
       isMouseDown = true; 
+      mouseLocation = event.original;
     });
 
     this.on('mouseUp', event => {
       isMouseDown = false;
+      mouseLocation = null;
     });
 
     this.on('mouseMove', event => {
       if (!isMouseDown) {
         return;
       }
-      
-      this.fire('addTile', event.original);
+      mouseLocation = event.original;
     });
-  },
-  oncomplete: function () {
-    const canvas = this.find('canvas'),
-      context = canvas.getContext('2d'),
-      getFrame = frame(),
-      width = this.get('width');
 
-    getFrame((elapsed, fps) => {
+    /*
+    var dummyCanvas = document.createElement('canvas');
+    dummyCanvas.width = 16;
+    dummyCanvas.height = 16;
+    var c = dummyCanvas.getContext('2d');
+    c.fillStyle = 'red';
+    c.fillRect(0, 0, 16, 16);
+    */
+
+    getRenderFrame((elapsed, fps) => {
       const tileImages = this.get('tileImages'),
         layer = this.get('layer'),
+        width = this.get('width'),
+        height = this.get('height'),
         tiles = layer.get('tiles');
+        //tiles = layer.tiles;
 
-      drawTiles(context, tiles, tileImages, width);
+      clearLayer(context, width, height);
+      drawTiles(context, tiles.toArray(), tileImages.toJS(), width, (frameCount === MAX_TILE_FRAMES) ? frameCount = 0 : frameCount++);
+
+      return CONTINUE;
+    });
+
+    getInputFrame((elapsed, fps) => {
+      this.set('fps', fps);
+
+      if (isMouseDown) {
+        switch(this.get('toolId')) {
+          case 'eraser':
+            this.fire('removeTile', mouseLocation);
+            break;
+          default:
+            this.fire('addTile', mouseLocation);
+        }
+      }
 
       return CONTINUE;
     });
@@ -60,10 +108,11 @@ const Layer = Ractive.extend({
   data: function () {
     return {
       layer: null,
+      fps: 0,
       tileImages: [],
-      width: 400
+      width: 400,
+      height: 400,
+      toolId: null
     };
   }
 });
-
-export default Layer;

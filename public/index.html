@@ -33,9 +33,10 @@
   </ul>
 </nav>
 
-<div data-app>...</div>
+<div data-view>...</div>
 
 <script id="layer" type="text/ractive">
+  <div>{{ fps }}</div>
   <canvas 
   on-mousedown="mouseDown"
   on-mousemove="mouseMove" 
@@ -102,9 +103,15 @@
   </ul>
 </script>
 
+<script id="toolSelect" type="text/ractive">
+  <ul>
+    <li on-click="select:tileBrush">Tile Brush</li>
+    <li on-click="select:eraser">Eraser</li>
+  </ul>
+</script>
 <script id="layers" type="text/ractive">
   {{#layers:i}}
-    <Layer layer="{{ layers[i] }}" tileImages="{{ tileImages }}" width="{{ width }}"></Layer>
+    <Layer layer="{{ layers[i] }}" tileImages="{{ tileImages }}" width="{{ width }}" toolId="{{ toolId }}"></Layer>
   {{/layers}}
 </script>
 
@@ -116,6 +123,7 @@
   <Layers store="{{ store }}"></Layers>
   <TileSheetSelect store="{{ store }}"></TileSheetSelect>
   <TileSelect store="{{ store }}"></TileSelect>
+  <ToolSelect store="{{ store }}"></ToolSelect>
 </script>
 
 

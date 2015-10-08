@@ -3,40 +3,56 @@
  */
 
 import Ractive from 'ractive';
-import { addTile } from '../modules/layers/update-layer.js';
-import { getCurrentLevelId } from '../helpers.js';
+import { addTile, removeTile } from '../modules/layers/update-layer.js';
 
-const Layers = Ractive.extend({
+function getTilePosition(pixelX, pixelY, width) {
+  const widthInTiles = Math.floor(width / 16),
+    tileY = Math.floor(pixelY / 16),
+    tileX = Math.floor(pixelX / 16);
+
+  return (tileY * widthInTiles) + tileX;
+}
+
+function getCurrentTileIndex(state) {
+  return state.currentTileSet.get('currentTileIndex');
+}
+
+export default Ractive.extend({
   template: '#layers',
   oninit: function () {
     const store = this.get('store');
+    //const mockLayers = [{ tiles: [] }];
 
-    this.on('Layer.addTile', function (mouseEvent) {
-      const state = store.getState(),
-        currentLevelId = getCurrentLevelId(),
-        tileSet = state.currentTileSet,
-        width = this.get('width'),
-        tilePosition = (mouseEvent.offsetY * width) + mouseEvent.offsetX,
-        tileIndex = tileSet.get('currentTileIndex');
+    this.on('Layer.addTile', (mouseEvent) => {
+      const tilePosition = getTilePosition(mouseEvent.offsetX, mouseEvent.offsetY, this.get('width')),
+        tileIndex = getCurrentTileIndex(store.getState());
 
-      store.dispatch(addTile(currentLevelId, tilePosition, tileIndex));
+      store.dispatch(addTile(tilePosition, tileIndex));
+      //mockLayers[0].tiles[tilePosition] = tileIndex;
+      //this.set('layers', mockLayers);
+    });
+
+    this.on('Layer.removeTile', (mouseEvent) => {
+      const tilePosition = getTilePosition(mouseEvent.offsetX, mouseEvent.offsetY, this.get('width'));
+      store.dispatch(removeTile(tilePosition));
     });
 
     store.subscribe(() => {
       const state = store.getState(),
         tileSet = state.currentTileSet;
 
+      this.set('toolId', state.tools.get('selectedId'));
       this.set('tileImages', tileSet.get('tileImages'));
       this.set('layers', state.layers.get('items').toArray());
+      //this.set('layers', mockLayers);
     });
   },
   data: function () {
     return {
       tileImages: [],
       layers: [],
-      width: 400
+      width: 400,
+      toolId: null
     };
   }
 });
-
-export default Layers;

@@ -4,7 +4,7 @@
 
 import Ractive from 'ractive';
 
-const TileSheetSelect = Ractive.extend({
+export default Ractive.extend({
   template: '#tileSheetSelect',
   oninit: function () {
     const store = this.get('store');
@@ -25,5 +25,3 @@ const TileSheetSelect = Ractive.extend({
     };
   }
 });
-
-export default TileSheetSelect;
