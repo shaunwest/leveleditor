@@ -11,7 +11,7 @@ export default Ractive.extend({
     const store = this.get('store');
 
     store.subscribe(() => {
-      const tileSet = store.getState().currentTileSet,
+      const tileSet = store.getState().get('currentTileSet'),
         tileImages = tileSet.get('tileImages');
 
       if (!tileImages || !tileImages.size) {

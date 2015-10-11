@@ -10,7 +10,7 @@ const LevelSelect = Ractive.extend({
     const store = this.get('store');
 
     store.subscribe(() => {
-      const levels = store.getState().levels;
+      const levels = store.getState().get('levels');
       const items = levels.get('items');
 
       if (!items.size) {

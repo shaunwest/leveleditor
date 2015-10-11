@@ -11,8 +11,15 @@
   "layers": [
     {
       "id": "background",
+      "label": "Background",
       "tileSheet": "demo-tiles",
       "tiles": [1, 0]
+    },
+    {
+      "id": "foreground",
+      "label": "Foreground",
+      "tileSheet": "demo-tiles",
+      "tiles": [0, 0, 0, 0, 0]
     }
   ],
   "colliders": [

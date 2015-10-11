@@ -138,7 +138,7 @@ export function selectTile(tileIndex) {
 // SELECT
 export function selectTileSheet(id) {
   return (dispatch, getState) => {
-    const tileSheet = getState().tileSheets.get('items').get(id),
+    const tileSheet = getState().get('tileSheets').get('items').get(id),
       tileImages = processTiles(tileSheet.get('image'), tileSheet.get('tiles'));
 
     dispatch(selectedTileSheet(id));   
@@ -153,7 +153,7 @@ export function fetchAll(src) {
     return dispatch(fetchTileSheets(src))
       .then(
         action => {
-          getState().tileSheets.get('items').toSeq()
+          getState().get('tileSheets').get('items').toSeq()
             .forEach((tileSheet, src) => {
               dispatch(getTileSheet(src));
             });
@@ -230,7 +230,7 @@ function getTileSheet(src) {
     dispatch(fetchTileSheet(src))
       .then(
         action => {
-          const imageSrc = getState().tileSheets.getIn(['items', src, 'src']);
+          const imageSrc = getState().get('tileSheets').getIn(['items', src, 'src']);
           return dispatch(getTileSheetImage(src, imageSrc));
         },
         error => {
@@ -245,7 +245,7 @@ function getTileSheetImage(src, imageSrc) {
     dispatch(fetchTileSheetImage(src, imageSrc))
       .then(
         action => {
-          const tileSheets = getState().tileSheets,
+          const tileSheets = getState().get('tileSheets'),
             tileSheet = tileSheets.getIn(['items', src]);
             //tileImages = processTiles(tileSheet.get('image'), tileSheet.get('tiles'));
           

@@ -6,8 +6,9 @@ import { Map } from 'immutable';
 import {
   REQUEST_LEVELS, RECEIVE_LEVELS, SELECT_LEVEL,
   REQUEST_LEVEL, RECEIVE_LEVEL, RECEIVE_LEVEL_ERROR
-  } from './fetch-levels.js';
-import { RECEIVE_ROUTE } from '../routes/handle-routes.js';
+  } from './levels-fetch.js';
+
+import { RECEIVE_ROUTE } from '../routes/routes-actions.js';
 
 const DEFAULT_THUMB = 'default-thumbnail.png';
 
@@ -16,6 +17,13 @@ export default function levels(state = Map({
   items: Map()
 }), action = {}) {
   switch (action.type) {
+    case RECEIVE_ROUTE:
+      /*console.log('Levels: RECEIVE ROUTE???');
+      return state;*/
+      const levelId = action.context.params.levelId;
+      return (levelId) ?
+        state.set('currentLevelId', levelId) :
+        state;
     case REQUEST_LEVELS:
       return state.set('isFetching', true);
     case RECEIVE_LEVELS:
@@ -34,11 +42,6 @@ export default function levels(state = Map({
         isError: true,
         thumbnail: DEFAULT_THUMB
       });
-    case RECEIVE_ROUTE:
-      const levelId = action.context.params.levelId;
-      return (levelId) ?
-        state.set('currentLevelId', levelId) :
-        state;
     default:
       return state;
   }

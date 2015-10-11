@@ -3,8 +3,8 @@
  */
 
 import { Map } from 'immutable';
-import { ADD_TILE, REMOVE_TILE } from './update-layer.js';
-import { SELECT_LEVEL } from '../levels/fetch-levels.js';
+import { SELECT_LAYER, TOGGLE_LAYER, ADD_TILE, REMOVE_TILE, FILL_TILES } from './layers-actions.js';
+import { SELECT_LEVEL } from '../levels/levels-fetch.js';
 
 export default function layers(state = Map({
   items: Map()
@@ -17,10 +17,16 @@ export default function layers(state = Map({
         items: action.level.layers,
         activeLayerIndex: 0
       });
+    case SELECT_LAYER:
+      return state.set('activeLayerIndex', action.index);
+    case TOGGLE_LAYER:
+      return state.setIn(['items', action.index, 'visible'], action.visible);
     case ADD_TILE:
       return state.setIn(['items', activeIndex, 'tiles', action.index], action.id);
     case REMOVE_TILE:
       return state.setIn(['items', activeIndex, 'tiles', action.index], undefined);
+    case FILL_TILES:
+      return state.mergeIn(['items', activeIndex, 'tiles'], action.tiles);
     default:
       return state;
   }

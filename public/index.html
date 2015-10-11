@@ -3,27 +3,7 @@
 <head lang="en">
   <meta charset="UTF-8">
   <title>Level Editor</title>
-  <style>
-    html, body {
-      font-family: "Helvetica Neue", Helvetica, Arial, sans-serif;
-    }
-    .thumbnail {
-      width: 64px;
-      height: 64px;
-    }
-
-    .levelSelectOption {
-      width: 200px;
-      height: 67px;
-      background: lightgrey;
-      margin: 10px 0;
-      padding: 5px 5px;
-    }
-
-    canvas {
-      background-color: #ededed;
-    }
-  </style>
+  <link rel="stylesheet" href="/css/main.css">
 </head>
 <body>
 <h1>Editor</h1>
@@ -36,12 +16,19 @@
 <div data-view>...</div>
 
 <script id="layer" type="text/ractive">
-  <div>{{ fps }}</div>
-  <canvas 
+  <!--<div>{{ fps }}</div>-->
+  <canvas class="layer"
   on-mousedown="mouseDown"
   on-mousemove="mouseMove" 
   on-mouseup="mouseUp" 
   width="400" height="400"></canvas>
+</script>
+<script id="layerSelect" type="text/ractive">
+  <ul>
+  {{#layers:i}}
+    <li><input type="checkbox" on-click="toggle:{{ i }}"><button on-click="select:{{ i }}">{{ layers[i].label }}</button></li>
+  {{/layers}}
+  </ul>
 </script>
 <script id="levelSelect" type="text/ractive">
   <ul>
@@ -107,12 +94,16 @@
   <ul>
     <li on-click="select:tileBrush">Tile Brush</li>
     <li on-click="select:eraser">Eraser</li>
+    <li on-click="select:selector">Selector</li>
+    <li on-click="select:fill">Fill</li>
   </ul>
 </script>
 <script id="layers" type="text/ractive">
+  <div class="layersContainer">
   {{#layers:i}}
     <Layer layer="{{ layers[i] }}" tileImages="{{ tileImages }}" width="{{ width }}" toolId="{{ toolId }}"></Layer>
   {{/layers}}
+  </div>
 </script>
 
 <script id="levelSelectView" type="text/ractive">
@@ -120,10 +111,16 @@
 </script>
 
 <script id="levelView" type="text/ractive">
+  <h2>{{ description }}</h2>
+  <h3>Layers</h3>
+  <!--<LayerSelect store="{{ store }}" state="{{ state }}"></LayerSelect>-->
+  <LayerSelect layers="{{ state.layers }}"></LayerSelect>
   <Layers store="{{ store }}"></Layers>
+  <h3>Tools</h3>
+  <ToolSelect store="{{ store }}"></ToolSelect>
+  <h3>Tiles</h3>
   <TileSheetSelect store="{{ store }}"></TileSheetSelect>
   <TileSelect store="{{ store }}"></TileSelect>
-  <ToolSelect store="{{ store }}"></ToolSelect>
 </script>
 
 

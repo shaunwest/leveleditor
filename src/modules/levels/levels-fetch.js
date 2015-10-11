@@ -89,7 +89,7 @@ export function fetchAll(src) {
     return dispatch(fetchLevels(src))
       .then(action => {
         getState()
-          .levels
+          .get('levels')
           .get('items')
           .toSeq()
           .forEach((level, src) => {

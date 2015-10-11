@@ -1,6 +1,6 @@
 <script id="layer" type="text/ractive">
-  <div>{{ fps }}</div>
-  <canvas 
+  <!--<div>{{ fps }}</div>-->
+  <canvas class="layer"
   on-mousedown="mouseDown"
   on-mousemove="mouseMove" 
   on-mouseup="mouseUp" 

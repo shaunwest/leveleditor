@@ -3,7 +3,8 @@
  */
 
 import Ractive from 'ractive';
-import { addTile, removeTile } from '../modules/layers/update-layer.js';
+import { addTile, removeTile } from '../modules/layers/layers-actions.js';
+import { fillTilesWith } from '../modules/layers/layers-update.js';
 
 function getTilePosition(pixelX, pixelY, width) {
   const widthInTiles = Math.floor(width / 16),
@@ -14,22 +15,19 @@ function getTilePosition(pixelX, pixelY, width) {
 }
 
 function getCurrentTileIndex(state) {
-  return state.currentTileSet.get('currentTileIndex');
+  return state.get('currentTileSet').get('currentTileIndex');
 }
 
 export default Ractive.extend({
   template: '#layers',
   oninit: function () {
     const store = this.get('store');
-    //const mockLayers = [{ tiles: [] }];
 
     this.on('Layer.addTile', (mouseEvent) => {
       const tilePosition = getTilePosition(mouseEvent.offsetX, mouseEvent.offsetY, this.get('width')),
         tileIndex = getCurrentTileIndex(store.getState());
 
       store.dispatch(addTile(tilePosition, tileIndex));
-      //mockLayers[0].tiles[tilePosition] = tileIndex;
-      //this.set('layers', mockLayers);
     });
 
     this.on('Layer.removeTile', (mouseEvent) => {
@@ -37,14 +35,18 @@ export default Ractive.extend({
       store.dispatch(removeTile(tilePosition));
     });
 
+    this.on('Layer.fillTiles', (mouseEvent) => {
+      const tileIndex = getCurrentTileIndex(store.getState());
+      store.dispatch(fillTilesWith(tileIndex));
+    });
+
     store.subscribe(() => {
       const state = store.getState(),
-        tileSet = state.currentTileSet;
+        tileSet = state.get('currentTileSet');
 
-      this.set('toolId', state.tools.get('selectedId'));
+      this.set('toolId', state.get('tools').get('selectedId'));
       this.set('tileImages', tileSet.get('tileImages'));
-      this.set('layers', state.layers.get('items').toArray());
-      //this.set('layers', mockLayers);
+      this.set('layers', state.get('layers').get('items').toArray());
     });
   },
   data: function () {

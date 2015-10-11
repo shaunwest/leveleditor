@@ -1,0 +1,30 @@
+
+html, body {
+  font-family: "Helvetica Neue", Helvetica, Arial, sans-serif;
+}
+
+.thumbnail {
+  width: 64px;
+  height: 64px;
+}
+
+.levelSelectOption {
+  width: 200px;
+  height: 67px;
+  background: lightgrey;
+  margin: 10px 0;
+  padding: 5px 5px;
+}
+
+.layersContainer {
+  position: relative;
+  width: 400px;
+  height: 400px;
+  top: 0;
+}
+
+.layer {
+  position: absolute;
+  top: 0;
+  left: 0;
+}

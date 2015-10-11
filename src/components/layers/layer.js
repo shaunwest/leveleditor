@@ -66,36 +66,31 @@ export default Ractive.extend({
       mouseLocation = event.original;
     });
 
-    /*
-    var dummyCanvas = document.createElement('canvas');
-    dummyCanvas.width = 16;
-    dummyCanvas.height = 16;
-    var c = dummyCanvas.getContext('2d');
-    c.fillStyle = 'red';
-    c.fillRect(0, 0, 16, 16);
-    */
-
     getRenderFrame((elapsed, fps) => {
       const tileImages = this.get('tileImages'),
         layer = this.get('layer'),
         width = this.get('width'),
         height = this.get('height'),
         tiles = layer.get('tiles');
-        //tiles = layer.tiles;
 
       clearLayer(context, width, height);
       drawTiles(context, tiles.toArray(), tileImages.toJS(), width, (frameCount === MAX_TILE_FRAMES) ? frameCount = 0 : frameCount++);
+      //context.rect(0, 0, 100, 100);
+      //context.stroke();
 
       return CONTINUE;
     });
 
     getInputFrame((elapsed, fps) => {
-      this.set('fps', fps);
+      //this.set('fps', fps);
 
       if (isMouseDown) {
         switch(this.get('toolId')) {
           case 'eraser':
             this.fire('removeTile', mouseLocation);
+            break;
+          case 'fill':
+            this.fire('fillTiles', mouseLocation);
             break;
           default:
             this.fire('addTile', mouseLocation);
@@ -108,6 +103,7 @@ export default Ractive.extend({
   data: function () {
     return {
       layer: null,
+      visible: true,
       fps: 0,
       tileImages: [],
       width: 400,

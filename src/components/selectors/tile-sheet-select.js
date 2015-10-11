@@ -10,7 +10,7 @@ export default Ractive.extend({
     const store = this.get('store');
 
     store.subscribe(() => {
-      const tileSheets = store.getState().tileSheets.get('items');
+      const tileSheets = store.getState().get('tileSheets').get('items');
 
       if (!tileSheets.size) {
         return;

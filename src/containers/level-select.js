@@ -3,8 +3,8 @@
  */
 
 import Ractive from 'ractive';
-import { fetchAll as fetchAllLevels } from '../modules/levels/fetch-levels.js';
-import { navigateTo } from '../modules/routes/handle-routes.js';
+import { fetchAll as fetchAllLevels } from '../modules/levels/levels-fetch.js';
+import { navigateTo } from '../modules/routes/routes-handle.js';
 import LevelSelect from '../components/selectors/level-select.js';
 
 export default function levelSelectView(store) {
