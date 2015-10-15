@@ -5,11 +5,5 @@
 import Ractive from 'ractive';
 
 export default Ractive.extend({
-  template: '#toolSelect',
-  oninit: function () {
-  },
-  data: function () {
-    return {
-    };
-  }
+  template: '#toolSelect'
 });

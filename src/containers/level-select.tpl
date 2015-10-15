@@ -1,4 +1,4 @@
 <script id="levelSelectView" type="text/ractive">
-  <LevelSelect store="{{ store }}"></LevelSelect>
+  <LevelSelect levels="{{ state.levels.items }}"></LevelSelect>
 </script>
 

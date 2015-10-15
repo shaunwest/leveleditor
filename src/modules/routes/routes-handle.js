@@ -3,7 +3,7 @@
  */
 
 import page from 'page';
-import store from '../../store.js';
+//import store from '../../store.js';
 import { receiveRoute, requestRoute } from './routes-actions.js';
 
 export function initRouting(routes) {
@@ -12,7 +12,7 @@ export function initRouting(routes) {
       page(route.path, (context, next) => {
         dispatch(receiveRoute(context.path, context));
         if (typeof route.view === 'function') {
-          route.view(store);
+          route.view();
         }
       });
     });

@@ -9,6 +9,8 @@ import store from './store.js';
 
 import { initRouting } from './modules/routes/routes-handle.js';
 
+import './components/components.js';
+
 import levelSelectView from './containers/level-select.js';
 import levelView from './containers/level-view.js';
 

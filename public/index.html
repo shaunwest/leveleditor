@@ -23,6 +23,14 @@
   on-mouseup="mouseUp" 
   width="400" height="400"></canvas>
 </script>
+<script id="layers" type="text/ractive">
+  <div class="layersContainer">
+  {{#layers:i}}
+    <Layer layer="{{ layers[i] }}" tileImages="{{ tileImages }}" width="{{ width }}" toolId="{{ toolId }}"></Layer>
+  {{/layers}}
+  </div>
+</script>
+
 <script id="layerSelect" type="text/ractive">
   <ul>
   {{#layers:i}}
@@ -58,9 +66,11 @@
   ...
   {{/isFetching}}
   {{^isFetching}}
-    {{#tileImages:i}}
-        <img src="{{ tiles[0] }}" on-click="select:{{ i }}">
-    {{/tileImages}}
+  <ul>
+    {{#tileImageUrls:i}}
+    <li><img src="{{ tiles[0] }}" on-click="select:{{ i }}"></li>
+    {{/tileImageUrls}}
+  </ul>
   {{/isFetching}}
   <ul>
   </ul>
@@ -86,7 +96,7 @@
         {{/isError}}
       {{/isFetching}}
     </li>
-  {{/levels}}
+  {{/tileSheets}}
   </ul>
 </script>
 
@@ -98,29 +108,20 @@
     <li on-click="select:fill">Fill</li>
   </ul>
 </script>
-<script id="layers" type="text/ractive">
-  <div class="layersContainer">
-  {{#layers:i}}
-    <Layer layer="{{ layers[i] }}" tileImages="{{ tileImages }}" width="{{ width }}" toolId="{{ toolId }}"></Layer>
-  {{/layers}}
-  </div>
-</script>
-
 <script id="levelSelectView" type="text/ractive">
-  <LevelSelect store="{{ store }}"></LevelSelect>
+  <LevelSelect levels="{{ state.levels.items }}"></LevelSelect>
 </script>
 
 <script id="levelView" type="text/ractive">
   <h2>{{ description }}</h2>
   <h3>Layers</h3>
-  <!--<LayerSelect store="{{ store }}" state="{{ state }}"></LayerSelect>-->
-  <LayerSelect layers="{{ state.layers }}"></LayerSelect>
-  <Layers store="{{ store }}"></Layers>
+  <LayerSelect layers="{{ state.layers.items }}"></LayerSelect>
+  <Layers toolId="{{ state.tools.selectedId }}" layers="{{ state.layers.items }}" tileImages="{{ state.currentTileSet.tileImages }}"></Layers>
   <h3>Tools</h3>
-  <ToolSelect store="{{ store }}"></ToolSelect>
+  <ToolSelect></ToolSelect>
   <h3>Tiles</h3>
-  <TileSheetSelect store="{{ store }}"></TileSheetSelect>
-  <TileSelect store="{{ store }}"></TileSelect>
+  <TileSheetSelect tileSheets="{{ state.tileSheets.items }}"></TileSheetSelect>
+  <TileSelect tileImages="{{ state.currentTileSet.tileImages }}"></TileSelect>
 </script>
 
 

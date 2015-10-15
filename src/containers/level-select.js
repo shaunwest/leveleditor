@@ -3,25 +3,23 @@
  */
 
 import Ractive from 'ractive';
+import store from '../store.js';
 import { fetchAll as fetchAllLevels } from '../modules/levels/levels-fetch.js';
 import { navigateTo } from '../modules/routes/routes-handle.js';
-import LevelSelect from '../components/selectors/level-select.js';
 
-export default function levelSelectView(store) {
+export default function levelSelectView() {
   return new Ractive({
     el: '[data-view]',
     template: '#levelSelectView',
-    components: {
-      LevelSelect
-    },
-    data: {
-      store
-    },
     oninit: function () {
       store.dispatch(fetchAllLevels('/data/levels.json'));
 
       this.on('LevelSelect.select', (event, levelId) => {
         store.dispatch(navigateTo('/level/' + levelId));
+      });
+
+      store.subscribe(() => {
+        this.set('state', store.getState().toJS());
       });
     }
   });

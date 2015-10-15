@@ -71,10 +71,11 @@ export default Ractive.extend({
         layer = this.get('layer'),
         width = this.get('width'),
         height = this.get('height'),
-        tiles = layer.get('tiles');
+        tiles = layer.tiles;
 
       clearLayer(context, width, height);
-      drawTiles(context, tiles.toArray(), tileImages.toJS(), width, (frameCount === MAX_TILE_FRAMES) ? frameCount = 0 : frameCount++);
+      drawTiles(context, tiles, tileImages, width, (frameCount === MAX_TILE_FRAMES) ? frameCount = 0 : frameCount++);
+      
       //context.rect(0, 0, 100, 100);
       //context.stroke();
 

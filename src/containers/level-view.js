@@ -4,34 +4,30 @@
 
 import Ractive from 'ractive';
 
+import store from '../store.js';
+
 import { fetchLevel, fetchAndSelectLevel } from '../modules/levels/levels-fetch.js';
 import { selectTileSheet, selectTile, fetchAll as fetchAllTileSheets } from '../modules/tile-sheets/fetch-tile-sheets.js';
 import { selectedTool } from '../modules/tools/select-tools.js';
-import { selectLayer, toggleLayer } from '../modules/layers/layers-actions.js';
+import { addTile, removeTile, selectLayer, toggleLayer } from '../modules/layers/layers-actions.js';
+import { fillTilesWith } from '../modules/layers/layers-update.js';
 
-import Layers from './layers.js';
+function getTilePosition(pixelX, pixelY, width) {
+  const widthInTiles = Math.floor(width / 16),
+    tileY = Math.floor(pixelY / 16),
+    tileX = Math.floor(pixelX / 16);
 
-import Layer from '../components/layers/layer.js';
-import TileSheetSelect from '../components/selectors/tile-sheet-select.js';
-import TileSelect from '../components/selectors/tile-select.js';
-import ToolSelect from '../components/selectors/tool-select.js';
-import LayerSelect from '../components/selectors/layer-select.js';
+  return (tileY * widthInTiles) + tileX;
+}
 
-export default function levelView(store) {
+function getCurrentTileIndex(state) {
+  return state.get('currentTileSet').get('currentTileIndex');
+}
+
+export default function levelView() {
   return new Ractive({
     el: '[data-view]',
     template: '#levelView',
-    components: {
-      Layers,
-      Layer,
-      TileSheetSelect,
-      TileSelect,
-      ToolSelect,
-      LayerSelect
-    },
-    data: {
-      store
-    },
     oninit: function () {
       const levelId = store.getState().get('levels').get('currentLevelId');
       store.dispatch(fetchAndSelectLevel(levelId));
@@ -71,6 +67,23 @@ export default function levelView(store) {
 
       this.on('LayerSelect.toggle', (event, layerIndex) => {
         store.dispatch(toggleLayer(layerIndex, event.original.target.checked));
+      });
+
+      this.on('Layer.addTile', (mouseEvent) => {
+        const tilePosition = getTilePosition(mouseEvent.offsetX, mouseEvent.offsetY, 400),
+          tileIndex = getCurrentTileIndex(store.getState());
+
+        store.dispatch(addTile(tilePosition, tileIndex));
+      });
+
+      this.on('Layer.removeTile', (mouseEvent) => {
+        const tilePosition = getTilePosition(mouseEvent.offsetX, mouseEvent.offsetY, 400);
+        store.dispatch(removeTile(tilePosition));
+      });
+
+      this.on('Layer.fillTiles', (mouseEvent) => {
+        const tileIndex = getCurrentTileIndex(store.getState());
+        store.dispatch(fillTilesWith(tileIndex));
       });
     }
   });

@@ -7,11 +7,11 @@ const logger = store => next => action => {
   console.log('Dispatching', action);
 
   const result = next(action);
-  const state = store.getState();
+  const state = store.getState().toJS();
   const nextState = Object
     .keys(state)
     .reduce((nextState, key) => {
-      nextState[key] = state[key].toJS();
+      nextState[key] = state[key];
       return nextState;
     }, {});
 

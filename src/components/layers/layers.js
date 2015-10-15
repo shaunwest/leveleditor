@@ -5,10 +5,13 @@
 import Ractive from 'ractive';
 
 export default Ractive.extend({
-  template: '#tileSheetSelect',
+  template: '#layers',
   data: function () {
     return {
-      tileSheets: []
+      tileImages: [],
+      layers: [],
+      width: 400,
+      toolId: null
     };
   }
 });
