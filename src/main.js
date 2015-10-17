@@ -2,7 +2,7 @@
  * Created by shaunwest on 8/19/15.
  */
 
-import 'babel-core/polyfill.js';
+//import 'babel-core/polyfill.js';
 
 import Ractive from 'ractive';
 import store from './store.js';
