@@ -11,7 +11,7 @@ import { initRouting } from './modules/routes/routes-handle.js';
 
 import './components/components.js';
 
-import levelSelectView from './containers/level-select.js';
+import LevelSelectView from './containers/level-select.js';
 import levelView from './containers/level-view.js';
 
 Ractive.DEBUG = false;
@@ -19,7 +19,7 @@ Ractive.DEBUG = false;
 const routes = [
   {
     path: '/',
-    view: levelSelectView
+    view: LevelSelectView
   },
   {
     path: '/level/:levelId',

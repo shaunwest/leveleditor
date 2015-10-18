@@ -3,6 +3,8 @@
  */
 
 import page from 'page';
+import ReactDOM from 'react-dom';
+import React from 'react';
 //import store from '../../store.js';
 import { receiveRoute, requestRoute } from './routes-actions.js';
 
@@ -11,8 +13,10 @@ export function initRouting(routes) {
     routes.forEach((route) => {
       page(route.path, (context, next) => {
         dispatch(receiveRoute(context.path, context));
-        if (typeof route.view === 'function') {
+        if (null && typeof route.view === 'function') {
           route.view();
+        } else {
+          ReactDOM.render(React.createElement(route.view, {description: 'fooo'}), document.getElementById('view'));
         }
       });
     });
