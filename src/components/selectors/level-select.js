@@ -2,34 +2,35 @@
  * Created by shaunwest on 8/22/15.
  */
 
-import React from 'react';
+import React, { Component, PropTypes } from 'react';
 
-class LevelSelect extends React.Component {
+// TODO: fetching?
+
+export default class LevelSelect extends Component {
   render() {
+    const levels = this.props.levels;
+
     return (
-      <button onClick={ e => this.props.onLevelSelect('kitty-world') }>
-        <img className="thumbnail" src="/img/default-thumbnail.png" /> { this.props.description }
-      </button>
+      <ul>
+      {
+        levels
+          .map((level, levelId) => {
+            const thumbnail = '/img/' + level.get('thumbnail');
+
+            return (
+              <li key={ levelId }>
+                <button onClick={ e => this.props.onLevelSelect(levelId) }>
+                  <img className="thumbnail" src={ thumbnail } /> { level.get('description') }
+                </button>
+              </li>
+            );
+          })
+          .valueSeq()
+      }
+      </ul>
     );
   }
 }
 
-export default LevelSelect;
-
-
-
-/*
-import Ractive from 'ractive';
-
-const LevelSelect = Ractive.extend({
-  template: '#levelSelect',
-  data: function () {
-    return {
-      levels: {} // replace with Map, use adaptor (?)
-    };
-  }
-});
-
-export default LevelSelect;*/
-
-
+LevelSelect.propTypes = { levels: PropTypes.object };
+LevelSelect.defaultProps = { levels: {} };

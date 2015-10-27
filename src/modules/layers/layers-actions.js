@@ -4,7 +4,7 @@ export function addTile(index, id) {
   return {
     type: ADD_TILE,
     index,
-    id
+    id 
   };
 }
 

@@ -14,9 +14,10 @@
     "watch-sass": "node tasks/make-sass.js -w",
     "build": "npm run make-public && npm run build-sass && npm run build-js",
     "prod": "npm run make-public && npm run prod-js",
-    "livereload": "livereload public -i 200",
+    "livereload_old": "livereload public -i 200",
+    "reload": "node tasks/livereload.js",
     "start-prod": "npm run prod && npm run minify-js && npm run serve",
-    "start": "npm run watch-sass & npm run watch-js & npm run serve & npm run livereload"
+    "start": "npm run watch-sass & npm run watch-js & npm run serve & npm run reload"
   },
   "browserify": {
     "transform": [
@@ -66,7 +67,9 @@
     "isomorphic-fetch": "^2.1.1",
     "page": "^1.6.3",
     "react": "^0.14.0",
+    "react-addons-create-fragment": "^0.14.0",
     "react-dom": "^0.14.0",
+    "react-redux": "^4.0.0",
     "redux": "^3.0.2",
     "redux-immutablejs": "0.0.6",
     "redux-logger": "^1.0.5",

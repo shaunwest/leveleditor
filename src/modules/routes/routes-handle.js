@@ -5,7 +5,8 @@
 import page from 'page';
 import ReactDOM from 'react-dom';
 import React from 'react';
-//import store from '../../store.js';
+import { Provider } from 'react-redux';
+import store from '../../store.js';
 import { receiveRoute, requestRoute } from './routes-actions.js';
 
 export function initRouting(routes) {
@@ -16,7 +17,7 @@ export function initRouting(routes) {
         if (null && typeof route.view === 'function') {
           route.view();
         } else {
-          ReactDOM.render(React.createElement(route.view, {description: 'fooo'}), document.getElementById('view'));
+          ReactDOM.render(<Provider store={store}>{ React.createElement(route.view, {description: 'fooo'}) }</Provider>, document.getElementById('view'));
         }
       });
     });
