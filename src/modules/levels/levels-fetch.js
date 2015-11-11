@@ -38,9 +38,6 @@ export function receiveLevelsError(src, json) {
 
 // LEVEL
 
-// selectLevel currently does nothing
-// because level selection is handled
-// by a hyperlink and the router
 export const SELECT_LEVEL = 'SELECT_LEVEL';
 
 export function selectLevel(level) {

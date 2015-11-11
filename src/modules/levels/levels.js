@@ -18,8 +18,6 @@ export default function levels(state = Map({
 }), action = {}) {
   switch (action.type) {
     case RECEIVE_ROUTE:
-      /*console.log('Levels: RECEIVE ROUTE???');
-      return state;*/
       const levelId = action.context.params.levelId;
       return (levelId) ?
         state.set('currentLevelId', levelId) :

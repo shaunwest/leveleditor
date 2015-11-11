@@ -12,10 +12,11 @@ export default class LayerSelect extends Component {
       <ul>
       { 
         layers
-          .map(function (layer) {
+          .map((layer, index) => {
             return (
               <li key={ layer.get('id') }>
-                <input type="checkbox" /><button>{ layer.get('label') }</button>
+                <input type="checkbox" onClick={ e => this.props.onToggle(e.target.checked, index) } checked={ layer.get('visible') } />
+                <button onClick={ e => this.props.onSelect(index) }>{ layer.get('label') }</button>
               </li>
             );
           })

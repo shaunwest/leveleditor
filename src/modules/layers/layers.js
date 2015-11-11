@@ -14,7 +14,10 @@ export default function layers(state = Map({
   switch (action.type) {
     case SELECT_LEVEL:
       return state.merge({
-        items: action.level.layers,
+        items: action.level.layers.map(layer => {
+          layer.visible = true;
+          return layer;
+        }),
         activeLayerIndex: 0
       });
     case SELECT_LAYER:

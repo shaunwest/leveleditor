@@ -15,8 +15,15 @@ export default class Layers extends Component {
         layers
           .map((layer) => {
             return (
-              <li key={ layer.get('id') }>
-                <Layer layer={ layer } tileImages={ this.props.tileImages } width={ this.props.width } height={ this.props.height } toolId={ this.props.toolId } onToolAction={ this.props.onToolAction }></Layer>
+              <li className="layer" key={ layer.get('id') }>
+                <Layer
+                  layer={ layer }
+                  tileImages={ this.props.tileImages }
+                  width={ this.props.width }
+                  height={ this.props.height }
+                  toolId={ this.props.toolId }
+                  onToolAction={ this.props.onToolAction }>
+                </Layer>
               </li>
             );
           })
@@ -26,18 +33,3 @@ export default class Layers extends Component {
     );
   } 
 }
-/*
-import Ractive from 'ractive';
-
-export default Ractive.extend({
-  template: '#layers',
-  data: function () {
-    return {
-      tileImages: [],
-      layers: [],
-      width: 400,
-      toolId: null
-    };
-  }
-});
-*/

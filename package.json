@@ -51,7 +51,6 @@
     "livereload": "^0.3.7",
     "mkdirp": "^0.5.1",
     "node-sass": "^3.3.3",
-    "ractive": "^0.7.3",
     "reactify": "^1.1.1",
     "rimraf": "^2.4.2",
     "uglify-js": "^2.5.0",

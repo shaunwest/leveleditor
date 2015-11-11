@@ -2,13 +2,14 @@
  * Created by shaunwest on 8/22/15.
  */
 
-//import Ractive from 'ractive';
 import React, { Component } from 'react';
 import frame from './lib/frame.js';
 
 const TILE_SIZE = 16,
   MAX_TILE_FRAMES = 16,
-  CONTINUE = true;
+  CONTINUE = true,
+  DISPLAY_SHOW = 'block',
+  DISPLAY_HIDE = 'none';
 
 export default class Layer extends Component {
   constructor(props) {
@@ -34,9 +35,10 @@ export default class Layer extends Component {
 
       clearLayer(context, width, height);
       drawTiles(context, tiles, tileImages, width, (frameCount === MAX_TILE_FRAMES) ? frameCount = 0 : frameCount++);
-      
-      //context.rect(0, 0, 100, 100);
-      //context.stroke();
+
+      //if (layer.get('      
+      context.rect(0, 0, 16, 16);
+      context.stroke();
 
       return CONTINUE;
     });
@@ -72,17 +74,17 @@ export default class Layer extends Component {
     }
   }
 
-  /*
-  // prevent React from updating after the initial render
-  // Could be useful here since this has it's own render function
-  shouldComponentUpdate() {
-    return false;
-  }
-  */
- 
   render() {
     return (
-      <canvas className="layer" onMouseDown={ this.mouseDown.bind(this) } onMouseMove={ this.mouseMove.bind(this) } onMouseUp={ this.mouseUp.bind(this) } width="400" height="400" ref="canvas"></canvas>
+      <canvas 
+        style={{ display: (this.props.layer.get('visible')) ? DISPLAY_SHOW : DISPLAY_HIDE }}
+        onMouseDown={ this.mouseDown.bind(this) }
+        onMouseMove={ this.mouseMove.bind(this) }
+        onMouseUp={ this.mouseUp.bind(this) }
+        width="400"
+        height="400"
+        ref="canvas">
+      </canvas>
     );
   }
 }
@@ -122,82 +124,3 @@ function drawTiles(context, tiles, tileImages, width, frameCount) {
     context.drawImage(tileImage, x * TILE_SIZE, y * TILE_SIZE);
   }
 }
-
-
-/*
-export default Ractive.extend({
-  template: '#layer',
-  oncomplete: function () {
-    const canvas = this.find('canvas'),
-      context = canvas.getContext('2d'),
-      getRenderFrame = frame(),
-      getInputFrame = frame();
-
-    let frameCount = 0,
-      isMouseDown = false,
-      mouseLocation;
-
-    this.on('mouseDown', event => {
-      isMouseDown = true; 
-      mouseLocation = event.original;
-    });
-
-    this.on('mouseUp', event => {
-      isMouseDown = false;
-      mouseLocation = null;
-    });
-
-    this.on('mouseMove', event => {
-      if (!isMouseDown) {
-        return;
-      }
-      mouseLocation = event.original;
-    });
-
-    getRenderFrame((elapsed, fps) => {
-      const tileImages = this.get('tileImages'),
-        layer = this.get('layer'),
-        width = this.get('width'),
-        height = this.get('height'),
-        tiles = layer.tiles;
-
-      clearLayer(context, width, height);
-      drawTiles(context, tiles, tileImages, width, (frameCount === MAX_TILE_FRAMES) ? frameCount = 0 : frameCount++);
-      
-      //context.rect(0, 0, 100, 100);
-      //context.stroke();
-
-      return CONTINUE;
-    });
-
-    getInputFrame((elapsed, fps) => {
-      //this.set('fps', fps);
-
-      if (isMouseDown) {
-        switch(this.get('toolId')) {
-          case 'eraser':
-            this.fire('removeTile', mouseLocation);
-            break;
-          case 'fill':
-            this.fire('fillTiles', mouseLocation);
-            break;
-          default:
-            this.fire('addTile', mouseLocation);
-        }
-      }
-
-      return CONTINUE;
-    });
-  },
-  data: function () {
-    return {
-      layer: null,
-      visible: true,
-      fps: 0,
-      tileImages: [],
-      width: 400,
-      height: 400,
-      toolId: null
-    };
-  }
-});*/

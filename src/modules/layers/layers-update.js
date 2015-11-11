@@ -6,7 +6,7 @@ import { fillTiles } from './layers-actions.js';
 
 export function fillTilesWith(tileId) {
   return (dispatch, getState) => {
-    const layers = getState().layers;
+    const layers = getState().get('layers');
     const activeIndex = layers.get('activeLayerIndex');
     const newTiles = [];
     const tiles = layers
