@@ -2,12 +2,15 @@
  * Created by shaunwest on 9/27/15.
  */
 
-import { Map } from 'immutable';
-import { SELECT_LAYER, TOGGLE_LAYER, ADD_TILE, REMOVE_TILE, FILL_TILES } from './layers-actions.js';
-import { SELECT_LEVEL } from '../levels/levels-fetch.js';
+import { Map, List } from 'immutable';
+import { SELECT_LAYER, TOGGLE_LAYER, ADD_TILE,
+  REMOVE_TILE, FILL_TILES, UPDATE_TILES } from './layers-actions.js';
+import { SELECT_LEVEL } from '../levels/levels-actions.js';
+import layer from './layer.js';
 
 export default function layers(state = Map({
-  items: Map()
+  items: List(),
+  activeLayerIndex: 0
 }), action = {}) {
   const activeIndex = state.get('activeLayerIndex');
 
@@ -23,13 +26,18 @@ export default function layers(state = Map({
     case SELECT_LAYER:
       return state.set('activeLayerIndex', action.index);
     case TOGGLE_LAYER:
-      return state.setIn(['items', action.index, 'visible'], action.visible);
+      return state.mergeIn(
+        ['items', action.index],
+        layer(state.getIn(['items', action.index]), action)
+      );
     case ADD_TILE:
-      return state.setIn(['items', activeIndex, 'tiles', action.index], action.id);
     case REMOVE_TILE:
-      return state.setIn(['items', activeIndex, 'tiles', action.index], undefined);
     case FILL_TILES:
-      return state.mergeIn(['items', activeIndex, 'tiles'], action.tiles);
+    case UPDATE_TILES:
+      return state.mergeIn(
+        ['items', activeIndex],
+        layer(state.getIn(['items', activeIndex]), action)
+      );
     default:
       return state;
   }

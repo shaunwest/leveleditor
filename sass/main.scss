@@ -12,7 +12,6 @@ html, body {
   width: 200px;
   height: 67px;
   background: lightgrey;
-  margin: 10px 0;
   padding: 5px 5px;
 }
 
@@ -20,11 +19,25 @@ html, body {
   position: relative;
   width: 400px;
   height: 400px;
-  top: 0;
+  margin: 0;
+  padding: 0;
 }
 
 .layer {
   position: absolute;
   top: 0;
   left: 0;
+  width: 400px;
+  height: 400px;
+}
+
+.layerCanvas, .inputLayerCanvas {
+  position: absolute;
+  top: 0;
+  left: 0;
+}
+
+.inputLayerCanvas {
+  border: 1px solid black;
+  //cursor: none;
 }

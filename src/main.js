@@ -6,17 +6,17 @@ import store from './store.js';
 
 import { initRouting } from './modules/routes/routes-handle.js';
 
-import LevelSelectView from './containers/level-select-view.js';
-import LevelEditView from './containers/level-edit-view.js';
+import LevelSelectContainer from './components/levels/level-select-container.js';
+import LevelEditContainer from './components/levels/level-edit-container.js';
 
 const routes = [
   {
     path: '/',
-    view: LevelSelectView
+    view: LevelSelectContainer
   },
   {
     path: '/level/:levelId',
-    view: LevelEditView
+    view: LevelEditContainer
   }
 ];
 

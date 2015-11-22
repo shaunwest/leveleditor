@@ -26,7 +26,8 @@
         {
           "plugins": [
             "object-assign"
-          ]
+          ],
+          "sourceMaps": true
         }
       ],
       [
