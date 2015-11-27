@@ -40,4 +40,8 @@ html, body {
 .inputLayerCanvas {
   border: 1px solid black;
   //cursor: none;
+
+  &.resize {
+    cursor: col-resize;
+  }
 }

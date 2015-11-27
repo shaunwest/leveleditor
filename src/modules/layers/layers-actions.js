@@ -37,6 +37,16 @@ export function updateTiles(tiles) {
   };
 }
 
+export const UPDATE_TILE = 'UPDATE_TILE';
+export function updateTile(index, tileId) {
+  return {
+    type: UPDATE_TILE,
+    index,
+    tileId
+  };
+}
+
+
 // TODO: should this be here or somewhere new?
 export const SELECT_LAYER = 'SELECT_LAYER';
 export function selectLayer(index) {

@@ -4,28 +4,36 @@
 
 import React, { Component } from 'react';
 import frame from '../lib/frame.js';
-import point from '../lib/point.js';
-import rect from '../lib/rect.js';
-import getElementLocation from '../lib/getElementLocation.js';
+import { point, rect } from '../lib/geom.js';
+import { Selector, ResizableSelector, MoveableSelector, getResizeSide, RESIZE_NONE } from '../lib/selector.js';
+import { Pointer } from '../lib/pointer.js';
+import { drawRect } from '../lib/draw.js';
+import getElementLocation from '../lib/getElementLocation.js'; //rename
 import * as TOOLS from '../../constants/tools.js';
 
 const CONTINUE = true,
-  SELECTOR_COLOR = 'rgb(255, 0, 0)',
-  SELECTOR_MIN_WIDTH = 16,
-  SELECTOR_MIN_HEIGHT = 16,
+  POINTER_COLOR = 'rgb(255, 0, 0)',
+  POINTER_WIDTH = 16,
+  POINTER_HEIGHT = 16,
   SELECTED_COLOR = 'rgb(0, 0, 255)',
   SELECTED_FILL_COLOR = 'rgba(0, 0, 255, 0.05)',
-  SELECTOR_TOOLS = [TOOLS.SELECTOR, TOOLS.TILE_BRUSH, TOOLS.ERASER],
-  SELECTION_AWARE_TOOLS = [TOOLS.TILE_BRUSH, TOOLS.FILL, TOOLS.ERASER]; 
+  POINTER_TOOLS = [TOOLS.SELECTOR, TOOLS.TILE_BRUSH, TOOLS.ERASER],
+  SELECTION_AWARE_TOOLS = [TOOLS.TILE_BRUSH, TOOLS.FILL, TOOLS.ERASER];
+
+const getSelector = Selector();
+const getResizableSelector = ResizableSelector();
+const getMoveableSelector = MoveableSelector();
+const getPointer = Pointer(POINTER_WIDTH, POINTER_HEIGHT);
 
 export default class InputLayer extends Component {
   constructor(props) {
     super(props);
     this.state = { 
       mouseIsActive: false,
-      mouseIsDown: false,
-      selector: null,
-      selection: null
+      mouseIsDown: null,
+      resizeSide: RESIZE_NONE,
+      pointer: null,
+      selector: null
     };
   }
 
@@ -36,12 +44,12 @@ export default class InputLayer extends Component {
     getRenderFrame((elapsed, fps) => {
       context.clearRect(0, 0, this.props.width, this.props.height);
 
-      if (this.state.selector && this.state.mouseIsActive && SELECTOR_TOOLS.findIndex(toolName => toolName === this.props.selectedToolId) !== -1) {
-        drawRect(context, this.state.selector, SELECTOR_COLOR);
+      if (this.state.pointer && this.state.mouseIsActive && POINTER_TOOLS.findIndex(toolName => toolName === this.props.selectedToolId) !== -1) {
+        drawRect(context, this.state.pointer, POINTER_COLOR);
       }
 
-      if (this.state.selection) {
-        drawRect(context, this.state.selection, SELECTED_COLOR, SELECTED_FILL_COLOR);
+      if (this.state.selector) {
+        drawRect(context, this.state.selector, SELECTED_COLOR, SELECTED_FILL_COLOR);
       }      
 
       return CONTINUE;
@@ -50,54 +58,123 @@ export default class InputLayer extends Component {
 
   mouseDown(event) {
     const mouseLocation = getMouseLocation(event.clientX, event.clientY, this.refs.canvas);
-    const selection = (this.props.selectedToolId === TOOLS.SELECTOR && this.state.selection) ?
-      null : this.state.selection;
+    const killSelector = (this.state.selector &&
+      !getResizeSide(mouseLocation, this.state.selector) && 
+      this.props.selectedToolId === TOOLS.SELECTOR);
 
-    this.setState({ mouseIsDown: true, selection });
+    this.setState({
+      mouseIsDown: mouseLocation,
+      resizeSide: RESIZE_NONE,
+      selector: (killSelector) ?
+        null : this.state.selector
+    });
 
     if (this.state.mouseIsActive) {
-      this.props.onMouseDown(point(mouseLocation.x, mouseLocation.y), selection);
+      this.props.onMouseDown(point(mouseLocation.x, mouseLocation.y), this.state.selector);
     }
   }
 
   mouseUp(event) {
     const mouseLocation = getMouseLocation(event.clientX, event.clientY, this.refs.canvas);
 
-    this.setState({ mouseIsDown: false });
+    this.setState({ 
+      mouseIsDown: null,
+      resizeSide: RESIZE_NONE
+    });
+
     this.props.onMouseUp(point(mouseLocation.x, mouseLocation.y));
   }
 
   mouseOut(event) {
     this.setState({ 
       mouseIsActive: false,
-      mouseIsDown: false
+      mouseIsDown: null,
+      resizeSide: RESIZE_NONE
     });
   }
 
   mouseMove(event) {
     const mouseLocation = getMouseLocation(event.clientX, event.clientY, this.refs.canvas);
-    const selection = (this.props.selectedToolId === TOOLS.SELECTOR && this.state.selection) ?
-      null : this.state.selection;
-    const state = {
+
+    const newState = (this.state.mouseIsDown) ?
+      this.mouseOverAndDown(mouseLocation) :
+      this.mouseOver(mouseLocation);
+
+    this.setState(newState);
+    this.props.onMouseMove.bind(this)(mouseLocation, this.state.selector);
+  }
+
+  mouseOverAndDown(mouseLocation) {
+    if (this.props.selectedToolId === TOOLS.SELECTOR) {
+      return this.handleSelectorMove(mouseLocation);
+    }
+    else if (this.props.selectedToolId === TOOLS.GRABBER) {
+      return this.handleGrabberMove(mouseLocation);
+    }
+
+    return this.state;
+  }
+
+  mouseOver(mouseLocation) {
+    const newState = {
       mouseIsActive: true
     };
 
-    if (this.props.selectedToolId === TOOLS.SELECTOR && this.state.mouseIsDown) {
-      state.selection = selectorGrow(mouseLocation, this.state.selection || this.state.selector);
-      state.selector = null;
-    } 
+    if (this.props.selectedToolId === TOOLS.SELECTOR &&
+      this.state.selector &&
+      getResizeSide(mouseLocation, this.state.selector)) {
+      // TODO: show resize mouse pointer
+      newState.pointer = null;
+    }
     else {
-      state.selector = selectorMove(mouseLocation);
+      // Show Pointer
+      newState.pointer = getPointer(mouseLocation);
     }
 
-    this.setState(state);
-    this.props.onMouseMove.bind(this)(point(mouseLocation.x, mouseLocation.y), selection);
+    return newState;
+  }
+
+  // TODO: implement me!
+  handleGrabberMove(mouseLocation) {
+    const newState = {
+      mouseIsActive: true
+    };
+
+    if (this.state.selector) {
+      newState.selector = getMoveableSelector(this.state.mouseIsDown, mouseLocation, this.state.selector);
+    }
+
+    return newState;
+  }
+
+  handleSelectorMove(mouseLocation) {
+    const newState = {
+      mouseIsActive: true
+    };
+
+    if (this.state.resizeSide) {
+      newState.selector = getResizableSelector(mouseLocation, this.state.selector, this.state.resizeSide);
+      return newState;
+    }
+
+    if (this.state.selector) {
+      newState.resizeSide = getResizeSide(mouseLocation, this.state.selector);
+    }
+   
+    if (!newState.resizeSide)  {
+      newState.selector = getSelector(mouseLocation, this.state.selector || this.state.pointer);
+      newState.pointer = null;
+    }
+
+    return newState;
   }
 
   render() {
+    const canvasClass = 'inputLayerCanvas' + (this.state.resizing ? ' resize' : '');
+
     return (
       <canvas 
-        className="inputLayerCanvas"
+        className={ canvasClass }
         onMouseDown={ this.mouseDown.bind(this) }
         onMouseMove={ this.mouseMove.bind(this) }
         onMouseUp={ this.mouseUp.bind(this) }
@@ -110,35 +187,7 @@ export default class InputLayer extends Component {
   }
 }
 
-function drawRect(context, rect, strokeStyle, fillStyle) {
-  context.beginPath();
-  if (strokeStyle) {
-    context.strokeStyle = strokeStyle;
-  }
-
-  if (fillStyle) {
-    context.fillStyle = fillStyle;
-    context.fillRect(rect.x, rect.y, rect.width, rect.height);
-  }
-
-  context.rect(rect.x, rect.y, rect.width, rect.height);
-  context.stroke();
-  context.closePath();
-}
-
 function getMouseLocation(clientX, clientY, canvas) {
   const canvasLocation = getElementLocation(canvas);
   return point(clientX - canvasLocation.x, clientY - canvasLocation.y);
-}
-
-function snap(value) {
-  return Math.floor(value / 16) * 16;
-}
-
-function selectorMove(mouseLocation) {
-  return rect(snap(mouseLocation.x), snap(mouseLocation.y), SELECTOR_MIN_WIDTH, SELECTOR_MIN_HEIGHT);
-}
-
-function selectorGrow(mouseLocation, selector) {
-  return rect(selector.x, selector.y, snap(mouseLocation.x - selector.x), snap(mouseLocation.y - selector.y));
 }

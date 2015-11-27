@@ -8,16 +8,8 @@ import LayerToolbar from '../toolbars/layer-toolbar.js';
 import Layer from './layer.js';
 import InputLayer from './input-layer.js';
 import * as TOOLS from '../../constants/tools.js';
-import { addTile, removeTile } from '../../modules/layers/layers-actions.js';
-import { fillTilesWith, fillTileSelection } from '../../modules/layers/layers-update.js';
-
-function getTilePosition(pixelX, pixelY, width) {
-  const widthInTiles = Math.floor(width / 16),
-    tileY = Math.floor(pixelY / 16),
-    tileX = Math.floor(pixelX / 16);
-
-  return (tileY * widthInTiles) + tileX;
-}
+import { removeTile } from '../../modules/layers/layers-actions.js';
+import { addTile, fillTilesWith, fillTileSelection, moveTileSelection } from '../../modules/layers/layers-update.js';
 
 class Layers extends Component {
   constructor(props) {
@@ -41,24 +33,22 @@ class Layers extends Component {
   }
 
   triggerToolAction(position, selection) {
-    const { dispatch, layers, tools, currentTileSet } = this.props,
-      activeLayer = this.state.activeLayer,
-      tilePosition = getTilePosition(position.x, position.y, activeLayer.get('width')),
+    const { dispatch, tools, currentTileSet } = this.props,
       tileIndex = currentTileSet.get('currentTileIndex');
 
-    // TODO: pass in mouse x/y instead of tile position
     switch (tools.get('selectedId')) {
       case TOOLS.ERASER:
-        //dispatch(removeTile(tilePosition, selection));
-        dispatch(fillTileSelection(tilePosition, undefined, selection));
+        dispatch(fillTileSelection(undefined, selection));
         return;
       case TOOLS.FILL:
-        //dispatch(fillTilesWith(tileIndex, selection));
-        dispatch(fillTileSelection(tilePosition, tileIndex, selection));
+        dispatch(fillTileSelection(tileIndex, selection));
         return;
       case TOOLS.TILE_BRUSH:
-        dispatch(addTile(tilePosition, tileIndex, selection));
+        dispatch(addTile(position, tileIndex, selection));
         return;
+      case TOOLS.GRABBER:
+        //dispatch(moveTileSelection(tileIndex, selection, position));
+        return; 
     }
   }
 

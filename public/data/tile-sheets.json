@@ -1,4 +1,5 @@
 {
-  "demo-tiles": { "default": true },
+  "smb-tiles": { "default": true },
+  "demo-tiles": {},
   "foo-tiles": {}
 }

@@ -4,12 +4,6 @@
 
 import React, { Component } from 'react';
 import * as TOOLS from '../../constants/tools.js';
-/*
-const TOOL_TILE_BRUSH = 'tileBrush',
-  TOOL_ERASER = 'eraser',
-  TOOL_SELECTOR = 'selector',
-  TOOL_FILL = 'fill';
-*/
 
 export default class ToolsToolbar extends Component {
   render() {
@@ -20,9 +14,17 @@ export default class ToolsToolbar extends Component {
         <li>
           <input
             type="radio"
+            onChange={ e => this.props.onToolSelect(TOOLS.GRABBER) }
+            checked={ selectedToolId === TOOLS.GRABBER }
+          />
+          Grabber
+        </li>
+        <li>
+          <input
+            type="radio"
             onChange={ e => this.props.onToolSelect(TOOLS.TILE_BRUSH) }
             checked={ selectedToolId === TOOLS.TILE_BRUSH }
-           />
+          />
           Tile Brush
         </li>
         <li>

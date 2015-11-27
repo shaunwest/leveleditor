@@ -20,7 +20,7 @@
     {
       "id": "foreground",
       "label": "Foreground",
-      "tileSheet": "demo-tiles",
+      "tileSheet": "smb-tiles",
       "tiles": [0, 0, 0, 0, 0],
       "width": 400,
       "height": 400

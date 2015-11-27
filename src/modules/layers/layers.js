@@ -4,7 +4,7 @@
 
 import { Map, List } from 'immutable';
 import { SELECT_LAYER, TOGGLE_LAYER, ADD_TILE,
-  REMOVE_TILE, FILL_TILES, UPDATE_TILES } from './layers-actions.js';
+  REMOVE_TILE, FILL_TILES, UPDATE_TILE, UPDATE_TILES } from './layers-actions.js';
 import { SELECT_LEVEL } from '../levels/levels-actions.js';
 import layer from './layer.js';
 
@@ -34,6 +34,7 @@ export default function layers(state = Map({
     case REMOVE_TILE:
     case FILL_TILES:
     case UPDATE_TILES:
+    case UPDATE_TILE:
       return state.mergeIn(
         ['items', activeIndex],
         layer(state.getIn(['items', activeIndex]), action)
