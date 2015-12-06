@@ -3,7 +3,7 @@
  */
 
 import React, { Component } from 'react';
-import Canvas from '../lib/canvas.js';
+import Canvas from '../../lib/canvas.js';
 
 export default class TileSelect extends Component {
   render() {

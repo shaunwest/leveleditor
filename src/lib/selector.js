@@ -20,15 +20,10 @@ export function Selector() {
 }
 
 export function MoveableSelector() {
-  return function (originalPointerPos, newPointerPos, oldSelector) {
-    const diff = point(
-      newPointerPos.x - originalPointerPos.x,
-      newPointerPos.y - originalPointerPos.y
-    );
-
+  return function (newPointerPosition, oldSelector, diff) {
     return rect(
-      snap(diff.x),
-      snap(diff.y),
+      snap(newPointerPosition.x - diff.x),
+      snap(newPointerPosition.y - diff.y),
       oldSelector.width,
       oldSelector.height
     );

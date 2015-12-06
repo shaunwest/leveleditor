@@ -12,7 +12,8 @@ export default function currentTileSet(state = Map({
 }), action = {}) {
   switch (action.type) {
     case SELECTED_TILE_SHEET:
-      return state.set('tileSetId', action.id);
+      //return state.set('tileSetId', action.id);
+      return state.merge(action.tileSheet);
     case MADE_TILES:
       return state.merge({currentTileIndex: 0, tileImages: action.tileImages});
     case SELECT_TILE:

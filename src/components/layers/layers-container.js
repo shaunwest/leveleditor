@@ -14,22 +14,6 @@ import { addTile, fillTilesWith, fillTileSelection, moveTileSelection } from '..
 class Layers extends Component {
   constructor(props) {
     super(props);
-    this.state = { mouseIsDown: false };
-  }
-
-  mouseDown(position, selection) {
-    this.setState({ mouseIsDown: true });
-    this.triggerToolAction(position, selection);
-  }
-
-  mouseUp(position) {
-    this.setState({ mouseIsDown: false });
-  }
-
-  mouseMove(position, selection) {
-    if (this.state.mouseIsDown) {
-      this.triggerToolAction(position, selection);
-    }
   }
 
   triggerToolAction(position, selection) {
@@ -38,16 +22,16 @@ class Layers extends Component {
 
     switch (tools.get('selectedId')) {
       case TOOLS.ERASER:
-        dispatch(fillTileSelection(undefined, selection));
+        dispatch(fillTileSelection(selection));
         return;
       case TOOLS.FILL:
-        dispatch(fillTileSelection(tileIndex, selection));
+        dispatch(fillTileSelection(selection, tileIndex));
         return;
       case TOOLS.TILE_BRUSH:
         dispatch(addTile(position, tileIndex, selection));
         return;
       case TOOLS.GRABBER:
-        //dispatch(moveTileSelection(tileIndex, selection, position));
+        dispatch(moveTileSelection(position, selection));
         return; 
     }
   }
@@ -62,9 +46,16 @@ class Layers extends Component {
   render() {
     const { layers, currentTileSet, tools } = this.props;
     const tileImages = currentTileSet.get('tileImages');
+    const tiles = currentTileSet.get('tiles');
+    const tileData = (tiles && tiles.size) ? tiles.toJS() : null;
     const activeLayer = layers.get(this.props.activeLayerIndex);
     const width = (activeLayer) ? activeLayer.get('width') : 400;
     const height = (activeLayer) ? activeLayer.get('height') : 400;
+
+    // maybe renderers should be created here and passed to layers?
+    // or should there be a debug data model passed into each layer?
+    // or should layers share a renderer? (removing the need for multiple layer components)
+    //  ... eh probably want to be able to easily layer different types of layers over each other
 
     return (
       <div>
@@ -77,8 +68,9 @@ class Layers extends Component {
                 <li className="layer" key={ layer.get('id') }>
                   <Layer
                     layer={ layer }
-                    tileImages={ tileImages }>
-                  </Layer>
+                    tileImages={ tileImages }
+                    tileData={ tileData }
+                  />
                 </li>
               );
             })
@@ -89,9 +81,8 @@ class Layers extends Component {
           width={ width }
           height={ height }
           selectedToolId={ tools.get('selectedId') }
-          onMouseDown={ this.mouseDown.bind(this) }
-          onMouseMove={ this.mouseMove.bind(this) }
-          onMouseUp={ this.mouseUp.bind(this) }
+          onMouseDown={ this.triggerToolAction.bind(this) }
+          onMouseMove={ this.triggerToolAction.bind(this) }
         />
         </ul>
       </div>

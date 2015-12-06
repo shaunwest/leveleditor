@@ -119,10 +119,11 @@ export function madeTiles(src, tileImages) {
 // SELECTED
 export const SELECTED_TILE_SHEET = 'SELECTED_TILE_SHEET';
 
-export function selectedTileSheet(id) {
+//export function selectedTileSheet(id) {
+export function selectedTileSheet(tileSheet) {
   return {
     type: SELECTED_TILE_SHEET,
-    id
+    tileSheet
   };
 }
 
@@ -141,7 +142,8 @@ export function selectTileSheet(id) {
     const tileSheet = getState().get('tileSheets').get('items').get(id),
       tileImages = processTiles(tileSheet.get('image'), tileSheet.get('tiles'));
 
-    dispatch(selectedTileSheet(id));   
+    //dispatch(selectedTileSheet(id));   
+    dispatch(selectedTileSheet(tileSheet));
     dispatch(madeTiles(id, tileImages));
   };
 }

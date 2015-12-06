@@ -46,7 +46,6 @@ export function updateTile(index, tileId) {
   };
 }
 
-
 // TODO: should this be here or somewhere new?
 export const SELECT_LAYER = 'SELECT_LAYER';
 export function selectLayer(index) {
