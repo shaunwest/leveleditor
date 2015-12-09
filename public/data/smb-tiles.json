@@ -4,7 +4,33 @@
   "thumbnail": "demo-tiles-thumb.png",
   "src": "smb-tiles.png",
   "tiles": [
-    {"xRange": 4, "x": 0, "y": 0, "width": 16, "height": 16, "fps": 8, "repeat": 60},
-    {"xRange": 4, "x": 0, "y": 16, "width": 16, "height": 16, "fps": 8}
+    {
+      "description": "Brick",
+      "width": 16,
+      "height": 16,
+      "type": "waitThenCycle",
+      "frames": {
+        "base": { "x": 0, "y": 0 },
+        "cycle": { "xRange": 3, "x": 16, "y": 0, "fps": 8, "every": 60 }
+      }
+    },
+    {
+      "description": "Question2",
+      "width": 16,
+      "height": 16,
+      "type": "waitThenCycle",
+      "frames": {
+        "base": { "x": 0, "y": 16 },
+        "cycle": { "xRange": 3, "x": 16, "y": 16, "fps": 8, "every": 60 }
+      }
+    },
+    {
+      "description": "Question",
+      "width": 16,
+      "height": 16,
+      "frames": {
+        "base": { "xRange": 3, "x": 16, "y": 16, "fps": 8 }
+      }
+    }
   ]
 }

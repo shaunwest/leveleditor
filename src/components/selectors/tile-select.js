@@ -14,9 +14,11 @@ export default class TileSelect extends Component {
       {
       tileImages
         .map((tileImage, index) => {
+          const image = tileImage.get('frames').get('base').get('images').get(0); 
+
           return (tileImage.get('isFetching')) ?
             (<li key={ index }>...</li>) :
-            (<li key={ index } onClick={ e => this.props.onTileSelect(index) }><Canvas image={ tileImage.get(0) } /></li>);
+            (<li key={ index } onClick={ e => this.props.onTileSelect(index) }><Canvas image={ image } /></li>);
         })
         .valueSeq()
       }

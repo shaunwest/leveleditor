@@ -4,7 +4,7 @@
 
 import 'isomorphic-fetch';
 import getImage from '../lib/image-loader.js';
-import { processTiles } from './lib/tile-sheet-processor.js';
+import { processSprites } from '../../lib/sprite-sheet-processor.js';
 
 // Probably should make these immutable Maps...
 
@@ -140,7 +140,7 @@ export function selectTile(tileIndex) {
 export function selectTileSheet(id) {
   return (dispatch, getState) => {
     const tileSheet = getState().get('tileSheets').get('items').get(id),
-      tileImages = processTiles(tileSheet.get('image'), tileSheet.get('tiles'));
+      tileImages = processSprites(tileSheet.get('image'), tileSheet.get('tiles'));
 
     //dispatch(selectedTileSheet(id));   
     dispatch(selectedTileSheet(tileSheet));

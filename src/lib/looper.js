@@ -2,13 +2,12 @@
  * Created by shaunwest on 6/20/15.
  */
 
-const MS_PER_SECOND = 1000,
-  // requestAnimationFrame automatically targets 60 FPS
-  TARGET_FPS = 60;
-
-const loopsData = new Map();
-
+// requestAnimationFrame automatically targets 60 FPS
+export const TARGET_FPS = 60;
 export const CONTINUE_RENDERING = true;
+
+const MS_PER_SECOND = 1000;
+const loopsData = new Map();
 
 function getDeltaTime(now, lastUpdateTime) {
   return (now - lastUpdateTime) / MS_PER_SECOND;
@@ -57,7 +56,7 @@ export default function Looper(id) {
     aFrameCount++;
 
     if (fps) {
-      vFrameCount += (TARGET_FPS / fps);
+      vFrameCount += Math.round(TARGET_FPS / fps);
     }
     last = +new Date();
     requestAnimationFrame(loop);
