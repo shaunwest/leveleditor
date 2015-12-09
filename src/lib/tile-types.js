@@ -1,6 +1,6 @@
 
 export function basic(tileSequence, targetFps, frameCount) {
-  const basicSequence = tileSequence.frames.base;
+  const basicSequence = tileSequence.frames.basic;
   const keyFrame = getKeyFrame(targetFps, basicSequence.fps || targetFps);
   return getSequenceTile(basicSequence.images, keyFrame, frameCount);
 }
@@ -27,22 +27,6 @@ export function waitThenCycle(tileSequence, targetFps, frameCount) {
     return basic(tileSequence, targetFps, frameCount);
   }
 }
-
-/*
-export function waitThenCycle(tileSequence, targetFps, frameCount) {
-  const cycleSequence = tileSequence.frames.cycle;
-  const cycleImages = cycleSequence.images;
-  const every = Math.floor(frameCount % cycleSequence.every);
-  if (every >= 0 && every < cycleImages.length) {
-    const keyFrame = getKeyFrame(targetFps, cycleSequence.fps || targetFps);
-    return cycleImages[every];
-  } else {
-    const basicSequence = tileSequence.frames.base;
-    const keyFrame = getKeyFrame(targetFps, basicSequence.fps || targetFps);
-    return getSequenceTile(basicSequence.images, keyFrame, frameCount);
-  }
-}
-*/
 
 function getKeyFrame(targetFps, sequenceFps) {
   return targetFps / sequenceFps;

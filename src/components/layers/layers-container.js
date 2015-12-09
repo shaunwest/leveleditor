@@ -16,7 +16,7 @@ class Layers extends Component {
     super(props);
   }
 
-  triggerToolAction(position, selection) {
+  triggerSelectorAction(position, selection) {
     const { dispatch, tools, currentTileSet } = this.props,
       tileIndex = currentTileSet.get('currentTileIndex');
 
@@ -27,6 +27,9 @@ class Layers extends Component {
       case TOOLS.FILL:
         dispatch(fillTileSelection(selection, tileIndex));
         return;
+      case TOOLS.FILL_EMPTY:
+        dispatch(fillTileSelection(selection, tileIndex, true));
+        return;
       case TOOLS.TILE_BRUSH:
         dispatch(addTile(position, tileIndex, selection));
         return;
@@ -35,6 +38,24 @@ class Layers extends Component {
         return; 
     }
   }
+
+  triggerPointerAction(position) {
+    const { dispatch, tools, currentTileSet } = this.props,
+      tileId = currentTileSet.get('currentTileIndex');
+
+    switch (tools.get('selectedId')) {
+      case TOOLS.ERASER:
+        dispatch(addTile(position));
+        return;
+      case TOOLS.FILL:
+        dispatch(fillTilesWith(tileId));
+        return;
+      case TOOLS.TILE_BRUSH:
+        dispatch(addTile(position, tileId));
+        return;
+    }
+  }
+
 
   componentWillReceiveProps(nextProps) {
     const { layers } = this.props,
@@ -51,11 +72,6 @@ class Layers extends Component {
     const activeLayer = layers.get(this.props.activeLayerIndex);
     const width = (activeLayer) ? activeLayer.get('width') : 400;
     const height = (activeLayer) ? activeLayer.get('height') : 400;
-
-    // maybe renderers should be created here and passed to layers?
-    // or should there be a debug data model passed into each layer?
-    // or should layers share a renderer? (removing the need for multiple layer components)
-    //  ... eh probably want to be able to easily layer different types of layers over each other
 
     return (
       <div>
@@ -81,8 +97,8 @@ class Layers extends Component {
           width={ width }
           height={ height }
           selectedToolId={ tools.get('selectedId') }
-          onMouseDown={ this.triggerToolAction.bind(this) }
-          onMouseMove={ this.triggerToolAction.bind(this) }
+          onSelectorAction={ this.triggerSelectorAction.bind(this) }
+          onPointerAction={ this.triggerPointerAction.bind(this) }
         />
         </ul>
       </div>

@@ -152,7 +152,7 @@ export function moveTileSelection(fromPosition, toSelection) {
   };
 }
 
-export function fillTileSelection(selection, tileId) {
+export function fillTileSelection(selection, tileId, emptyOnly = false) {
   return (dispatch, getState) => {
     const activeLayer = getActiveLayer(getState().get('layers'));
     const layerTiles = activeLayer.get('tiles').toArray();
@@ -162,7 +162,9 @@ export function fillTileSelection(selection, tileId) {
       for (let x = selection.x; x < selection.x + selection.width; x++) {
         for (let y = selection.y; y < selection.y + selection.height; y++) {
           const layerTilePosition = getTilePosition(x, y, layerWidth);
-          layerTiles[layerTilePosition] = tileId;
+          if (!emptyOnly || typeof layerTiles[layerTilePosition] === 'undefined') {
+            layerTiles[layerTilePosition] = tileId;
+          }
         }
       }
     }

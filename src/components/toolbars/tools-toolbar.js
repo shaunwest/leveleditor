@@ -51,6 +51,15 @@ export default class ToolsToolbar extends Component {
           />
           Fill
         </li>
+        <li>
+          <input
+            type="radio"
+            onChange={ e => this.props.onToolSelect(TOOLS.FILL_EMPTY) }
+            checked={ selectedToolId === TOOLS.FILL_EMPTY }
+          />
+          Fill Empty
+        </li>
+
       </ul>
     );
   }

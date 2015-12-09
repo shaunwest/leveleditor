@@ -10,8 +10,8 @@ import rootReducer from './modules/root-reducer.js';
 import { Immutable, Map } from 'immutable';
 
 const createStoreWithMiddleware = applyMiddleware(
-  thunkMiddleware, // lets us dispatch() functions
-  logger
+  thunkMiddleware // lets us dispatch() functions
+  //logger
   //loggerMiddleware // neat middleware that logs actions
 )(createStore);
 

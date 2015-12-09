@@ -10,18 +10,8 @@
       "height": 16,
       "type": "waitThenCycle",
       "frames": {
-        "base": { "x": 0, "y": 0 },
+        "basic": { "x": 0, "y": 0 },
         "cycle": { "xRange": 3, "x": 16, "y": 0, "fps": 8, "every": 60 }
-      }
-    },
-    {
-      "description": "Question2",
-      "width": 16,
-      "height": 16,
-      "type": "waitThenCycle",
-      "frames": {
-        "base": { "x": 0, "y": 16 },
-        "cycle": { "xRange": 3, "x": 16, "y": 16, "fps": 8, "every": 60 }
       }
     },
     {
@@ -29,7 +19,7 @@
       "width": 16,
       "height": 16,
       "frames": {
-        "base": { "xRange": 3, "x": 16, "y": 16, "fps": 8 }
+        "basic": { "xRange": 3, "x": 16, "y": 16, "fps": 8 }
       }
     }
   ]

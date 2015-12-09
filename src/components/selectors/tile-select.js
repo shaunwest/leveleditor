@@ -14,7 +14,7 @@ export default class TileSelect extends Component {
       {
       tileImages
         .map((tileImage, index) => {
-          const image = tileImage.get('frames').get('base').get('images').get(0); 
+          const image = tileImage.get('frames').get('basic').get('images').get(0); 
 
           return (tileImage.get('isFetching')) ?
             (<li key={ index }>...</li>) :
