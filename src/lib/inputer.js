@@ -98,7 +98,7 @@ export default class Inputer {
     return this;
   }
 
-  HANDLE_SIDE_EFFECTS(func) {
+  _HANDLE_SIDE_EFFECTS(func) {
     this.sideEffectsFunc = func;
   }
 

@@ -17,3 +17,8 @@ export function rect(x = 0, y = 0, width = 100, height = 100) {
     height
   };
 }
+
+export function rectContainsPoint(point, rect) {
+  return (point.x >= rect.x && point.x < rect.x + rect.width && 
+    point.y >= rect.y && point.y < rect.y + rect.height);
+}

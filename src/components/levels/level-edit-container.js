@@ -6,7 +6,7 @@ import React, { Component, PropTypes } from 'react';
 import { connect } from 'react-redux';
 
 import LayerSelect from '../selectors/layer-select.js';
-import ToolsToolbar from '../toolbars/tools-toolbar.js';
+import ToolSelect from '../selectors/tool-select.js';
 import TileSheetSelect from '../selectors/tile-sheet-select.js';
 import TileSelect from '../selectors/tile-select.js';
 import LayersContainer from '../layers/layers-container.js';
@@ -70,18 +70,21 @@ class LevelEditContainer extends Component {
 
         <h3>Tools</h3>
 
-        <ToolsToolbar
+        <ToolSelect
           onToolSelect={ this.onToolSelect.bind(this) }
-          selectedToolId={ tools.get('selectedId') }/>
+          selectedToolId={ tools.get('selectedId') } />
 
         <h3>Tiles</h3>
 
         <TileSheetSelect
           onTileSheetSelect={ this.onTileSheetSelect.bind(this) }
-          tileSheets={ tileSheets.get('items') }/>
+          tileSheets={ tileSheets.get('items') }
+          selectedTileSheetId= { currentTileSet.get('id') } 
+        />
 
         <TileSelect
           onTileSelect={ this.onTileSelect.bind(this) }
+          selectedTileId={ currentTileSet.get('currentTileIndex') }
           tileImages={ currentTileSet.get('tileImages') }/>
       </div>
     );

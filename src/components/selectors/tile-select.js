@@ -18,7 +18,15 @@ export default class TileSelect extends Component {
 
           return (tileImage.get('isFetching')) ?
             (<li key={ index }>...</li>) :
-            (<li key={ index } onClick={ e => this.props.onTileSelect(index) }><Canvas image={ image } /></li>);
+            (
+              <li key={ index }>
+                <input
+                  type="radio"
+                  onChange={ e => this.props.onTileSelect(index) }
+                  checked={ this.props.selectedTileId === index }
+                /> <Canvas image={ image } />
+              </li>
+            );
         })
         .valueSeq()
       }

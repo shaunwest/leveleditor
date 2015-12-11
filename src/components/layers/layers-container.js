@@ -9,7 +9,8 @@ import Layer from './layer.js';
 import InputLayer from './input-layer.js';
 import * as TOOLS from '../../constants/tools.js';
 import { removeTile } from '../../modules/layers/layers-actions.js';
-import { addTile, fillTilesWith, fillTileSelection, moveTileSelection } from '../../modules/layers/layers-update.js';
+import { addTile, fillTilesWith, fillTileSelection,
+  moveTileSelection, fillContiguousTiles } from '../../modules/layers/layers-update.js';
 
 class Layers extends Component {
   constructor(props) {
@@ -18,20 +19,26 @@ class Layers extends Component {
 
   triggerSelectorAction(position, selection) {
     const { dispatch, tools, currentTileSet } = this.props,
-      tileIndex = currentTileSet.get('currentTileIndex');
+      tileId = currentTileSet.get('currentTileIndex');
 
     switch (tools.get('selectedId')) {
       case TOOLS.ERASER:
         dispatch(fillTileSelection(selection));
         return;
       case TOOLS.FILL:
-        dispatch(fillTileSelection(selection, tileIndex));
+        dispatch(fillTileSelection(selection, tileId));
         return;
       case TOOLS.FILL_EMPTY:
-        dispatch(fillTileSelection(selection, tileIndex, true));
+        dispatch(fillTileSelection(selection, tileId, true));
         return;
       case TOOLS.TILE_BRUSH:
-        dispatch(addTile(position, tileIndex, selection));
+        dispatch(addTile(position, tileId, selection));
+        return;
+      case TOOLS.FILL_CONTIGUOUS:
+        dispatch(fillContiguousTiles(position, tileId, true, selection));
+        return;
+      case TOOLS.FILL_CONTIGUOUS_EMPTY:
+        dispatch(fillContiguousTiles(position, tileId, false, selection));
         return;
       case TOOLS.GRABBER:
         dispatch(moveTileSelection(position, selection));
@@ -50,8 +57,17 @@ class Layers extends Component {
       case TOOLS.FILL:
         dispatch(fillTilesWith(tileId));
         return;
+      case TOOLS.FILL_EMPTY:
+        dispatch(fillTilesWith(tileId, true));
+        return;
       case TOOLS.TILE_BRUSH:
         dispatch(addTile(position, tileId));
+        return;
+      case TOOLS.FILL_CONTIGUOUS:
+        dispatch(fillContiguousTiles(position, tileId, true));
+        return;
+      case TOOLS.FILL_CONTIGUOUS_EMPTY:
+        dispatch(fillContiguousTiles(position, tileId));
         return;
     }
   }

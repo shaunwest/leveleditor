@@ -19,7 +19,23 @@
       "width": 16,
       "height": 16,
       "frames": {
-        "basic": { "xRange": 3, "x": 16, "y": 16, "fps": 8 }
+        "basic": { "xRange": 4, "x": 0, "y": 16, "fps": 8 }
+      }
+    },
+    {
+      "description": "Block",
+      "width": 16,
+      "height": 16,
+      "frames": {
+        "basic": { "x": 0, "y": 32 }
+      }
+    },
+    {
+      "description": "Used",
+      "width": 16,
+      "height": 16,
+      "frames": {
+        "basic": { "x": 16, "y": 32 }
       }
     }
   ]

@@ -10,7 +10,6 @@ import { Selector, ResizableSelector, MoveableSelector, getResizeSide, RESIZE_NO
 import { Pointer } from '../../lib/pointer.js';
 import { drawRect } from '../../lib/draw.js';
 import { clone } from '../../lib/obj.js';
-import getElementLocation from '../../lib/get-element-location.js';
 import * as TOOLS from '../../constants/tools.js';
 
 const CONTINUE = true,
@@ -22,8 +21,7 @@ const CONTINUE = true,
   TEMP_SELECTOR_COLOR = 'rgb(0, 255, 0)',
   ACTION_NONE = 'actionNone',
   ACTION_FIRE = 'actionFire',
-  POINTER_TOOLS = [TOOLS.SELECTOR, TOOLS.TILE_BRUSH, TOOLS.ERASER],
-  SELECTION_AWARE_TOOLS = [TOOLS.TILE_BRUSH, TOOLS.FILL, TOOLS.ERASER];
+  POINTER_TOOLS = [TOOLS.SELECTOR, TOOLS.TILE_BRUSH, TOOLS.ERASER];
 
 const getSelector = Selector();
 const getResizableSelector = ResizableSelector();
@@ -55,29 +53,20 @@ export default class InputLayer extends Component {
     // PRESS
     inputer
       .onPress(position => {
-        if (this.toolIsSelected(TOOLS.TILE_BRUSH, TOOLS.ERASER, TOOLS.FILL, TOOLS.FILL_EMPTY)) {
-          /*if (this.state.selector) {
-            this.props.onSelectorAction(position, this.state.selector); 
-          } else {
-            this.props.onPointerAction(position);
-          }*/
+        if (this.toolIsSelected(TOOLS.TILE_BRUSH, TOOLS.ERASER, TOOLS.FILL, TOOLS.FILL_EMPTY, TOOLS.FILL_CONTIGUOUS, TOOLS.FILL_CONTIGUOUS_EMPTY)) {
           return {
             action: ACTION_FIRE,
-            pointer: position            
+            pointer: position
           };
         }
 
         if (this.toolIsSelected(TOOLS.SELECTOR)) {
-          const selector = (this.state.selector && !getResizeSide(position, this.state.selector)) ?
-            null :
-            this.state.selector;
-
-          //this.props.onSelectorAction(position, selector);
-
           return {
             action: ACTION_FIRE,
-            selector,
-            pointer: getPointer(position)
+            pointer: getPointer(position),
+            selector: (this.state.selector && !getResizeSide(position, this.state.selector)) ?
+              null :
+              this.state.selector
           };
         }
 
@@ -89,9 +78,6 @@ export default class InputLayer extends Component {
         }
       })
       .onRelease((position, pressPosition) => {
-        //if (this.state.grabberDiff) {
-        //  this.props.onSelectorAction(point(pressPosition.x - this.state.grabberDiff.x, pressPosition.y - this.state.grabberDiff.y), this.state.selector);
-        //}
         const pointer = (this.state.grabberDiff) ?
           point(pressPosition.x - this.state.grabberDiff.x, pressPosition.y - this.state.grabberDiff.y) :
           this.state.pointer;
@@ -112,22 +98,15 @@ export default class InputLayer extends Component {
       })
       .onDrag(position => {
         if (this.toolIsSelected(TOOLS.TILE_BRUSH, TOOLS.ERASER)) {
-          /*if (this.state.selector) {
-            this.props.onSelectorAction(position, this.state.selector);
-          } else {
-            this.props.onPointerAction(position);
-          }*/
           return {
             pointer: position,
             action: ACTION_FIRE
           };
         }
-
-        if (this.toolIsSelected(TOOLS.SELECTOR)) {
+        else if (this.toolIsSelected(TOOLS.SELECTOR)) {
           return this.handleSelectorSizing(position);
         }
-
-        if (this.toolIsSelected(TOOLS.GRABBER)) {
+        else if (this.toolIsSelected(TOOLS.GRABBER)) {
           return this.handleGrabberMove(position);
         }
       })
@@ -137,19 +116,22 @@ export default class InputLayer extends Component {
           resizeSide: RESIZE_NONE
         };
       })
-      .HANDLE_SIDE_EFFECTS(result => {
+      ._HANDLE_SIDE_EFFECTS(result => {
         if (!result) {
           return;
         }
 
         this.setState(result);
 
-        if (this.state.action === ACTION_FIRE) {
-          if (this.state.selector) {
-            this.props.onSelectorAction(this.state.pointer, this.state.selector);
-          } else {
-            this.props.onPointerAction(this.state.pointer);
-          }
+        if (this.state.action !== ACTION_FIRE) {
+          return;
+        }
+
+        if (this.state.selector) {
+          this.props.onSelectorAction(this.state.pointer, this.state.selector);
+        }
+        else {
+          this.props.onPointerAction(this.state.pointer);
         }
       });
 

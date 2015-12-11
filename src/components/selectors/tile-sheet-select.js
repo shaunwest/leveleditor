@@ -21,9 +21,11 @@ export default class TileSheetSelect extends Component {
             }
             return (
               <li key={ key }>
-                <button onClick={ e => this.props.onTileSheetSelect(key) }>
-                  <img src={ thumbnail } />{ tileSheet.get('description') }
-                </button>
+                <input
+                  type="radio"
+                  onChange={ e => this.props.onTileSheetSelect(key) }
+                  checked={ key === this.props.selectedTileSheetId }
+                /> <img src={ thumbnail } />{ tileSheet.get('description') }
               </li>
             );
           })
