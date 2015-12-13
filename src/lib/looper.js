@@ -7,34 +7,19 @@ export const TARGET_FPS = 60;
 export const CONTINUE_RENDERING = true;
 
 const MS_PER_SECOND = 1000;
-const loopsData = new Map();
 
 function getDeltaTime(now, lastUpdateTime) {
   return (now - lastUpdateTime) / MS_PER_SECOND;
 }
 
-export default function Looper(id) {
-  const start = +new Date()
-  let last = start, fps = 0, vFrameCount = 0, aFrameCount = 0;
-
-  if (!id) {
-    throw 'Looper: a loop id is required';
-  }
-
-  if (!loopsData.has(id)) {
-    loopsData.set(id, {
-      callbacks: [],
-      started: false
-    });
-  } else {
-    loopsData.get(id).callbacks.length = 0;
-  }
+export default function Looper() {
+  const start = +new Date(), callbacks = [];
+  let started = false, last = start, fps = 0, vFrameCount = 0, aFrameCount = 0;
 
   function loop() {
     let i = 0;
     // TODO: for perf don't use new
     const now = +new Date();
-    const callbacks = loopsData.get(id).callbacks;
     const numCallbacks = callbacks.length;
     // FIXME: if the loop is suspended, totalElapsed will
     // grow out of sync with aFrameCount
@@ -63,17 +48,15 @@ export default function Looper(id) {
   }
 
   function create(cb) {
-    const loopData = loopsData.get(id);
-
     if (!cb) {
-      loopsData.get(id).callbacks.length = 0;
+      callbacks.length = 0;
       return create;
     }
 
-    loopData.callbacks.push(cb);
-    if (!loopData.started) {
+    callbacks.push(cb);
+    if (!started) {
       loop();
-      loopData.started = true;
+      started = true;
     }
 
     return create;

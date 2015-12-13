@@ -16,17 +16,16 @@ export default class Layer extends Component {
   render() {
     const layer = this.props.layer;
     const layerCanvas = this.refs.canvas;
-    const tiles = layer.get('tiles').toArray();
+    const tiles = layer.get('tiles');
     const width = layer.get('width');
     const height = layer.get('height');
     const tileImages = this.props.tileImages;
     const _RENDER_LOOP = (tileImages.size && layerCanvas) ? 
       tileRenderer(
         layerCanvas.getContext('2d'),
-        tiles,
+        tiles.toArray(),
         TILE_SIZE,
         tileImages.toJS(),
-        //this.props.tileData,
         width,
         height) :
       NOOP;

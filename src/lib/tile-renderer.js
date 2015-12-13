@@ -3,20 +3,22 @@
  */
 
 import * as TileTypes from './tile-types.js';
+import { unFlattenXDimension, unFlattenYDimension } from './geom.js'; 
 import Looper, { TARGET_FPS, CONTINUE_RENDERING } from './looper.js';
-
-const LOOP_ID = 'tileRenderer';
 
 export default function tileRenderer (context, tiles, tileSize, tileSequences, width, height) {
   const tileFrameIndexes = [];
-  const _RENDER_LOOP = Looper(width); // FIXME: this id needs to be something else. Is it even needed?
-  const widthInTiles = Math.floor(width / tileSize);
+  const _RENDER_LOOP = Looper();
 
   return _RENDER_LOOP((fps, elapsed, vFrameCount, aFrameCount) => {
+    const tilesLength = tiles.length * tileSize;
+    const canvasWidth = unFlattenXDimension(tilesLength, width);
+    const canvasHeight = unFlattenYDimension(tilesLength, width);
+    const widthInTiles = Math.floor(canvasWidth / tileSize);
     const currentTiles = getCurrentTiles(tileSequences, vFrameCount);
 
-    context.clearRect(0, 0, width, height);
-    drawTiles(context, tiles, currentTiles, widthInTiles, tileSize);
+    _CLEAR_TILES(context, canvasWidth, canvasHeight);
+    _DRAW_TILES(context, tiles, currentTiles, widthInTiles, tileSize);
 
     return CONTINUE_RENDERING;
   });
@@ -35,7 +37,7 @@ function getCurrentTiles(tileSequences, frameCount) {
   return tiles;
 }
 
-function drawTiles(context, mapTiles, tileSet, widthInTiles, tileSize) {
+function _DRAW_TILES(context, mapTiles, tileSet, widthInTiles, tileSize) {
   const numMapTiles = mapTiles.length;
 
   for(let i = 0; i < numMapTiles; i++) {
@@ -54,10 +56,14 @@ function drawTiles(context, mapTiles, tileSet, widthInTiles, tileSize) {
     const x = i % widthInTiles;
     const y = Math.floor(i / widthInTiles);
 
-    drawTile(context, tileImage, x * tileSize, y * tileSize);
+    _DRAW_TILE(context, tileImage, x * tileSize, y * tileSize);
   }
 }
 
-function drawTile(context, tileImage, x, y) {
+function _CLEAR_TILES(context, width, height) {
+  context.clearRect(0, 0, width, height);
+}
+
+function _DRAW_TILE(context, tileImage, x, y) {
   context.drawImage(tileImage, x, y);
 }

@@ -2,7 +2,7 @@
  * Created by shaunwest on 8/23/15.
  */
 
-import { point, rect } from './geom.js';
+import { point, rect, flattenCoord } from './geom.js';
 
 export function getTilePosition(pixelX, pixelY, width) {
   const widthInTiles = pixel2Tile(width),
@@ -10,17 +10,6 @@ export function getTilePosition(pixelX, pixelY, width) {
     tileX = pixel2Tile(pixelX);
 
   return flattenCoord(tileX, tileY, widthInTiles);
-}
-
-export function flattenCoord(x, y, targetWidth) {
-  return (y * targetWidth) + x;
-}
-
-export function unFlattenCoord(value, targetWidth) {
-  return {
-    x: value % targetWidth,
-    y: Math.floor(value / targetWidth)
-  };
 }
 
 export function pixel2Tile(pixel) {
@@ -96,17 +85,13 @@ export function fillContiguousTargetTiles(layerTiles, tileX, tileY, tileId, rang
   recursiveTileFill(layerTiles, tileX, tileY, tileId, range, widthInTiles, tileValue => tileValue === targetValue);
 }
 
+// TODO: JS is not optimized for this level of recursion. Make this NOT recursive.
 export function recursiveTileFill(layerTiles, tileX, tileY, tileId, range, widthInTiles, predicate) {
   const tilePosition = flattenCoord(tileX, tileY, widthInTiles);
 
   if (!predicate(layerTiles[tilePosition]) || !tileInRange(tileX, tileY, range)) {
     return;
   }
-  /*
-  if (typeof layerTiles[tilePosition] !== 'undefined' || !tileInRange(tileX, tileY, range)) {
-    return;
-  }
-  */
 
   layerTiles[tilePosition] = tileId;
 

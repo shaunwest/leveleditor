@@ -3,7 +3,7 @@
  */
 
 import 'isomorphic-fetch';
-import getImage from '../lib/image-loader.js';
+import getImage from '../../lib/image-loader.js';
 import { processSprites } from '../../lib/sprite-sheet-processor.js';
 
 // Probably should make these immutable Maps...

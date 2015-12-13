@@ -11,10 +11,15 @@ import * as TOOLS from '../../constants/tools.js';
 import { removeTile } from '../../modules/layers/layers-actions.js';
 import { addTile, fillTilesWith, fillTileSelection,
   moveTileSelection, fillContiguousTiles } from '../../modules/layers/layers-update.js';
+import Viewport from '../../lib/viewport.js';
 
 class Layers extends Component {
   constructor(props) {
     super(props);
+
+    this.state = {
+      viewport: Viewport(0, 0, 400, 400)
+    };
   }
 
   triggerSelectorAction(position, selection) {
@@ -72,7 +77,6 @@ class Layers extends Component {
     }
   }
 
-
   componentWillReceiveProps(nextProps) {
     const { layers } = this.props,
       activeLayerIndex = nextProps.activeLayerIndex;
@@ -88,6 +92,7 @@ class Layers extends Component {
     const activeLayer = layers.get(this.props.activeLayerIndex);
     const width = (activeLayer) ? activeLayer.get('width') : 400;
     const height = (activeLayer) ? activeLayer.get('height') : 400;
+    const viewport = this.state.viewport;
 
     return (
       <div>
@@ -102,6 +107,7 @@ class Layers extends Component {
                     layer={ layer }
                     tileImages={ tileImages }
                     tileData={ tileData }
+                    viewport={ viewport }
                   />
                 </li>
               );
