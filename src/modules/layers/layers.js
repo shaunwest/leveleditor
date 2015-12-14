@@ -5,30 +5,37 @@
 import { Map, List } from 'immutable';
 import { SELECT_LAYER, TOGGLE_LAYER, ADD_TILE,
   REMOVE_TILE, FILL_TILES, UPDATE_TILE, UPDATE_TILES } from './layers-actions.js';
-import { SELECT_LEVEL } from '../levels/levels-actions.js';
+import { INIT_LAYERS } from '../levels/levels-actions.js';
 import layer from './layer.js';
+import { create, populate } from '../../lib/rendering-grid.js';
 
 export default function layers(state = Map({
-  items: List(),
-  activeLayerIndex: 0
+  items: Map()
 }), action = {}) {
-  const activeIndex = state.get('activeLayerIndex');
-
   switch (action.type) {
-    case SELECT_LEVEL:
+    case INIT_LAYERS:
       return state.merge({
-        items: action.level.layers.map(layer => {
+        /*items: action.level.layers.map(layer => {
           layer.visible = true;
           return layer;
-        }),
-        activeLayerIndex: 0
+        }),*/
+        items: action.layers.reduce((acc, data) => {
+          acc[data.id] = layer(Map({
+            visible: true,
+            id: data.id,
+            width: data.width,
+            height: data.height,
+            tiles: [] // needed?
+          }));
+          return acc;
+        }, {})
       });
     case SELECT_LAYER:
-      return state.set('activeLayerIndex', action.index);
+      return state.set('activeLayerId', action.layerId);
     case TOGGLE_LAYER:
       return state.mergeIn(
-        ['items', action.index],
-        layer(state.getIn(['items', action.index]), action)
+        ['items', action.layerId],
+        layer(state.getIn(['items', action.layerId]), action)
       );
     case ADD_TILE:
     case REMOVE_TILE:
@@ -36,9 +43,16 @@ export default function layers(state = Map({
     case UPDATE_TILES:
     case UPDATE_TILE:
       return state.mergeIn(
+        ['items', action.layerId],
+        layer(state.getIn(['items', action.layerId]), action)
+      );
+    /*
+    case UPDATE_TILE:
+      return state.mergeIn(
         ['items', activeIndex],
         layer(state.getIn(['items', activeIndex]), action)
       );
+    */
     default:
       return state;
   }

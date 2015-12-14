@@ -3,8 +3,9 @@
  */
 
 import { requestLevels, receiveLevels, receiveLevelsError,
-  requestLevel, receiveLevel, receiveLevelError, selectLevel } from './levels-actions.js';
-
+  requestLevel, receiveLevel, receiveLevelError,
+  initLayers, initLayer } from './levels-actions.js';
+import { updateTiles, selectLayer } from '../layers/layers-actions.js';
 import 'isomorphic-fetch';
 
 export function fetchAll(src) {
@@ -49,6 +50,17 @@ export function fetchLevel(src) {
         json => dispatch(receiveLevel(src, json)),
         json => dispatch(receiveLevelError(src, json))
       );
+  };
+}
+
+export function selectLevel(level) {
+  return dispatch => {
+    dispatch(initLayers(level.layers));
+    level.layers.forEach((layer) => {
+      //dispatch(initLayer(layer));
+      dispatch(updateTiles(layer.id, layer.tiles));
+    });
+    return dispatch(selectLayer('background'));
   };
 }
 

@@ -5,7 +5,6 @@
 import { Map } from 'immutable';
 import { SELECT_LAYER, TOGGLE_LAYER, ADD_TILE,
   REMOVE_TILE, FILL_TILES, UPDATE_TILES, UPDATE_TILE } from './layers-actions.js';
-import { SELECT_LEVEL } from '../levels/levels-actions.js';
 
 export default function layer(state = Map({
   tiles: []

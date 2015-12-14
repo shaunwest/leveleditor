@@ -7,14 +7,14 @@ import React, { Component } from 'react';
 export default class LayerSelect extends Component {
   render() {
     const layers = this.props.layers,
-      activeLayerIndex = this.props.activeLayerIndex;
+      activeLayerId = this.props.activeLayerId;
 
     return (
       <ul>
       { 
         layers
           .map((layer, index) => {
-            const isActive = !!(index === activeLayerIndex);
+            const isActive = !!(index === activeLayerId);
             return (
               <li key={ layer.get('id') }>
                 { layer.get('label') }

@@ -11,25 +11,29 @@ import { rect, rectContainsPoint } from  '../../lib/geom.js';
 function getActiveLayer(layers) {
   return layers
     .get('items')
-    .get(layers.get('activeLayerIndex'));
+    .get(layers.get('activeLayerId'));
 }
 
 export function fillTilesWith(tileId, emptyOnly = false) {
   return (dispatch, getState) => {
-    const newTiles = getActiveLayer(getState().get('layers')).get('tiles').toArray();
+    const activeLayer = getActiveLayer(getState().get('layers'));
+    const newTiles = activeLayer.get('tiles').toArray();
+    const layerId = activeLayer.get('id');
 
     fillAllTiles(newTiles, tileId, emptyOnly);
 
-    return dispatch(fillTiles(newTiles));
+    return dispatch(fillTiles(layerId, newTiles));
   };
 }
 
 export function addTile(position, tileId, selection) {
   return (dispatch, getState) => {
-    const layerWidth = getActiveLayer(getState().get('layers')).get('width');
+    const activeLayer = getActiveLayer(getState().get('layers'));
+    const layerWidth = activeLayer.get('width');
+    const layerId = activeLayer.get('id');
 
     if (!selection || rectContainsPoint(position, selection)) {
-      return dispatch(updateTile(getTilePosition(position.x, position.y, layerWidth), tileId));
+      return dispatch(updateTile(layerId, getTilePosition(position.x, position.y, layerWidth), tileId));
     }
   }
 }
@@ -50,10 +54,11 @@ export function pasteTileSelection(tiles, toSelection) {
     const activeLayer = getActiveLayer(getState().get('layers'));
     const layerTiles = activeLayer.get('tiles').toArray();
     const layerWidth = activeLayer.get('width');
+    const layerId = activeLayer.get('id');
     const toSelectionInTiles = pixelRect2TileRect(toSelection);
 
     setTileRegion(tiles, toSelectionInTiles, layerTiles, pixel2Tile(layerWidth));
-    return dispatch(updateTiles(layerTiles));
+    return dispatch(updateTiles(layerId, layerTiles));
   };
 }
 
@@ -82,6 +87,7 @@ export function fillContiguousTiles(position, tileId, fillTarget = false, select
   return (dispatch, getState) => {
     const activeLayer = getActiveLayer(getState().get('layers'));
     const layerTiles = activeLayer.get('tiles').toArray();
+    const layerId = activeLayer.get('id');
     const range = (selection) ?
       pixelRect2TileRect(selection) : 
       pixelRect2TileRect(rect(0, 0, activeLayer.get('width'), activeLayer.get('height')));
@@ -96,7 +102,7 @@ export function fillContiguousTiles(position, tileId, fillTarget = false, select
       fillContiguousEmptyTiles(layerTiles, tileX, tileY, tileId, range, widthInTiles);
     }
 
-    return dispatch(updateTiles(layerTiles));
+    return dispatch(updateTiles(layerId, layerTiles));
   };
 }
 
@@ -106,6 +112,7 @@ export function fillTileSelection(selection, tileId, emptyOnly = false) {
     const activeLayer = getActiveLayer(getState().get('layers'));
     const layerTiles = activeLayer.get('tiles').toArray();
     const layerWidth = activeLayer.get('width');
+    const layerId = activeLayer.get('id');
 
     if (selection) {
       for (let x = selection.x; x < selection.x + selection.width; x++) {
@@ -118,6 +125,6 @@ export function fillTileSelection(selection, tileId, emptyOnly = false) {
       }
     }
 
-    return dispatch(updateTiles(layerTiles));
+    return dispatch(updateTiles(layerId, layerTiles));
   }
 }

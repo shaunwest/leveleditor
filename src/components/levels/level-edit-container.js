@@ -62,11 +62,11 @@ class LevelEditContainer extends Component {
 
         <LayerSelect 
           layers={ layers.get('items') }
-          activeLayerIndex={ layers.get('activeLayerIndex') }
+          activeLayerId={ layers.get('activeLayerId') }
           onToggle={ this.onLayerToggle.bind(this) }
           onSelect={ this.onLayerSelect.bind(this) }/>
 
-        <LayersContainer activeLayerIndex={ layers.get('activeLayerIndex') } />
+        <LayersContainer activeLayerId={ layers.get('activeLayerId') } />
 
         <h3>Tools</h3>
 

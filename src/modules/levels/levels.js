@@ -4,7 +4,7 @@
 
 import { Map } from 'immutable';
 import {
-  REQUEST_LEVELS, RECEIVE_LEVELS, SELECT_LEVEL,
+  REQUEST_LEVELS, RECEIVE_LEVELS,
   REQUEST_LEVEL, RECEIVE_LEVEL, RECEIVE_LEVEL_ERROR
   } from './levels-actions.js';
 

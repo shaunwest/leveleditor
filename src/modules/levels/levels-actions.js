@@ -36,12 +36,12 @@ export function receiveLevelsError(src, json) {
 
 // LEVEL
 
-export const SELECT_LEVEL = 'SELECT_LEVEL';
+export const INIT_LAYERS = 'INIT_LAYERS';
 
-export function selectLevel(level) {
+export function initLayers(layers) {
   return {
-    type: SELECT_LEVEL,
-    level
+    type: INIT_LAYERS,
+    layers
   };
 }
 

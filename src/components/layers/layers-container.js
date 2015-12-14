@@ -79,9 +79,9 @@ class Layers extends Component {
 
   componentWillReceiveProps(nextProps) {
     const { layers } = this.props,
-      activeLayerIndex = nextProps.activeLayerIndex;
+      activeLayerId = nextProps.activeLayerId;
 
-    this.setState({ activeLayer: layers.get(activeLayerIndex) });
+    this.setState({ activeLayer: layers.get(activeLayerId) });
   }
 
   render() {
@@ -89,7 +89,7 @@ class Layers extends Component {
     const tileImages = currentTileSet.get('tileImages');
     const tiles = currentTileSet.get('tiles');
     const tileData = (tiles && tiles.size) ? tiles.toJS() : null;
-    const activeLayer = layers.get(this.props.activeLayerIndex);
+    const activeLayer = layers.get(this.props.activeLayerId);
     const width = (activeLayer) ? activeLayer.get('width') : 400;
     const height = (activeLayer) ? activeLayer.get('height') : 400;
     const viewport = this.state.viewport;
