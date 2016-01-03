@@ -4,13 +4,15 @@
 
 import { flattenCoord } from './geom.js';
 
+const DEFAULT_CELL_SIZE = 128;
+
 function pixel2Cell(pixel, cellSize) {
   return Math.floor(pixel / cellSize);
 }
 
-export function create(width, height) {
+export function create(width, height, cellSize = DEFAULT_CELL_SIZE) {
   const grid = [];
-  const size = width * height;
+  const size = pixel2Cell(width, cellSize) * pixel2Cell(height, cellSize);
 
   for (let i = 0; i < size; i++) {
     grid[i] = undefined;
@@ -19,7 +21,7 @@ export function create(width, height) {
   return grid;
 }
 
-export function populate(grid, items = [], cellSize = 128, gridWidth) {
+export function populate(grid, items = [], cellSize = DEFAULT_CELL_SIZE, gridWidth) {
   const numItems = items.length;
 
   for (let i = 0; i < numItems; i++) {

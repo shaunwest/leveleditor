@@ -108,20 +108,21 @@ class Layers extends Component {
                     tileImages={ tileImages }
                     tileData={ tileData }
                     viewport={ viewport }
+                    renderLoop={ this.props.renderLoop }
                   />
                 </li>
               );
             })
             .valueSeq()
         }
-        <InputLayer
-          ref="inputLayer"
-          width={ width }
-          height={ height }
-          selectedToolId={ tools.get('selectedId') }
-          onSelectorAction={ this.triggerSelectorAction.bind(this) }
-          onPointerAction={ this.triggerPointerAction.bind(this) }
-        />
+          <InputLayer
+            ref="inputLayer"
+            width={ width }
+            height={ height }
+            selectedToolId={ tools.get('selectedId') }
+            onSelectorAction={ this.triggerSelectorAction.bind(this) }
+            onPointerAction={ this.triggerPointerAction.bind(this) }
+          />
         </ul>
       </div>
     );

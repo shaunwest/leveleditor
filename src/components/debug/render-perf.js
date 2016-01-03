@@ -3,7 +3,7 @@
  */
 
 import React, { Component } from 'react';
-import { CONTINUE_RENDERING } from '../../lib/frame.js';
+import { CONTINUE_RENDERING } from '../../lib/looper.js';
 
 export default class RenderPerf extends Component {
   render() {

@@ -12,8 +12,7 @@ import { drawRect } from '../../lib/draw.js';
 import { clone } from '../../lib/obj.js';
 import * as TOOLS from '../../constants/tools.js';
 
-const CONTINUE = true,
-  POINTER_COLOR = 'rgb(255, 0, 0)',
+const POINTER_COLOR = 'rgb(255, 0, 0)',
   POINTER_WIDTH = 16,
   POINTER_HEIGHT = 16,
   SELECTED_COLOR = 'rgb(0, 0, 255)',
@@ -45,7 +44,7 @@ export default class InputLayer extends Component {
   componentDidMount() {
     const props = this.props,
       state = this.state,
-      _RENDER_LOOP = Looper('inputLayer'),
+      renderLoop = Looper('inputLayer'),
       context = this.refs.canvas.getContext('2d');
 
     const inputer = new Inputer(this.refs.canvas);
@@ -135,7 +134,7 @@ export default class InputLayer extends Component {
         }
       });
 
-    _RENDER_LOOP((elapsed, fps) => {
+    renderLoop((elapsed, fps) => {
       context.clearRect(0, 0, this.props.width, this.props.height);
 
       if (this.state.pointer && inputer.isActive() && POINTER_TOOLS.findIndex(toolName => toolName === this.props.selectedToolId) !== -1) {
@@ -149,8 +148,6 @@ export default class InputLayer extends Component {
       if (this.state.tempSelector) {
         drawRect(context, this.state.tempSelector, TEMP_SELECTOR_COLOR);
       }      
-
-      return CONTINUE;
     });
   }
 

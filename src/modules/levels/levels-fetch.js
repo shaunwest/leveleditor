@@ -56,10 +56,11 @@ export function fetchLevel(src) {
 export function selectLevel(level) {
   return dispatch => {
     dispatch(initLayers(level.layers));
+
     level.layers.forEach((layer) => {
-      //dispatch(initLayer(layer));
-      dispatch(updateTiles(layer.id, layer.tiles));
+      dispatch(updateTiles(layer.id, layer.sprites));
     });
+    // FIXME: don't assume background
     return dispatch(selectLayer('background'));
   };
 }

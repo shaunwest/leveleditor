@@ -20,7 +20,15 @@ if (argv.w)  {
   options.packageCache = {};
   b = browserify(SOURCE_FILE, options);
   w = watchify(b);
-  w.bundle().on('data', function () {})
+
+  w.bundle()
+    .on('data', function (data) {
+      console.log(data);
+    })
+    .on('error', function (error) {
+      console.log(error);
+    })
+
   w.on('update', function () {
     console.log('UPDATE');
     makeJS(w);

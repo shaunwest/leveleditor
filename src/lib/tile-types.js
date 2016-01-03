@@ -1,3 +1,5 @@
+// TODO: rename to sequenceTypes
+
 
 export function basic(tileSequence, targetFps, frameCount) {
   const basicSequence = tileSequence.frames.basic;

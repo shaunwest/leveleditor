@@ -7,21 +7,21 @@ import { SELECT_LAYER, TOGGLE_LAYER, ADD_TILE,
   REMOVE_TILE, FILL_TILES, UPDATE_TILES, UPDATE_TILE } from './layers-actions.js';
 
 export default function layer(state = Map({
-  tiles: []
+  sprites: [],
+  grid: []
 }), action = {}) {
   switch (action.type) {
     case TOGGLE_LAYER:
       return state.set('visible', action.visible);
     case ADD_TILE:
-      return state.setIn(['tiles', action.index], action.id);
+      return state.setIn(['sprites', action.index], action.id);
     case REMOVE_TILE:
-      return state.setIn(['tiles', action.index], undefined);
-    case FILL_TILES:
-      return state.merge({tiles: action.tiles});
+      return state.setIn(['sprites', action.index], undefined);
     case UPDATE_TILE:
-      return state.setIn(['tiles', action.index], action.tileId);
+      return state.setIn(['sprites', action.index], action.tileId);
+    case FILL_TILES:
     case UPDATE_TILES:
-      return state.merge({tiles: action.tiles});
+      return state.merge({sprites: action.sprites});
     default:
       return state;
   }

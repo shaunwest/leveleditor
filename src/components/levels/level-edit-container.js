@@ -16,12 +16,15 @@ import { selectTileSheet, selectTile, fetchAll as fetchAllTileSheets } from '../
 import { selectedTool } from '../../modules/tools/select-tools.js';
 import { selectLayer, toggleLayer } from '../../modules/layers/layers-actions.js';
 
+import Looper, { TARGET_FPS } from '../../lib/looper.js';
+
 class LevelEditContainer extends Component {
   componentDidMount() {
     const { dispatch, levels } = this.props,
       levelId = levels.get('currentLevelId');
 
     this.dispatch = dispatch;
+    this.renderLoop = Looper();
 
     dispatch(fetchAndSelectLevel(levelId));
     dispatch(fetchAllTileSheets('/data/tile-sheets.json'));
@@ -66,7 +69,9 @@ class LevelEditContainer extends Component {
           onToggle={ this.onLayerToggle.bind(this) }
           onSelect={ this.onLayerSelect.bind(this) }/>
 
-        <LayersContainer activeLayerId={ layers.get('activeLayerId') } />
+        <LayersContainer
+          activeLayerId={ layers.get('activeLayerId') } 
+          renderLoop={ this.renderLoop } />
 
         <h3>Tools</h3>
 

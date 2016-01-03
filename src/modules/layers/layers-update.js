@@ -17,7 +17,7 @@ function getActiveLayer(layers) {
 export function fillTilesWith(tileId, emptyOnly = false) {
   return (dispatch, getState) => {
     const activeLayer = getActiveLayer(getState().get('layers'));
-    const newTiles = activeLayer.get('tiles').toArray();
+    const newTiles = activeLayer.get('sprites').toArray();
     const layerId = activeLayer.get('id');
 
     fillAllTiles(newTiles, tileId, emptyOnly);
@@ -41,7 +41,7 @@ export function addTile(position, tileId, selection) {
 export function copyTileSelection(fromSelection) {
   return (dispatch, getState) => {
     const activeLayer = getActiveLayer(getState().get('layers'));
-    const layerTiles = activeLayer.get('tiles').toArray();
+    const layerTiles = activeLayer.get('sprites').toArray();
     const layerWidth = activeLayer.get('width');
     const fromSelectionInTiles = pixelRect2TileRect(fromSelection);
 
@@ -52,7 +52,7 @@ export function copyTileSelection(fromSelection) {
 export function pasteTileSelection(tiles, toSelection) {
   return (dispatch, getState) => {
     const activeLayer = getActiveLayer(getState().get('layers'));
-    const layerTiles = activeLayer.get('tiles').toArray();
+    const layerTiles = activeLayer.get('sprites').toArray();
     const layerWidth = activeLayer.get('width');
     const layerId = activeLayer.get('id');
     const toSelectionInTiles = pixelRect2TileRect(toSelection);
@@ -65,7 +65,7 @@ export function pasteTileSelection(tiles, toSelection) {
 export function moveTileSelection(fromPosition, toSelection) {
   return (dispatch, getState) => {
     const activeLayer = getActiveLayer(getState().get('layers'));
-    const layerTiles = activeLayer.get('tiles').toArray();
+    const layerTiles = activeLayer.get('sprites').toArray();
     const layerWidth = activeLayer.get('width');
     const fromSelection = rect(
       fromPosition.x,
@@ -86,7 +86,7 @@ export function moveTileSelection(fromPosition, toSelection) {
 export function fillContiguousTiles(position, tileId, fillTarget = false, selection = undefined) {
   return (dispatch, getState) => {
     const activeLayer = getActiveLayer(getState().get('layers'));
-    const layerTiles = activeLayer.get('tiles').toArray();
+    const layerTiles = activeLayer.get('sprites').toArray();
     const layerId = activeLayer.get('id');
     const range = (selection) ?
       pixelRect2TileRect(selection) : 
@@ -110,7 +110,7 @@ export function fillContiguousTiles(position, tileId, fillTarget = false, select
 export function fillTileSelection(selection, tileId, emptyOnly = false) {
   return (dispatch, getState) => {
     const activeLayer = getActiveLayer(getState().get('layers'));
-    const layerTiles = activeLayer.get('tiles').toArray();
+    const layerTiles = activeLayer.get('sprites').toArray();
     const layerWidth = activeLayer.get('width');
     const layerId = activeLayer.get('id');
 

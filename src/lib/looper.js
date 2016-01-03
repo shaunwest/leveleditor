@@ -18,7 +18,7 @@ export default function Looper() {
 
   function loop() {
     let i = 0;
-    // TODO: for perf don't use new
+    // FIXME: for perf don't use new
     const now = +new Date();
     const numCallbacks = callbacks.length;
     // FIXME: if the loop is suspended, totalElapsed will
@@ -29,8 +29,9 @@ export default function Looper() {
 
     while (i++ < numCallbacks) {
       const callback = callbacks.shift();
-      if (callback(fps, elapsed, vFrameCount, aFrameCount)) {
-        callbacks.push(callback);  
+      const result = callback(fps, elapsed, vFrameCount, aFrameCount);
+      if (typeof result === 'undefined') {
+        callbacks.push(callback);
       }
     }
 
@@ -47,7 +48,7 @@ export default function Looper() {
     requestAnimationFrame(loop);
   }
 
-  function create(cb) {
+  return function create(cb) {
     if (!cb) {
       callbacks.length = 0;
       return create;
@@ -60,7 +61,5 @@ export default function Looper() {
     }
 
     return create;
-  }
-
-  return create;
+  };
 }

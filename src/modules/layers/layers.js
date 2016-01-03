@@ -7,7 +7,7 @@ import { SELECT_LAYER, TOGGLE_LAYER, ADD_TILE,
   REMOVE_TILE, FILL_TILES, UPDATE_TILE, UPDATE_TILES } from './layers-actions.js';
 import { INIT_LAYERS } from '../levels/levels-actions.js';
 import layer from './layer.js';
-import { create, populate } from '../../lib/rendering-grid.js';
+import { create } from '../../lib/rendering-grid.js';
 
 export default function layers(state = Map({
   items: Map()
@@ -15,17 +15,15 @@ export default function layers(state = Map({
   switch (action.type) {
     case INIT_LAYERS:
       return state.merge({
-        /*items: action.level.layers.map(layer => {
-          layer.visible = true;
-          return layer;
-        }),*/
         items: action.layers.reduce((acc, data) => {
           acc[data.id] = layer(Map({
             visible: true,
             id: data.id,
             width: data.width,
             height: data.height,
-            tiles: [] // needed?
+            tileSize: data.tileSize,
+            renderMode: data.renderMode,
+            grid: create(data.width, data.height)
           }));
           return acc;
         }, {})
@@ -46,13 +44,6 @@ export default function layers(state = Map({
         ['items', action.layerId],
         layer(state.getIn(['items', action.layerId]), action)
       );
-    /*
-    case UPDATE_TILE:
-      return state.mergeIn(
-        ['items', activeIndex],
-        layer(state.getIn(['items', activeIndex]), action)
-      );
-    */
     default:
       return state;
   }

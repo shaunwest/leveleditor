@@ -24,21 +24,21 @@ export function removeTile(layerId, index, selection) {
 
 export const FILL_TILES = 'FILL_TILES';
 
-export function fillTiles(layerId, tiles, selection) {
+export function fillTiles(layerId, sprites, selection) {
   return {
     type: FILL_TILES,
     layerId,
-    tiles,
+    sprites,
     selection
   };
 }
 
 export const UPDATE_TILES = 'UPDATE_TILES';
-export function updateTiles(layerId, tiles) {
+export function updateTiles(layerId, sprites) {
   return {
     type: UPDATE_TILES,
     layerId,
-    tiles
+    sprites
   };
 }
 
