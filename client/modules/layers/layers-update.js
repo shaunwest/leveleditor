@@ -35,7 +35,7 @@ export function addTile(position, tileId, selection) {
     if (!selection || rectContainsPoint(position, selection)) {
       return dispatch(updateTile(layerId, getTilePosition(position.x, position.y, layerWidth), tileId));
     }
-  }
+  };
 }
 
 export function copyTileSelection(fromSelection) {
@@ -126,5 +126,5 @@ export function fillTileSelection(selection, tileId, emptyOnly = false) {
     }
 
     return dispatch(updateTiles(layerId, layerTiles));
-  }
+  };
 }

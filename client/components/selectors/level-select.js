@@ -3,6 +3,7 @@
  */
 
 import React, { Component, PropTypes } from 'react';
+import { IMG_PATH } from '../../paths.js';
 
 // TODO: fetching?
 
@@ -15,7 +16,7 @@ export default class LevelSelect extends Component {
       {
         levels
           .map((level, levelId) => {
-            const thumbnail = '/img/' + level.get('thumbnail');
+            const thumbnail = IMG_PATH + level.get('thumbnail');
 
             return (
               <li key={ levelId }>

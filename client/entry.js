@@ -2,6 +2,8 @@
  * Created by shaunwest on 8/19/15.
  */
 
+import './styles/main.scss';
+
 import store from './store.js';
 
 import { initRouting } from './modules/routes/routes-handle.js';

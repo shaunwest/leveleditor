@@ -3,6 +3,7 @@
  */
 
 import React, { Component } from 'react';
+import { DATA_PATH } from '../../paths.js';
 
 export default class TileSheetSelect extends Component {
   render() {
@@ -12,7 +13,7 @@ export default class TileSheetSelect extends Component {
       {
         tileSheets
           .map((tileSheet, key) => {
-            const thumbnail = '/data/assets/' + tileSheet.get('thumbnail');
+            const thumbnail = DATA_PATH + 'assets/' + tileSheet.get('thumbnail');
             if (tileSheet.get('isFetching')) {
               return (<li key={ key }>...</li>);
             }

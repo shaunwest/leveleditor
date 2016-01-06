@@ -1,0 +1,69 @@
+
+html, body {
+  font-family: "Helvetica Neue", Helvetica, Arial, sans-serif;
+}
+
+.thumbnail {
+  width: 64px;
+  height: 64px;
+}
+
+.levelSelectOption {
+  width: 200px;
+  height: 67px;
+  background: lightgrey;
+  padding: 5px 5px;
+}
+
+.layersContainer {
+  position: relative;
+  width: 400px;
+  height: 400px;
+  margin: 0;
+  padding: 0;
+}
+
+.layer {
+  position: absolute;
+  top: 0;
+  left: 0;
+  width: 400px;
+  height: 400px;
+}
+
+.layerContainer {
+  position: absolute;
+  top: 0;
+  left: 0;
+}
+
+.layerCanvas, .inputLayerCanvas {
+  position: absolute;
+}
+
+.inputLayerCanvas {
+  border: 1px solid black;
+  //cursor: none;
+
+  &.resize {
+    cursor: col-resize;
+  }
+}
+
+.perf {
+  font-family: courier;
+}
+
+/*
+.labelColumn {
+  float: left;
+  width: 100px;
+  text-align: right;
+}
+
+.valueColumn {
+  text-align: left;
+  width: 150px;
+}
+*/
+

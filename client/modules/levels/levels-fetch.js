@@ -2,6 +2,7 @@
  * Created by shaunwest on 8/23/15.
  */
 
+import { DATA_PATH } from '../../paths.js';
 import { requestLevels, receiveLevels, receiveLevelsError,
   requestLevel, receiveLevel, receiveLevelError,
   initLayers, initLayer } from './levels-actions.js';
@@ -20,7 +21,7 @@ export function fetchAll(src) {
             dispatch(fetchLevel(src));
           });
       });
-  }
+  };
 }
 
 export function fetchLevels(src) {
@@ -41,7 +42,7 @@ export function fetchLevels(src) {
 export function fetchLevel(src) {
   return dispatch => {
     dispatch(requestLevel(src));
-    return fetch('/data/' + src + '.json')
+    return fetch(DATA_PATH + src + '.json')
       .then(
         response => response.json(),
         response => response.text()

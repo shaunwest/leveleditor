@@ -5,6 +5,8 @@
 import React, { Component, PropTypes } from 'react';
 import { connect } from 'react-redux';
 
+import { DATA_PATH } from '../../paths.js';
+
 import LayerSelect from '../selectors/layer-select.js';
 import ToolSelect from '../selectors/tool-select.js';
 import TileSheetSelect from '../selectors/tile-sheet-select.js';
@@ -27,7 +29,7 @@ class LevelEditContainer extends Component {
     this.renderLoop = Looper();
 
     dispatch(fetchAndSelectLevel(levelId));
-    dispatch(fetchAllTileSheets('/data/tile-sheets.json'));
+    dispatch(fetchAllTileSheets(DATA_PATH + '/tile-sheets.json'));
   }
 
   onToolSelect(toolId) {

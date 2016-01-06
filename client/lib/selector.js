@@ -16,7 +16,7 @@ export function Selector() {
       snap(newPointerPos.x - oldPointerPos.x),
       snap(newPointerPos.y - oldPointerPos.y)
     );
-  }
+  };
 }
 
 export function MoveableSelector() {
@@ -27,7 +27,7 @@ export function MoveableSelector() {
       oldSelector.width,
       oldSelector.height
     );
-  }
+  };
 }
 
 export function ResizableSelector() {
@@ -64,7 +64,7 @@ export function ResizableSelector() {
       default:
         return oldSelector;
     }
-  }
+  };
 }
 
 function rectContains(rect, point) {

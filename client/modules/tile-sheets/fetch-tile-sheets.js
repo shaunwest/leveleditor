@@ -3,6 +3,7 @@
  */
 
 import 'isomorphic-fetch';
+import { DATA_PATH } from '../../paths.js';
 import getImage from '../../lib/image-loader.js';
 import { processSprites } from '../../lib/sprite-sheet-processor.js';
 
@@ -81,7 +82,7 @@ export function requestTileSheetImage(src, imageSrc) {
     type: REQUEST_TILE_SHEET_IMAGE,
     src,
     imageSrc
-  }
+  };
 }
 
 export const RECEIVE_TILE_SHEET_IMAGE = 'RECEIVE_TILE_SHEET_IMAGE';
@@ -93,7 +94,7 @@ export function receiveTileSheetImage(src, imageSrc, image) {
     imageSrc,
     image,
     receivedAt: Date.now()
-  }
+  };
 }
 
 export const RECEIVE_TILE_SHEET_IMAGE_ERROR = 'RECEIVE_TILE_SHEET_IMAGE_ERROR';
@@ -102,7 +103,7 @@ export function receiveTileSheetImageError(src) {
   return {
     type: RECEIVE_TILE_SHEET_IMAGE_ERROR,
     src
-  }
+  };
 }
 
 export const MADE_TILES = 'MADE_TILES';
@@ -197,7 +198,7 @@ export function fetchTileSheets(src) {
 export function fetchTileSheet(src) {
   return dispatch => {
     dispatch(requestTileSheet(src));
-    return fetch('/data/' + src + '.json')
+    return fetch(DATA_PATH + src + '.json')
       .then(
         response => response.json(),
         response => response.json()
@@ -209,14 +210,14 @@ export function fetchTileSheet(src) {
           dispatch(receiveTileSheetError(src, json));
           return Promise.reject(json);
         }
-      )
+      );
   };
 }
 
 export function fetchTileSheetImage(src, imageSrc) {
   return dispatch => {
     dispatch(requestTileSheetImage(src, imageSrc));
-    return getImage('/data/assets/' + imageSrc)
+    return getImage(DATA_PATH + 'assets/' + imageSrc)
       .then(
         image => dispatch(receiveTileSheetImage(src, imageSrc, image)),
         error => {

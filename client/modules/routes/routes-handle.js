@@ -23,7 +23,7 @@ export function initRouting(routes) {
     });
 
     page();
-  }
+  };
 }
 
 export function navigateTo(path) {
