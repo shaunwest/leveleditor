@@ -19,7 +19,7 @@ objectAssign(env, {
 module.exports = {
   target: 'web',
 
-  entry: './client/entry.js',
+  entry: './client/src/entry.js',
 
   output: {
     path: path.join(process.cwd(), '/client'),
