@@ -2,20 +2,12 @@
  * Created by shaunwest on 8/23/15.
  */
 
-import { loadLayer } from '../reducers/active-layer-actions.js';
 //import { fillTiles, updateTile, updateTiles } from '../reducers/layers-actions.js';
 import { fillTiles, updateTile, updateTiles } from '../reducers/tiled-layouts-actions.js';
 import { getTilePosition, pixel2Tile, getTileRegion,
   setTileRegion, tileRegionIsEmpty, pixelRect2TileRect,
   fillAllTiles, fillContiguousEmptyTiles, fillContiguousTargetTiles } from '../lib/tile-tools.js';
 import { rect, rectContainsPoint } from  '../lib/geom.js';
-
-export function getLayer(layerId) {
-  return (dispatch, getState) => {
-    const layer = getState().get('layers').get(layerId);
-    return dispatch(loadLayer(layer));
-  };
-}
 
 /* no longer used
 function getActiveLayer(layers) {

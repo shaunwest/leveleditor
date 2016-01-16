@@ -24,7 +24,8 @@ export default class TileSelect extends Component {
                   type="radio"
                   onChange={ e => this.props.onTileSelect(index) }
                   checked={ this.props.selectedTileId === index }
-                /> <Canvas image={ image } />
+                />
+                <Canvas image={ image } />
               </li>
             );
         })

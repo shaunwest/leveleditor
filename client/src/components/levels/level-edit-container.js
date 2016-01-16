@@ -13,8 +13,7 @@ import TileSheetSelect from '../selectors/tile-sheet-select.js';
 import TileSelect from '../selectors/tile-select.js';
 import LayersContainer from '../layers/layers-container.js';
 
-import { fetchLevel, fetchAndSelectLevel } from '../../dispatchers/levels.js';
-import { getLayer } from '../../dispatchers/layers.js';
+import { fetchAndSelectLevel } from '../../dispatchers/levels.js';
 
 import { selectTileSheet, selectTile, fetchAll as fetchAllTileSheets } from '../../reducers/tile-sheets-actions.js';
 import { selectedTool } from '../../reducers/tools-actions.js';
@@ -49,7 +48,6 @@ class LevelEditContainer extends Component {
 
   onLayerSelect(layerIndex) {
     this.dispatch(selectLayer(layerIndex));
-    this.dispatch(getLayer(layerIndex));
   }
 
   onLayerToggle(on, layerIndex) {
@@ -88,7 +86,7 @@ class LevelEditContainer extends Component {
         <TileSheetSelect
           onTileSheetSelect={ this.onTileSheetSelect.bind(this) }
           tileSheets={ tileSheets.get('items') }
-          selectedTileSheetId= { currentTileSet.get('id') } />
+          selectedTileSheetId={ currentTileSet.get('id') } />
 
         <TileSelect
           onTileSelect={ this.onTileSelect.bind(this) }
