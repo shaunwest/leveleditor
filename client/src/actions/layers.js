@@ -1,31 +1,71 @@
 /**
- * Created by shaunwest on 8/23/15.
+ * Created by shaunwest on 1/16/16.
  */
 
-//import { fillTiles, updateTile, updateTiles } from '../reducers/layers-actions.js';
-import { fillTiles, updateTile, updateTiles } from '../reducers/tiled-layouts-actions.js';
 import { getTilePosition, pixel2Tile, getTileRegion,
   setTileRegion, tileRegionIsEmpty, pixelRect2TileRect,
   fillAllTiles, fillContiguousEmptyTiles, fillContiguousTargetTiles } from '../lib/tile-tools.js';
 import { rect, rectContainsPoint } from  '../lib/geom.js';
 
-/* no longer used
-function getActiveLayer(layers) {
-  return layers
-    .get(layers.get('activeLayerId'));
+export const UPDATE_TILES = 'UPDATE_TILES';
+export function updateTiles(layerId, tiles) {
+  return {
+    type: UPDATE_TILES,
+    layerId,
+    tiles
+  };
 }
-*/
+
+export const ADD_TILE = 'ADD_TILE';
+export function addTile(layerId, tileIndex, tileId, selection) {
+  return {
+    type: ADD_TILE,
+    layerId,
+    tileIndex,
+    tileId,
+    selection
+  };
+}
+
+export const REMOVE_TILE = 'REMOVE_TILE';
+export function removeTile(layerId, tileIndex, selection) {
+  return {
+    type: REMOVE_TILE,
+    layerId,
+    tileIndex,  
+    selection
+  };
+}
+
+export const FILL_TILES = 'FILL_TILES';
+export function fillTiles(layerId, layout, selection) {
+  return {
+    type: FILL_TILES,
+    layerId,
+    layout,
+    selection
+  };
+}
+
+export const UPDATE_TILE = 'UPDATE_TILE';
+export function updateTile(layerId, tileIndex, tileId) {
+  return {
+    type: UPDATE_TILE,
+    layerId,
+    tileIndex,
+    tileId
+  };
+}
 
 export function fillTilesWith(tileId, emptyOnly = false) {
   return (dispatch, getState) => {
     const state = getState();
     const layerId = state.get('filters').get('activeLayerId');
-    const layoutId = state.get('layers').get(layerId).get('layoutId');
-    const newTiles = state.get('tiledLayouts').get(layoutId).toArray();
+    const newTiles = state.get('layers').get(layerId).get('layout').toArray();
 
     fillAllTiles(newTiles, tileId, emptyOnly);
 
-    return dispatch(fillTiles(layoutId, newTiles));
+    return dispatch(fillTiles(layerId, newTiles));
   };
 }
 
@@ -34,11 +74,10 @@ export function addTile(position, tileId, selection) {
     const state = getState();
     const layerId = state.get('filters').get('activeLayerId');
     const layer = state.get('layers').get(layerId);
-    const layoutId = layer.get('layoutId');
     const layerWidth = layer.get('width');
 
     if (!selection || rectContainsPoint(position, selection)) {
-      return dispatch(updateTile(layoutId, getTilePosition(position.x, position.y, layerWidth), tileId));
+      return dispatch(updateTile(layerId, getTilePosition(position.x, position.y, layerWidth), tileId));
     }
   };
 }
@@ -48,12 +87,11 @@ export function copyTileSelection(fromSelection) {
     const state = getState();
     const layerId = state.get('filters').get('activeLayerId');
     const layer = state.get('layers').get(layerId);
-    const layoutId = layer.get('layoutId');
-    const layerTiles = state.get('tiledLayouts').get(layoutId).toArray();
+    const layout = layer.get('layout').toArray();
     const layerWidth = layer.get('width');
     const fromSelectionInTiles = pixelRect2TileRect(fromSelection);
 
-    return getTileRegion(fromSelectionInTiles, layerTiles, pixel2Tile(layerWidth));
+    return getTileRegion(fromSelectionInTiles, layout, pixel2Tile(layerWidth));
   };
 }
 
@@ -62,13 +100,12 @@ export function pasteTileSelection(tiles, toSelection) {
     const state = getState();
     const layerId = state.get('filters').get('activeLayerId');
     const layer = state.get('layers').get(layerId);
-    const layoutId = layer.get('layoutId');
-    const layerTiles = state.get('tiledLayouts').get(layoutId).toArray();
+    const layout = layer.get('layout').toArray();
     const layerWidth = layer.get('width');
     const toSelectionInTiles = pixelRect2TileRect(toSelection);
 
-    setTileRegion(tiles, toSelectionInTiles, layerTiles, pixel2Tile(layerWidth));
-    return dispatch(updateTiles(layerId, layerTiles));
+    setTileRegion(tiles, toSelectionInTiles, layout, pixel2Tile(layerWidth));
+    return dispatch(updateTiles(layerId, layout));
   };
 }
 
@@ -77,8 +114,6 @@ export function moveTileSelection(fromPosition, toSelection) {
     const state = getState();
     const layerId = state.get('filters').get('activeLayerId');
     const layer = state.get('layers').get(layerId);
-    const layoutId = layer.get('layoutId');
-    const layerTiles = state.get('tiledLayouts').get(layoutId).toArray();
     const layerWidth = layer.get('width');
     const fromSelection = rect(
       fromPosition.x,
@@ -101,8 +136,7 @@ export function fillContiguousTiles(position, tileId, fillTarget = false, select
     const state = getState();
     const layerId = state.get('filters').get('activeLayerId');
     const layer = state.get('layers').get(layerId);
-    const layoutId = layer.get('layoutId');
-    const layerTiles = state.get('tiledLayouts').get(layoutId).toArray();
+    const layout = layer.get('layout').toArray();
     const range = (selection) ?
       pixelRect2TileRect(selection) : 
       pixelRect2TileRect(rect(0, 0, layer.get('width'), layer.get('height')));
@@ -111,13 +145,13 @@ export function fillContiguousTiles(position, tileId, fillTarget = false, select
     const widthInTiles = pixel2Tile(layer.get('width'));
 
     if (fillTarget) {
-      fillContiguousTargetTiles(layerTiles, tileX, tileY, tileId, range, widthInTiles);
+      fillContiguousTargetTiles(layout, tileX, tileY, tileId, range, widthInTiles);
     }
     else {
-      fillContiguousEmptyTiles(layerTiles, tileX, tileY, tileId, range, widthInTiles);
+      fillContiguousEmptyTiles(layout, tileX, tileY, tileId, range, widthInTiles);
     }
 
-    return dispatch(updateTiles(layerId, layerTiles));
+    return dispatch(updateTiles(layerId, layout));
   };
 }
 
@@ -127,21 +161,20 @@ export function fillTileSelection(selection, tileId, emptyOnly = false) {
     const state = getState();
     const layerId = state.get('filters').get('activeLayerId');
     const layer = state.get('layers').get(layerId);
-    const layoutId = layer.get('layoutId');
-    const layerTiles = state.get('tiledLayouts').get(layoutId).toArray();
+    const layout = layer.get('layout').toArray();
     const layerWidth = layer.get('width');
 
     if (selection) {
       for (let x = selection.x; x < selection.x + selection.width; x++) {
         for (let y = selection.y; y < selection.y + selection.height; y++) {
           const layerTilePosition = getTilePosition(x, y, layerWidth);
-          if (!emptyOnly || typeof layerTiles[layerTilePosition] === 'undefined') {
-            layerTiles[layerTilePosition] = tileId;
+          if (!emptyOnly || typeof layout[layerTilePosition] === 'undefined') {
+            layout[layerTilePosition] = tileId;
           }
         }
       }
     }
 
-    return dispatch(updateTiles(layerId, layerTiles));
+    return dispatch(updateTiles(layerId, layout));
   };
 }

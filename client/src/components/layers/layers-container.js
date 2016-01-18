@@ -8,9 +8,8 @@ import LayerToolbar from '../toolbars/layer-toolbar.js';
 import Layer from './layer.js';
 import InputLayer from './input-layer.js';
 import * as TOOLS from '../../constants/tools.js';
-import { removeTile } from '../../reducers/layers-actions.js';
 import { addTile, fillTilesWith, fillTileSelection,
-  moveTileSelection, fillContiguousTiles } from '../../dispatchers/layers.js';
+  moveTileSelection, fillContiguousTiles } from '../../actions/layers.js';
 import Viewport from '../../lib/viewport.js';
 
 class Layers extends Component {
@@ -23,10 +22,10 @@ class Layers extends Component {
   }
 
   triggerSelectorAction(position, selection) {
-    const { dispatch, tools, currentTileSet } = this.props,
-      tileId = currentTileSet.get('currentTileIndex');
+    const { dispatch, filters } = this.props,
+      tileId = filters.get('selectedTileIndex');
 
-    switch (tools.get('selectedId')) {
+    switch (filters.get('selectedToolId')) {
       case TOOLS.ERASER:
         dispatch(fillTileSelection(selection));
         return;
@@ -52,10 +51,10 @@ class Layers extends Component {
   }
 
   triggerPointerAction(position) {
-    const { dispatch, tools, currentTileSet } = this.props,
-      tileId = currentTileSet.get('currentTileIndex');
+    const { dispatch, filters } = this.props,
+      tileId = filters.get('selectedTileIndex');
 
-    switch (tools.get('selectedId')) {
+    switch (filters.get('selectedToolId')) {
       case TOOLS.ERASER:
         dispatch(addTile(position));
         return;
@@ -78,14 +77,16 @@ class Layers extends Component {
   }
 
   render() {
-    const { layers, currentTileSet, tools, filters, tiledLayouts } = this.props;
-    const tileImages = currentTileSet.get('tileImages');
-    const tiles = currentTileSet.get('tiles');
-    const tileData = (tiles && tiles.size) ? tiles.toJS() : null;
+    const { layers, tileSheets, filters } = this.props;
     const activeLayer = layers.get(filters.get('activeLayerId'));
     const width = (activeLayer) ? activeLayer.get('width') : 400;
     const height = (activeLayer) ? activeLayer.get('height') : 400;
     const viewport = this.state.viewport;
+    const activeTileSetId = filters.get('activeTileSetId');
+    const activeTileSet = tileSheets.get(activeTileSetId);
+    const tileImages = (activeTileSet) ? activeTileSet.get('tileImages') : null;
+    const tiles = (activeTileSet) ? activeTileSet.get('tiles') : null;
+    const tileData = (tiles && tiles.size) ? tiles.toJS() : null;
 
     return (
       <div>
@@ -95,13 +96,10 @@ class Layers extends Component {
           layers
             .map(layer => {
               const layerId = layer.get('id');
-              const layoutId = layer.get('layoutId');
-              const layout = tiledLayouts.get(layoutId);
               return (
                 <li className="layer" key={ layerId }>
                   <Layer
                     layer={ layer }
-                    layout={ layout }
                     tileImages={ tileImages }
                     tileData={ tileData }
                     viewport={ viewport }
@@ -117,7 +115,7 @@ class Layers extends Component {
             ref="inputLayer"
             width={ width }
             height={ height }
-            selectedToolId={ tools.get('selectedId') }
+            selectedToolId={ filters.get('selectedToolId') }
             onSelectorAction={ this.triggerSelectorAction.bind(this) }
             onPointerAction={ this.triggerPointerAction.bind(this) }
           />
@@ -130,10 +128,8 @@ class Layers extends Component {
 function select(state) {
   return { 
     layers: state.get('layers'),
-    tools: state.get('tools'),
-    currentTileSet: state.get('currentTileSet'),
     filters: state.get('filters'),
-    tiledLayouts: state.get('tiledLayouts')
+    tileSheets: state.get('tileSheets')
   };
 }
 

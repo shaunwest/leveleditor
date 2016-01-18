@@ -4,40 +4,29 @@
 
 import { Map } from 'immutable';
 import {
-  REQUEST_TILE_SHEETS, RECEIVE_TILE_SHEETS,
-  REQUEST_TILE_SHEET, RECEIVE_TILE_SHEET, RECEIVE_TILE_SHEET_ERROR,
-  REQUEST_TILE_SHEET_IMAGE, RECEIVE_TILE_SHEET_IMAGE
-  } from './tile-sheets-actions.js';
+  RECEIVE_TILE_SHEETS,
+  RECEIVE_TILE_SHEET, RECEIVE_TILE_SHEET_ERROR,
+  RECEIVE_TILE_SHEET_IMAGE,
+  MADE_TILES
+  } from '../actions/tile-sheets.js';
 
 const DEFAULT_THUMB = 'default-thumbnail.png';
 
 export default function tileSheets(state = Map({
-  isFetching: false,
-  items: Map()
 }), action = {}) {
   switch (action.type) {
-    case REQUEST_TILE_SHEETS:
-      return state.set('isFetching', true);
     case RECEIVE_TILE_SHEETS:
-      return state.merge({
-        isFetching: false,
-        items: action.tileSheets,
-        lastUpdated: action.receivedAt
-      });
-    case REQUEST_TILE_SHEET:
-      return state.mergeIn(['items', action.src], { isFetching: true });
+      return state.merge(action.tileSheets);
     case RECEIVE_TILE_SHEET:
-      return state.mergeIn(['items', action.src], { isFetching: false }, action.tileSheet);
+      return state.mergeIn([action.src], action.tileSheet);
     case RECEIVE_TILE_SHEET_ERROR:
-      return state.mergeIn(['items', action.src], {
-        isFetching: false,
-        isError: true,
+      return state.mergeIn([action.src], {
         thumbnail: DEFAULT_THUMB
       });
-    case REQUEST_TILE_SHEET_IMAGE:
-      return state.mergeIn(['items', action.src], { isFetching: true });
     case RECEIVE_TILE_SHEET_IMAGE:
-      return state.mergeIn(['items', action.src], { isFetching: false, image: action.image });
+      return state.mergeIn([action.src], { image: action.image });
+    case MADE_TILES:
+      return state.mergeIn([action.src], { tileImages: action.tileImages });
     default:
       return state;
   }

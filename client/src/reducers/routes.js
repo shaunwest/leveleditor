@@ -3,7 +3,7 @@
  */
 
 import { Map } from 'immutable';
-import { REQUEST_ROUTE, RECEIVE_ROUTE } from './routes-actions.js';
+import { REQUEST_ROUTE, RECEIVE_ROUTE } from '../actions/routes.js';
 
 export default function routes(state = Map({
   isFetching: false

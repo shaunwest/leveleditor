@@ -5,8 +5,8 @@
 import React, { Component, PropTypes } from 'react';
 import { DATA_PATH } from '../../paths.js';
 import { connect } from 'react-redux';
-import { fetchAll as fetchAllLevels } from '../../dispatchers/levels.js';
-import { navigateTo } from '../../dispatchers/routes.js';
+import { fetchAll as fetchAllLevels } from '../../actions/levels.js';
+import { navigateTo } from '../../actions/routes.js';
 
 import LevelSelect from '../selectors/level-select.js';
 
@@ -19,7 +19,7 @@ class LevelSelectContainer extends Component {
   render() {
     const { dispatch, levels } = this.props;
     return (
-      <LevelSelect onLevelSelect={ levelId => dispatch(navigateTo('/level/' + levelId)) } levels={ levels.get('items') } />
+      <LevelSelect onLevelSelect={ levelId => dispatch(navigateTo('/level/' + levelId)) } levels={ levels } />
     );
   }
 }

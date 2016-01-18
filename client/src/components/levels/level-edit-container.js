@@ -13,18 +13,18 @@ import TileSheetSelect from '../selectors/tile-sheet-select.js';
 import TileSelect from '../selectors/tile-select.js';
 import LayersContainer from '../layers/layers-container.js';
 
-import { fetchAndSelectLevel } from '../../dispatchers/levels.js';
+import { fetchAndSelectLevel } from '../../actions/levels.js';
 
-import { selectTileSheet, selectTile, fetchAll as fetchAllTileSheets } from '../../reducers/tile-sheets-actions.js';
-import { selectedTool } from '../../reducers/tools-actions.js';
-import { selectLayer, toggleLayer } from '../../reducers/layers-actions.js';
+import { selectTileSheet, selectTile, fetchAll as fetchAllTileSheets } from '../../actions/tile-sheets.js';
+import { selectedTool } from '../../actions/tools.js';
+import { selectLayer, toggleLayer } from '../../actions/filters.js';
 
 import Looper, { TARGET_FPS } from '../../lib/looper.js';
 
 class LevelEditContainer extends Component {
   componentDidMount() {
-    const { dispatch, levels } = this.props,
-      levelId = levels.get('currentLevelId');
+    const { dispatch, filters } = this.props,
+      levelId = filters.get('currentLevelId');
 
     this.dispatch = dispatch;
     this.renderLoop = Looper();
@@ -55,10 +55,12 @@ class LevelEditContainer extends Component {
   }
 
   render() {
-    const { levels, layers, tileSheets, tools, currentTileSet, filters } = this.props,
-      levelId = levels.get('currentLevelId'),
-      level = levels.get('items').get(levelId),
-      description = (level) ? level.get('description') : '...';
+    const { levels, layers, tileSheets, filters } = this.props,
+      levelId = filters.get('currentLevelId'),
+      level = levels.get(levelId),
+      description = (level) ? level.get('description') : '...',
+      activeTileSetId = filters.get('activeTileSetId'),
+      activeTileSet = tileSheets.get(activeTileSetId);
 
     return (
       <div>
@@ -79,19 +81,21 @@ class LevelEditContainer extends Component {
 
         <ToolSelect
           onToolSelect={ this.onToolSelect.bind(this) }
-          selectedToolId={ tools.get('selectedId') } />
+          selectedToolId={ filters.get('selectedToolId') } />
 
         <h3>Tiles</h3>
 
         <TileSheetSelect
           onTileSheetSelect={ this.onTileSheetSelect.bind(this) }
-          tileSheets={ tileSheets.get('items') }
-          selectedTileSheetId={ currentTileSet.get('id') } />
+          tileSheets={ tileSheets }
+          selectedTileSheetId={ filters.get('activeTileSetId') } />
 
-        <TileSelect
-          onTileSelect={ this.onTileSelect.bind(this) }
-          selectedTileId={ currentTileSet.get('currentTileIndex') }
-          tileImages={ currentTileSet.get('tileImages') } />
+        { (activeTileSet) ?
+          <TileSelect
+            onTileSelect={ this.onTileSelect.bind(this) }
+            selectedTileId={ filters.get('selectedTileIndex') }
+            tileImages={ activeTileSet.get('tileImages') } /> : null
+         }
       </div>
     );
   }
@@ -102,8 +106,6 @@ function select(state) {
     levels: state.get('levels'), 
     layers: state.get('layers'),
     tileSheets: state.get('tileSheets'),
-    tools: state.get('tools'),
-    currentTileSet: state.get('currentTileSet'),
     filters: state.get('filters')
   };
 }

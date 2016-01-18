@@ -1,5 +1,5 @@
 /**
- * Created by shaunwest on 9/10/15.
+ * Created by shaunwest on 10/11/15.
  */
 
 import page from 'page';
@@ -7,7 +7,23 @@ import ReactDOM from 'react-dom';
 import React from 'react';
 import { Provider } from 'react-redux';
 import store from '../store.js';
-import { receiveRoute, requestRoute } from '../reducers/routes-actions.js';
+
+export const REQUEST_ROUTE = 'REQUEST_ROUTE';
+export function requestRoute(path) {
+  return { 
+    type: REQUEST_ROUTE,
+    path: path
+  };
+}
+
+export const RECEIVE_ROUTE = 'RECEIVE_ROUTE';
+export function receiveRoute(path, context) {
+  return {
+    type: RECEIVE_ROUTE,
+    path: path,
+    context: context
+  };
+}
 
 export function initRouting(routes) {
   return dispatch => {

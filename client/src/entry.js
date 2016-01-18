@@ -6,7 +6,7 @@ import './styles/main.scss';
 
 import store from './store.js';
 
-import { initRouting } from './dispatchers/routes.js';
+import { initRouting } from './actions/routes.js';
 
 import LevelSelectContainer from './components/levels/level-select-container.js';
 import LevelEditContainer from './components/levels/level-edit-container.js';

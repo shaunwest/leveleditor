@@ -12,6 +12,7 @@ export default class TileSelect extends Component {
     return (
       <ul>
       {
+      (tileImages) ?
       tileImages
         .map((tileImage, index) => {
           const image = tileImage.get('frames').get('basic').get('images').get(0); 
@@ -29,7 +30,7 @@ export default class TileSelect extends Component {
               </li>
             );
         })
-        .valueSeq()
+        .valueSeq() : null
       }
       </ul>
     );

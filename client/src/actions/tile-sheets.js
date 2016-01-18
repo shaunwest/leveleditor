@@ -7,11 +7,9 @@ import { DATA_PATH } from '../paths.js';
 import getImage from '../lib/image-loader.js';
 import { processSprites } from '../lib/sprite-sheet-processor.js';
 
-// Probably should make these immutable Maps...
+// TODO: Probably should make these immutable Maps?
 
-// TILE SHEETS
 export const REQUEST_TILE_SHEETS = 'REQUEST_TILE_SHEETS';
-
 export function requestTileSheets(src) {
   return {
     type: REQUEST_TILE_SHEETS,
@@ -20,7 +18,6 @@ export function requestTileSheets(src) {
 }
 
 export const RECEIVE_TILE_SHEETS = 'RECEIVE_TILE_SHEETS';
-
 export function receiveTileSheets(src, tileSheets) {
   return {
     type: RECEIVE_TILE_SHEETS,
@@ -31,7 +28,6 @@ export function receiveTileSheets(src, tileSheets) {
 }
 
 export const RECEIVE_TILE_SHEETS_ERROR = 'RECEIVE_TILE_SHEETS_ERROR';
-
 export function receiveTileSheetsError(src, json) {
   return {
     type: RECEIVE_TILE_SHEETS_ERROR,
@@ -41,11 +37,7 @@ export function receiveTileSheetsError(src, json) {
   };
 }
 
-
-// GET TILE SHEET
-
 export const REQUEST_TILE_SHEET = 'REQUEST_TILE_SHEET';
-
 export function requestTileSheet(src) {
   return {
     type: REQUEST_TILE_SHEET,
@@ -54,7 +46,6 @@ export function requestTileSheet(src) {
 }
 
 export const RECEIVE_TILE_SHEET = 'RECEIVE_TILE_SHEET';
-
 export function receiveTileSheet(src, json) {
   return {
     type: RECEIVE_TILE_SHEET,
@@ -65,7 +56,6 @@ export function receiveTileSheet(src, json) {
 }
 
 export const RECEIVE_TILE_SHEET_ERROR = 'RECEIVE_TILE_SHEET_ERROR';
-
 export function receiveTileSheetError(src, error) {
   return {
     type: RECEIVE_TILE_SHEET_ERROR,
@@ -76,7 +66,6 @@ export function receiveTileSheetError(src, error) {
 }
 
 export const REQUEST_TILE_SHEET_IMAGE = 'REQUEST_TILE_SHEET_IMAGE';
-
 export function requestTileSheetImage(src, imageSrc) {
   return {
     type: REQUEST_TILE_SHEET_IMAGE,
@@ -86,7 +75,6 @@ export function requestTileSheetImage(src, imageSrc) {
 }
 
 export const RECEIVE_TILE_SHEET_IMAGE = 'RECEIVE_TILE_SHEET_IMAGE';
-
 export function receiveTileSheetImage(src, imageSrc, image) {
   return {
     type: RECEIVE_TILE_SHEET_IMAGE,
@@ -98,7 +86,6 @@ export function receiveTileSheetImage(src, imageSrc, image) {
 }
 
 export const RECEIVE_TILE_SHEET_IMAGE_ERROR = 'RECEIVE_TILE_SHEET_IMAGE_ERROR';
-
 export function receiveTileSheetImageError(src) {
   return {
     type: RECEIVE_TILE_SHEET_IMAGE_ERROR,
@@ -107,7 +94,6 @@ export function receiveTileSheetImageError(src) {
 }
 
 export const MADE_TILES = 'MADE_TILES';
-
 export function madeTiles(src, tileImages) {
   return {
     type: MADE_TILES,
@@ -117,19 +103,15 @@ export function madeTiles(src, tileImages) {
 }
 
 
-// SELECTED
 export const SELECTED_TILE_SHEET = 'SELECTED_TILE_SHEET';
-
-//export function selectedTileSheet(id) {
-export function selectedTileSheet(tileSheet) {
+export function selectedTileSheet(id) {
   return {
     type: SELECTED_TILE_SHEET,
-    tileSheet
+    id
   };
 }
 
 export const SELECT_TILE = 'SELECT_TILE';
-
 export function selectTile(tileIndex) {
   return {
     type: SELECT_TILE,
@@ -137,26 +119,23 @@ export function selectTile(tileIndex) {
   };
 }
 
-// SELECT
+// TODO: is it id or src?
 export function selectTileSheet(id) {
   return (dispatch, getState) => {
-    const tileSheet = getState().get('tileSheets').get('items').get(id),
+    const tileSheet = getState().get('tileSheets').get(id),
       tileImages = processSprites(tileSheet.get('image'), tileSheet.get('tiles'));
 
-    //dispatch(selectedTileSheet(id));   
-    dispatch(selectedTileSheet(tileSheet));
+    dispatch(selectedTileSheet(id));   
     dispatch(madeTiles(id, tileImages));
   };
 }
-
-// FETCH
 
 export function fetchAll(src) {
   return (dispatch, getState) => {
     return dispatch(fetchTileSheets(src))
       .then(
         action => {
-          getState().get('tileSheets').get('items').toSeq()
+          getState().get('tileSheets').toSeq()
             .forEach((tileSheet, src) => {
               dispatch(getTileSheet(src));
             });
@@ -233,7 +212,7 @@ function getTileSheet(src) {
     dispatch(fetchTileSheet(src))
       .then(
         action => {
-          const imageSrc = getState().get('tileSheets').getIn(['items', src, 'src']);
+          const imageSrc = getState().get('tileSheets').getIn([src, 'src']); // TODO uh what?
           return dispatch(getTileSheetImage(src, imageSrc));
         },
         error => {
@@ -249,7 +228,7 @@ function getTileSheetImage(src, imageSrc) {
       .then(
         action => {
           const tileSheets = getState().get('tileSheets'),
-            tileSheet = tileSheets.getIn(['items', src]);
+            tileSheet = tileSheets.get(src);
             //tileImages = processTiles(tileSheet.get('image'), tileSheet.get('tiles'));
           
           //dispatch(madeTiles(src, tileImages));

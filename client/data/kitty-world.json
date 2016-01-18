@@ -14,9 +14,8 @@
       "label": "Background",
       "tileSheet": "demo-tiles",
       "tileSize": 16,
-      "renderMode": "fixed",
-      "layoutType": "fixed",
-      "sprites_old": [1, 0],
+      "layoutType": "FIXED_2D",
+      "layout": [1, 0],
       "layoutId": "background",
       "width": 256,
       "height": 256
