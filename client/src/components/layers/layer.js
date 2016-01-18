@@ -3,68 +3,49 @@
  */
 
 import React, { Component } from 'react';
+import { connect } from 'react-redux';
 //import RenderPerf from '../debug/render-perf.js';
-//import fixedRenderer from '../../lib/fixed-renderer.js';
-import { getCurrentFrames } from '../../lib/sprite-sequencer.js';
-import { fixed } from '../../lib/render-types.js';
-import * as layoutTypes from '../../constants/layout-types.js';
+import TileRenderer from '../renderers/tiled.js';
 
-// TODO: maybe make Layer a smart component and make a new component
-// that handles the renderLoop, etc
 export default class Layer extends Component {
-  constructor(props) {
-    super(props);
-
-    this.state = {
-      renderContext: null
-    };
-  }
-
-  componentDidMount() {
-    this.setState({
-      renderContext: this.refs.canvas.getContext('2d')
-    });
-  }
-
   render() {
-    const layer = this.props.layer;
-    const tileImages = this.props.tileImages;
+    const { layers, tileSheets, filters } = this.props;
+
+    const layerId = this.props.layerId;
+    const renderLoop = this.props.renderLoop;
+    const viewport = this.props.viewport;
+
+    const visible = filters.get('layerVisibility').get(layerId);
+    const layer = layers.get(layerId);
+    const activeTileSet = tileSheets.get(filters.get('activeTileSetId'));
+    const tileImages = (activeTileSet) ? activeTileSet.get('tileImages') : null;
     const layout = layer.get('layout');
-    const renderContext = this.state.renderContext;
-
-    if (tileImages && tileImages.size && layout && layout.size && renderContext) {
-      const spriteSequences = tileImages.toJS();
-      const spritesArray = layout.toArray();
-      const renderLoop = this.props.renderLoop;
-      const regionWidth = layer.get('width');
-      const layoutType = layer.get('layoutType');
-      const viewport = this.props.viewport;
-      const tileSize = layer.get('tileSize');
-
-      renderLoop('FOOO', (fps, elapsed, vFrameCount, aFrameCount) => {
-        const currentTiles = getCurrentFrames(spriteSequences, vFrameCount);
-
-        renderContext.clearRect(0, 0, viewport.width, viewport.height);
-
-        if (layoutType === layoutTypes.FIXED_2D) {
-          fixed(spritesArray, currentTiles, tileSize, regionWidth, function (spriteImage, x, y) {
-            renderContext.drawImage(spriteImage, x, y);
-          });
-        }
-      });
-    }
+    const spritesArray = (layout && layout.size) ? layout.toArray() : null;
+    const spriteSequences = (tileImages && tileImages.size) ? tileImages.toJS() : null;
 
     return (
       <div
         className="layerContainer"
-        style={{ display: this.props.visible ? 'block' : 'none' }}>
-        <canvas 
-          className="layerCanvas"
-          width={ layer.get('width') }
-          height={ layer.get('height') }
-          ref="canvas">
-        </canvas>
+        style={{ display: visible ? 'block' : 'none' }}>
+        <TileRenderer 
+          renderLoop={ renderLoop }
+          spritesArray={ spritesArray }
+          spriteSequences={ spriteSequences }
+          tileSize={ layer.get('tileSize') }
+          viewport={ viewport }
+          regionWidth={ layer.get('width') }
+        />
       </div>
     );
   }
 }
+
+function select(state) {
+  return { 
+    layers: state.get('layers'),
+    filters: state.get('filters'),
+    tileSheets: state.get('tileSheets')
+  };
+}
+
+export default connect(select)(Layer);

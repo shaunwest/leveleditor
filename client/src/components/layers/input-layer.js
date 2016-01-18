@@ -10,7 +10,7 @@ import { Selector, ResizableSelector, MoveableSelector, getResizeSide, RESIZE_NO
 import { Pointer } from '../../lib/pointer.js';
 import { drawRect } from '../../lib/draw.js';
 import { clone } from '../../lib/obj.js';
-import * as TOOLS from '../../constants/tools.js';
+import * as Tools from '../../constants/tools.js';
 
 const POINTER_COLOR = 'rgb(255, 0, 0)',
   POINTER_WIDTH = 16,
@@ -20,7 +20,7 @@ const POINTER_COLOR = 'rgb(255, 0, 0)',
   TEMP_SELECTOR_COLOR = 'rgb(0, 255, 0)',
   ACTION_NONE = 'actionNone',
   ACTION_FIRE = 'actionFire',
-  POINTER_TOOLS = [TOOLS.SELECTOR, TOOLS.TILE_BRUSH, TOOLS.ERASER];
+  PointerTools = [Tools.SELECTOR, Tools.TILE_BRUSH, Tools.ERASER];
 
 const getSelector = Selector();
 const getResizableSelector = ResizableSelector();
@@ -52,14 +52,14 @@ export default class InputLayer extends Component {
     // PRESS
     inputer
       .onPress(position => {
-        if (this.toolIsSelected(TOOLS.TILE_BRUSH, TOOLS.ERASER, TOOLS.FILL, TOOLS.FILL_EMPTY, TOOLS.FILL_CONTIGUOUS, TOOLS.FILL_CONTIGUOUS_EMPTY)) {
+        if (this.toolIsSelected(Tools.TILE_BRUSH, Tools.ERASER, Tools.FILL, Tools.FILL_EMPTY, Tools.FILL_CONTIGUOUS, Tools.FILL_CONTIGUOUS_EMPTY)) {
           return {
             action: ACTION_FIRE,
             pointer: position
           };
         }
 
-        if (this.toolIsSelected(TOOLS.SELECTOR)) {
+        if (this.toolIsSelected(Tools.SELECTOR)) {
           return {
             action: ACTION_FIRE,
             pointer: getPointer(position),
@@ -69,7 +69,7 @@ export default class InputLayer extends Component {
           };
         }
 
-        if (this.toolIsSelected(TOOLS.GRABBER)) {
+        if (this.toolIsSelected(Tools.GRABBER)) {
           return {
             action: ACTION_NONE,
             grabberDiff: point(position.x - this.state.selector.x, position.y - this.state.selector.y)
@@ -91,21 +91,21 @@ export default class InputLayer extends Component {
       })
       .onHoverOver(position => {
         // TODO: show the resizing mouse pointer somehow
-        return (this.toolIsSelected(TOOLS.SELECTOR) && this.state.selector && getResizeSide(position, this.state.selector)) ?
+        return (this.toolIsSelected(Tools.SELECTOR) && this.state.selector && getResizeSide(position, this.state.selector)) ?
           { action: ACTION_NONE, pointer: null } :
           { action: ACTION_NONE, pointer: getPointer(position) };
       })
       .onDrag(position => {
-        if (this.toolIsSelected(TOOLS.TILE_BRUSH, TOOLS.ERASER)) {
+        if (this.toolIsSelected(Tools.TILE_BRUSH, Tools.ERASER)) {
           return {
             pointer: position,
             action: ACTION_FIRE
           };
         }
-        else if (this.toolIsSelected(TOOLS.SELECTOR)) {
+        else if (this.toolIsSelected(Tools.SELECTOR)) {
           return this.handleSelectorSizing(position);
         }
-        else if (this.toolIsSelected(TOOLS.GRABBER)) {
+        else if (this.toolIsSelected(Tools.GRABBER)) {
           return this.handleGrabberMove(position);
         }
       })
@@ -134,10 +134,11 @@ export default class InputLayer extends Component {
         }
       });
 
+    // TODO: move into a render component
     renderLoop('INPUT', (elapsed, fps) => {
-      context.clearRect(0, 0, this.props.width, this.props.height);
+      context.clearRect(0, 0, this.props.viewport.width, this.props.viewport.height);
 
-      if (this.state.pointer && inputer.isActive() && POINTER_TOOLS.findIndex(toolName => toolName === this.props.selectedToolId) !== -1) {
+      if (this.state.pointer && inputer.isActive() && PointerTools.findIndex(toolName => toolName === this.props.selectedToolId) !== -1) {
         drawRect(context, this.state.pointer, POINTER_COLOR);
       }
 
@@ -195,8 +196,8 @@ export default class InputLayer extends Component {
     return (
       <canvas 
         className={ canvasClass }
-        width={ this.props.width }
-        height={ this.props.height }
+        width={ this.props.viewport.width }
+        height={ this.props.viewport.height }
         ref="canvas">
       </canvas>
     );

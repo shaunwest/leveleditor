@@ -7,7 +7,7 @@ import { TARGET_FPS } from './looper.js';
 
 export function getCurrentFrames(spriteSequences, frameCount) {
   const currentFrames = [];
-  const numSequences = spriteSequences.length;
+  const numSequences = (spriteSequences) ? spriteSequences.length : 0;
 
   for (let i = 0; i < numSequences; i++) {
     const type = spriteSequences[i].type || 'basic';

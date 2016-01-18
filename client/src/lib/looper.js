@@ -8,6 +8,8 @@ export const CONTINUE_RENDERING = true;
 
 const MS_PER_SECOND = 1000;
 
+let foo = 0;
+
 function getDeltaTime(now, lastUpdateTime) {
   return (now - lastUpdateTime) / MS_PER_SECOND;
 }

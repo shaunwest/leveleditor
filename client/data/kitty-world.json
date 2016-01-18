@@ -17,7 +17,7 @@
       "layoutType": "FIXED_2D",
       "layout": [1, 0],
       "layoutId": "background",
-      "width": 256,
+      "width": 512,
       "height": 256
     }
   },

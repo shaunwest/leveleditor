@@ -5,7 +5,7 @@
 import { unFlattenXDimension } from './geom.js'; 
 
 export function fixed(spriteIdList, currentSpriteSet, spriteSize, regionWidth, spriteFunc) {
-  const numSprites = spriteIdList.length;
+  const numSprites = (spriteIdList) ? spriteIdList.length : 0;
   const spriteListLength = numSprites * spriteSize;
   const canvasWidth = unFlattenXDimension(spriteListLength, regionWidth);
   const gridWidth = Math.floor(canvasWidth / spriteSize);
