@@ -69,7 +69,7 @@ export default class Inputer {
       undefined;
 
     if (this.sideEffectsFunc) {
-      this.sideEffectsFunc.call(this, result, eventName);
+      this.sideEffectsFunc.call(this, result, eventName, this.active);
     }
   }
 

@@ -3,24 +3,20 @@
  */
 
 import React, { Component } from 'react';
-import Looper from '../../lib/looper.js';
 import Inputer from '../../lib/inputer.js';
 import { point, rect } from '../../lib/geom.js';
-import { Selector, ResizableSelector, MoveableSelector, getResizeSide, RESIZE_NONE } from '../../lib/selector.js';
+import { Selector, ResizableSelector, MoveableSelector,
+  getResizeSide, RESIZE_NONE } from '../../lib/selector.js';
 import { Pointer } from '../../lib/pointer.js';
-import { drawRect } from '../../lib/draw.js';
+import InputRenderer from '../renderers/input.js';
+
 import { clone } from '../../lib/obj.js';
 import * as Tools from '../../constants/tools.js';
 
-const POINTER_COLOR = 'rgb(255, 0, 0)',
-  POINTER_WIDTH = 16,
+const POINTER_WIDTH = 16,
   POINTER_HEIGHT = 16,
-  SELECTED_COLOR = 'rgb(0, 0, 255)',
-  SELECTED_FILL_COLOR = 'rgba(0, 0, 255, 0.05)',
-  TEMP_SELECTOR_COLOR = 'rgb(0, 255, 0)',
   ACTION_NONE = 'actionNone',
-  ACTION_FIRE = 'actionFire',
-  PointerTools = [Tools.SELECTOR, Tools.TILE_BRUSH, Tools.ERASER];
+  ACTION_FIRE = 'actionFire';
 
 const getSelector = Selector();
 const getResizableSelector = ResizableSelector();
@@ -31,6 +27,9 @@ export default class InputLayer extends Component {
   constructor(props) {
     super(props);
 
+    // change to inputState so state can be mutated
+    // and the renderer won't re-render on a change
+    // - maybe the renderer shouldn't be a react component??
     this.state = { 
       action: ACTION_NONE,
       resizeSide: RESIZE_NONE,
@@ -44,21 +43,13 @@ export default class InputLayer extends Component {
   componentDidMount() {
     const props = this.props,
       state = this.state,
-      renderLoop = Looper(),
-      context = this.refs.canvas.getContext('2d');
+      canvas = this.refs.renderer.getCanvas();
 
-    const inputer = new Inputer(this.refs.canvas);
+    const inputer = new Inputer(canvas);
 
     // PRESS
     inputer
       .onPress(position => {
-        if (this.toolIsSelected(Tools.TILE_BRUSH, Tools.ERASER, Tools.FILL, Tools.FILL_EMPTY, Tools.FILL_CONTIGUOUS, Tools.FILL_CONTIGUOUS_EMPTY)) {
-          return {
-            action: ACTION_FIRE,
-            pointer: position
-          };
-        }
-
         if (this.toolIsSelected(Tools.SELECTOR)) {
           return {
             action: ACTION_FIRE,
@@ -75,6 +66,11 @@ export default class InputLayer extends Component {
             grabberDiff: point(position.x - this.state.selector.x, position.y - this.state.selector.y)
           };
         }
+
+        return {
+          action: ACTION_FIRE,
+          pointer: position
+        };
       })
       .onRelease((position, pressPosition) => {
         const pointer = (this.state.grabberDiff) ?
@@ -114,13 +110,15 @@ export default class InputLayer extends Component {
           action: ACTION_NONE,
           resizeSide: RESIZE_NONE
         };
-      })
-      ._HANDLE_SIDE_EFFECTS(result => {
+      });
+
+    inputer
+      ._HANDLE_SIDE_EFFECTS((result, eventName, isActive) => {
         if (!result) {
           return;
         }
 
-        this.setState(result);
+        this.setState(Object.assign(result, { isActive }));
 
         if (this.state.action !== ACTION_FIRE) {
           return;
@@ -133,23 +131,6 @@ export default class InputLayer extends Component {
           this.props.onPointerAction(this.state.pointer);
         }
       });
-
-    // TODO: move into a render component
-    renderLoop('INPUT', (elapsed, fps) => {
-      context.clearRect(0, 0, this.props.viewport.width, this.props.viewport.height);
-
-      if (this.state.pointer && inputer.isActive() && PointerTools.findIndex(toolName => toolName === this.props.selectedToolId) !== -1) {
-        drawRect(context, this.state.pointer, POINTER_COLOR);
-      }
-
-      if (this.state.selector) {
-        drawRect(context, this.state.selector, SELECTED_COLOR, SELECTED_FILL_COLOR);
-      }
-
-      if (this.state.tempSelector) {
-        drawRect(context, this.state.tempSelector, TEMP_SELECTOR_COLOR);
-      }      
-    });
   }
 
   toolIsSelected(...toolIds) {
@@ -191,15 +172,18 @@ export default class InputLayer extends Component {
   }
 
   render() {
-    const canvasClass = 'inputLayerCanvas' + (this.state.resizing ? ' resize' : '');
-
     return (
-      <canvas 
-        className={ canvasClass }
-        width={ this.props.viewport.width }
-        height={ this.props.viewport.height }
-        ref="canvas">
-      </canvas>
+      <InputRenderer
+        viewport={ this.props.viewport }
+        pointer={ this.state.pointer }
+        selector={ this.state.selector }
+        tempSelector={ this.state.tempSelector }
+        selectedToolId={ this.props.selectedToolId }
+        renderLoop={ this.props.renderLoop }
+        isActive={ this.state.isActive }
+        isResizing={ this.state.resizing }
+        ref="renderer"
+      />
     );
   }
 }

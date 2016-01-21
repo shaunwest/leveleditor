@@ -109,6 +109,7 @@ class Layers extends Component {
             ref="inputLayer"
             viewport={ viewport }
             selectedToolId={ filters.get('selectedToolId') }
+            renderLoop={ this.props.renderLoop }
             onSelectorAction={ this.triggerSelectorAction.bind(this) }
             onPointerAction={ this.triggerPointerAction.bind(this) }
           />

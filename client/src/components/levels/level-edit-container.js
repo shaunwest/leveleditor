@@ -22,12 +22,18 @@ import { selectLayer, toggleLayer } from '../../actions/filters.js';
 import Looper, { TARGET_FPS } from '../../lib/looper.js';
 
 class LevelEditContainer extends Component {
+  constructor(props) {
+    super(props);
+
+    this.renderLoop = Looper();
+  }
+
   componentDidMount() {
     const { dispatch, filters } = this.props,
       levelId = filters.get('currentLevelId');
 
     this.dispatch = dispatch;
-    this.renderLoop = Looper();
+    //this.renderLoop = Looper();
 
     dispatch(fetchAndSelectLevel(levelId));
     dispatch(fetchAllTileSheets(DATA_PATH + '/tile-sheets.json'));
