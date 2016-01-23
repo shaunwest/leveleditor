@@ -4,19 +4,25 @@
 
 import React, { Component } from 'react';
 import Inputer from '../../lib/inputer.js';
+
+import { drawRect } from '../../lib/draw.js';
 import { point, rect } from '../../lib/geom.js';
 import { Selector, ResizableSelector, MoveableSelector,
   getResizeSide, RESIZE_NONE } from '../../lib/selector.js';
 import { Pointer } from '../../lib/pointer.js';
-import InputRenderer from '../renderers/input.js';
-
 import { clone } from '../../lib/obj.js';
+
+import CanvasRenderer from '../renderers/canvas.js';
+
 import * as Tools from '../../constants/tools.js';
 
 const POINTER_WIDTH = 16,
   POINTER_HEIGHT = 16,
-  ACTION_NONE = 'actionNone',
-  ACTION_FIRE = 'actionFire';
+  POINTER_COLOR = 'rgb(255, 0, 0)',
+  SELECTED_COLOR = 'rgb(0, 0, 255)',
+  SELECTED_FILL_COLOR = 'rgba(0, 0, 255, 0.05)',
+  TEMP_SELECTOR_COLOR = 'rgb(0, 255, 0)',
+  PointerTools = [Tools.SELECTOR, Tools.TILE_BRUSH, Tools.ERASER];
 
 const getSelector = Selector();
 const getResizableSelector = ResizableSelector();
@@ -27,11 +33,7 @@ export default class InputLayer extends Component {
   constructor(props) {
     super(props);
 
-    // change to inputState so state can be mutated
-    // and the renderer won't re-render on a change
-    // - maybe the renderer shouldn't be a react component??
-    this.state = { 
-      action: ACTION_NONE,
+    this.state = {
       resizeSide: RESIZE_NONE,
       grabberDiff: null,
       pointer: null,
@@ -45,143 +47,168 @@ export default class InputLayer extends Component {
       state = this.state,
       canvas = this.refs.renderer.getCanvas();
 
+    this.renderContext = canvas.getContext('2d');
+
     const inputer = new Inputer(canvas);
 
-    // PRESS
-    inputer
-      .onPress(position => {
-        if (this.toolIsSelected(Tools.SELECTOR)) {
-          return {
-            action: ACTION_FIRE,
-            pointer: getPointer(position),
-            selector: (this.state.selector && !getResizeSide(position, this.state.selector)) ?
-              null :
-              this.state.selector
-          };
-        }
+    inputer.onUpdate((input) => {
+      //console.log(input.isPressed, input.activePressPosition, input.isDragging, input.isHovering);
+      const previousState = this.state;
 
-        if (this.toolIsSelected(Tools.GRABBER)) {
-          return {
-            action: ACTION_NONE,
-            grabberDiff: point(position.x - this.state.selector.x, position.y - this.state.selector.y)
-          };
-        }
-
-        return {
-          action: ACTION_FIRE,
-          pointer: position
-        };
-      })
-      .onRelease((position, pressPosition) => {
-        const pointer = (this.state.grabberDiff) ?
-          point(pressPosition.x - this.state.grabberDiff.x, pressPosition.y - this.state.grabberDiff.y) :
-          this.state.pointer;
-
-        return { 
-          resizeSide: RESIZE_NONE,
-          action: (this.state.grabberDiff) ? ACTION_FIRE : ACTION_NONE,
-          pointer,
-          tempSelector: null,
-          grabberDiff: null
-        };
-      })
-      .onHoverOver(position => {
-        // TODO: show the resizing mouse pointer somehow
-        return (this.toolIsSelected(Tools.SELECTOR) && this.state.selector && getResizeSide(position, this.state.selector)) ?
-          { action: ACTION_NONE, pointer: null } :
-          { action: ACTION_NONE, pointer: getPointer(position) };
-      })
-      .onDrag(position => {
+      if (input.isDragging) {
         if (this.toolIsSelected(Tools.TILE_BRUSH, Tools.ERASER)) {
-          return {
-            pointer: position,
-            action: ACTION_FIRE
-          };
-        }
-        else if (this.toolIsSelected(Tools.SELECTOR)) {
-          return this.handleSelectorSizing(position);
-        }
-        else if (this.toolIsSelected(Tools.GRABBER)) {
-          return this.handleGrabberMove(position);
-        }
-      })
-      .onOut(position => {
-        return { 
-          action: ACTION_NONE,
-          resizeSide: RESIZE_NONE
-        };
-      });
-
-    inputer
-      ._HANDLE_SIDE_EFFECTS((result, eventName, isActive) => {
-        if (!result) {
-          return;
-        }
-
-        this.setState(Object.assign(result, { isActive }));
-
-        if (this.state.action !== ACTION_FIRE) {
-          return;
-        }
-
-        if (this.state.selector) {
-          this.props.onSelectorAction(this.state.pointer, this.state.selector);
-        }
-        else {
+          this.setState({
+            pointer: getPointer(input.position)
+          });
           this.props.onPointerAction(this.state.pointer);
         }
-      });
+        else if (this.toolIsSelected(Tools.SELECTOR)) {
+          if (previousState.resizeSide) {
+            this.setState({ 
+              selector: getResizableSelector(input.position, previousState.selector, previousState.resizeSide) 
+            });
+          }
+          else {
+            const resizeSide = (previousState.selector) ?
+              getResizeSide(input.position, previousState.selector) :
+              null;
+
+            if (!resizeSide) {
+              this.setState({
+                selector: getSelector(input.position, previousState.selector || input.lastPosition),
+                pointer: null
+              });
+            }
+            else {
+              this.setState({
+                resizeSide
+              });
+            }
+          }
+
+          this.props.onSelectorAction(input.position, this.state.selector);
+        }
+        else if (this.toolIsSelected(Tools.GRABBER)) {
+          if (previousState.selector) {
+            this.setState({
+              selector: getMoveableSelector(input.position, previousState.selector, previousState.grabberDiff),
+              tempSelector: previousState.tempSelector || clone(previousState.selector)
+            });
+          }
+        }
+      }
+      else if (input.isPressed) {
+        if (this.toolIsSelected(Tools.SELECTOR)) {
+          if (previousState.selector && !getResizeSide(this.state.pointer, previousState.selector)) {
+            this.setState({
+              pointer: getPointer(input.position),
+              selector: null
+            });
+            this.props.onSelectorAction(this.state.pointer, previousState.selector);
+          }
+          else {
+            this.setState({
+              pointer: getPointer(input.position),
+            });
+            this.props.onPointerAction(this.state.pointer);
+          } 
+        } 
+        else if (this.toolIsSelected(Tools.GRABBER)) {
+          this.setState({
+            grabberDiff: point(input.position.x - previousState.selector.x, input.position.y - previoiusState.selector.y)
+          });
+        }
+        else {
+          const pointer = getPointer(input.position);
+          this.setState({ pointer });
+          this.props.onPointerAction(pointer);
+        }
+      }
+      // TODO: hovering vs. !pressed is confusing. Think about this more...
+      /*
+      else if (input.isHovering) {
+        if (this.toolIsSelected(Tools.SELECTOR) && previousState.selector && getResizeSide(input.position, previousState.selector)) { 
+          this.setState({
+            pointer: null
+          });
+        }
+        else {
+          this.setState({
+            pointer: getPointer(input.position),
+            resizeSide: RESIZE_NONE
+          });
+        }
+      } 
+      */
+      else if (!input.isPressed) {
+        if (this.toolIsSelected(Tools.SELECTOR) && previousState.selector && getResizeSide(input.position, previousState.selector)) { 
+          this.setState({
+            pointer: null
+          });
+        } 
+        else {
+          const pointer = (this.state.grabberDiff) ?
+            getPointer(
+              input.activePressPosition.x - previousState.grabberDiff.x,
+              input.activePressPosition.y - previousState.grabberDiff.y
+            ) :
+            getPointer(input.lastPosition);
+
+          this.setState({ 
+            pointer,
+            resizeSide: RESIZE_NONE,
+            tempSelector: null,
+            grabberDiff: null
+          });
+
+          if (previousState.grabberDiff) {
+            if (previousState.selector) {
+              this.props.onSelectorAction(this.state.pointer, previousState.selector);
+            }
+            else {
+              this.props.onPointerAction(this.state.pointer);
+            }
+          }
+        }
+      }
+    });
   }
 
   toolIsSelected(...toolIds) {
     return toolIds.find(toolId => this.props.selectedToolId === toolId);
   }
 
-  handleGrabberMove(position) {
-    const newState = {
-      action: ACTION_NONE 
-    };
-
-    if (this.state.selector) {
-      newState.selector = getMoveableSelector(position, this.state.selector, this.state.grabberDiff);
-      newState.tempSelector = this.state.tempSelector || clone(this.state.selector);
-    }
-
-    return newState;
-  }
-
-  handleSelectorSizing(position) {
-    const newState = {
-      action: ACTION_NONE 
-    };
-
-    if (this.state.resizeSide) {
-      newState.selector = getResizableSelector(position, this.state.selector, this.state.resizeSide);
-    } else {
-      if (this.state.selector) {
-        newState.resizeSide = getResizeSide(position, this.state.selector);
-      }
-     
-      if (!newState.resizeSide)  {
-        newState.selector = getSelector(position, this.state.selector || this.state.pointer);
-        newState.pointer = null;
-      }
-    }
-
-    return newState;
-  }
-
   render() {
+    const context = this.renderContext;
+    const viewport = this.props.viewport;
+    const canvasClass = 'inputLayerCanvas' + (this.props.resizing ? ' resize' : '');
+    const selectedToolId = this.props.selectedToolId;
+    const isActive = true;
+    //if (!state.isActive) {
+      // fooo
+    //}
+
+    if (context) {
+      context.clearRect(0, 0, viewport.width, viewport.height);
+
+      if (this.state.pointer && isActive && PointerTools.findIndex(toolName => toolName === selectedToolId) !== -1) {
+        drawRect(context, this.state.pointer, POINTER_COLOR);
+      }
+
+      if (this.state.selector) {
+        drawRect(context, this.state.selector, SELECTED_COLOR, SELECTED_FILL_COLOR);
+      }
+
+      if (this.state.tempSelector) {
+        drawRect(context, this.state.tempSelector, TEMP_SELECTOR_COLOR);
+      }
+    }
+
     return (
-      <InputRenderer
-        viewport={ this.props.viewport }
-        pointer={ this.state.pointer }
-        selector={ this.state.selector }
-        tempSelector={ this.state.tempSelector }
-        selectedToolId={ this.props.selectedToolId }
-        renderLoop={ this.props.renderLoop }
-        isActive={ this.state.isActive }
-        isResizing={ this.state.resizing }
+      <CanvasRenderer
+        canvasClass={ canvasClass }
+        width={ viewport.width }
+        height={ viewport.height }
         ref="renderer"
       />
     );

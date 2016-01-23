@@ -38,28 +38,9 @@ export default class InputRenderer extends Component {
     const selector = this.props.selector;
     const tempSelector = this.props.tempSelector;
     const selectedToolId = this.props.selectedToolId;
-    const renderLoop = this.props.renderLoop;
     const context = this.state.renderContext;
     const isActive = this.props.isActive;
     const canvasClass = 'inputLayerCanvas' + (this.props.resizing ? ' resize' : '');
-
-    // Don't even need a render loop because react rendering
-    // can handle it just fine on its own
-    /*renderLoop('INPUTRENDERER', (fps, elapsed) => {
-      context.clearRect(0, 0, viewport.width, viewport.height);
-
-      if (pointer && isActive && PointerTools.findIndex(toolName => toolName === selectedToolId) !== -1) {
-        drawRect(context, pointer, POINTER_COLOR);
-      }
-
-      if (selector) {
-        drawRect(context, selector, SELECTED_COLOR, SELECTED_FILL_COLOR);
-      }
-
-      if (tempSelector) {
-        drawRect(context, tempSelector, TEMP_SELECTOR_COLOR);
-      }      
-    });*/
 
     if (context) {
       context.clearRect(0, 0, viewport.width, viewport.height);

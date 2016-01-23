@@ -5,105 +5,81 @@
 import getElementLocation from './get-element-location.js';
 import { point } from './geom.js';
 
-const EVENT_PRESS = 'eventPress',
-  EVENT_HOVER_OVER = 'eventHoverOver',
-  EVENT_DRAG = 'eventDrag',
-  EVENT_OUT = 'eventOut',
-  EVENT_RELEASE = 'eventRelease';
-
 export default class Inputer {
   constructor(targetElement) {
-    this.events = {};
+    this.values = {
+      isPressed: false,
+      isActive: false,
+      //isHovering: false,
+      isDragging: false,
+      activePressPosition: null,
+      position: null,
+      lastPosition: null
+    };
+    this.cb = () => {};
 
     // PRESS
     targetElement.addEventListener('mousedown', event => {
+      const values = this.values;
       const mouseLocation = getMouseLocation(event.clientX, event.clientY, targetElement);
 
-      this.active = true;
-      this.pressLocation = mouseLocation;
+      values.isActive = true;
+      values.activePressPosition = values.position = mouseLocation;
+      values.isPressed = true;
 
-      return this.fire(EVENT_PRESS, mouseLocation);
+      this.cb(values);
     });
 
     // RELEASE
     targetElement.addEventListener('mouseup', event => {
-      const pressLocation = this.pressLocation;
+      const values = this.values;
       const mouseLocation = getMouseLocation(event.clientX, event.clientY, targetElement);
 
-      this.active = true;
-      this.pressLocation = null;
+      values.isActive = true;
+      values.activePressPosition = null;
+      values.position = mouseLocation;
+      values.isPressed = false;
 
-      return this.fire(EVENT_RELEASE, mouseLocation, pressLocation);
+      this.cb(values);
     });
 
     // OUT
     targetElement.addEventListener('mouseout', event => {
+      const values = this.values;
       const mouseLocation = getMouseLocation(event.clientX, event.clientY, targetElement);
 
-      this.active = false; 
-      this.pressLocation = null;
+      values.isActive = false; 
+      values.position = null;
+      //values.isHovering = false;
+      // TODO: should activePressPosition be cleared?
 
-      return this.fire(EVENT_OUT, mouseLocation);
+      this.cb(values);
     });
 
     // DRAG && HOVER OVER
     targetElement.addEventListener('mousemove', event => {
-      const lastLocation = this.lastLocation;
+      const values = this.values;
       const mouseLocation = getMouseLocation(event.clientX, event.clientY, targetElement);
 
-      this.active = true;
-      this.lastLocation = mouseLocation;
+      values.isActive = true;
+      values.lastPosition = (values.position || mouseLocation);
+      values.position = mouseLocation;
 
-      if (this.pressLocation) {
-        return this.fire(EVENT_DRAG, mouseLocation, lastLocation, this.pressLocation);
+      if (values.activePressPosition) {
+        values.isDragging = true;
+        //values.isHovering = false;
       }
       else {
-        return this.fire(EVENT_HOVER_OVER, mouseLocation, lastLocation);
+        //values.isHovering = true;
+        values.isDragging = false;
       }
+
+      this.cb(values);
     });
   }
 
-  fire(eventName, ...data) {
-    const result = (this.events[eventName]) ?
-      this.events[eventName].apply(this, data) :
-      undefined;
-
-    if (this.sideEffectsFunc) {
-      this.sideEffectsFunc.call(this, result, eventName, this.active);
-    }
-  }
-
-  onPress(func) {
-    this.events[EVENT_PRESS] = func;
-    return this;
-  }
-
-  onHoverOver(func) {
-    this.events[EVENT_HOVER_OVER] = func;
-    return this;
-  }
-
-  onDrag(func) {
-    this.events[EVENT_DRAG] = func;
-    return this;
-  }
-
-  onRelease(func) {
-    this.events[EVENT_RELEASE] = func;
-    return this;
-  }
-
-  onOut(func) {
-    this.events[EVENT_OUT] = func;
-    return this;
-  }
-
-  _HANDLE_SIDE_EFFECTS(func) {
-    this.sideEffectsFunc = func;
-  }
-
-  isActive() {
-    return this.active;
+  onUpdate(cb) {
+    this.cb = cb;
   }
 }
 
