@@ -9,6 +9,24 @@ export function point(x = 0, y = 0) {
   };
 }
 
+export function dist(point1, point2) {
+  return {
+    x: Math.abs(point1.x - point2.x),
+    y: Math.abs(point1.y - point2.y)
+  };
+}
+
+export function isMinDist(dist, x, y) {
+  return (dist.x >= x && dist.y >= y);
+}
+
+export function pointFromRect(rect) {
+  return {
+    x: rect.x,
+    y: rect.y
+  };
+}
+
 export function rect(x = 0, y = 0, width = 100, height = 100) {
   return {
     x,
@@ -16,6 +34,10 @@ export function rect(x = 0, y = 0, width = 100, height = 100) {
     width,
     height
   };
+}
+
+export function rectHasMinSize(rect, width, height) {
+  return (Math.abs(rect.width) >= width && Math.abs(rect.height) >= height);
 }
 
 export function rectContainsPoint(point, rect) {

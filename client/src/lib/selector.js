@@ -7,12 +7,11 @@ export const RESIZE_LEFT = 'resizeLeft',
   RESIZE_RIGHT = 'resizeRight',
   RESIZE_NONE = '';
 
-// TODO: rename to ExpandableSelector
-export function Selector() {
+export function ExpandableSelector() {
   return function (newPointerPos, oldPointerPos) {
     return rect(
-      oldPointerPos.x,
-      oldPointerPos.y,
+      snap(oldPointerPos.x),
+      snap(oldPointerPos.y),
       snap(newPointerPos.x - oldPointerPos.x),
       snap(newPointerPos.y - oldPointerPos.y)
     );

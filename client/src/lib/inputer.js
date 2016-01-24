@@ -10,10 +10,8 @@ export default class Inputer {
     this.values = {
       isPressed: false,
       isActive: false,
-      //isHovering: false,
-      isDragging: false,
-      activePressPosition: null,
       position: null,
+      initialPressPosition: null,
       lastPosition: null
     };
     this.cb = () => {};
@@ -24,7 +22,7 @@ export default class Inputer {
       const mouseLocation = getMouseLocation(event.clientX, event.clientY, targetElement);
 
       values.isActive = true;
-      values.activePressPosition = values.position = mouseLocation;
+      values.position = values.initialPressPosition = mouseLocation;
       values.isPressed = true;
 
       this.cb(values);
@@ -36,7 +34,6 @@ export default class Inputer {
       const mouseLocation = getMouseLocation(event.clientX, event.clientY, targetElement);
 
       values.isActive = true;
-      values.activePressPosition = null;
       values.position = mouseLocation;
       values.isPressed = false;
 
@@ -49,10 +46,8 @@ export default class Inputer {
       const mouseLocation = getMouseLocation(event.clientX, event.clientY, targetElement);
 
       values.isActive = false; 
-      values.position = null;
-      //values.isHovering = false;
-      // TODO: should activePressPosition be cleared?
-
+      //values.position = null;
+      
       this.cb(values);
     });
 
@@ -64,15 +59,6 @@ export default class Inputer {
       values.isActive = true;
       values.lastPosition = (values.position || mouseLocation);
       values.position = mouseLocation;
-
-      if (values.activePressPosition) {
-        values.isDragging = true;
-        //values.isHovering = false;
-      }
-      else {
-        //values.isHovering = true;
-        values.isDragging = false;
-      }
 
       this.cb(values);
     });
