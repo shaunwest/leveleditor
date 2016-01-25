@@ -23,8 +23,6 @@ class Layers extends Component {
     };
   }
 
-  // TODO: Move these actions to input layer
-  // (but not until input layer is broken down)
   triggerSelectorAction(position, selection) {
     const { dispatch, filters } = this.props,
       tileId = filters.get('selectedTileIndex');
