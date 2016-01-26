@@ -8,7 +8,7 @@ import LayerToolbar from '../toolbars/layer-toolbar.js';
 import Layer from './layer.js';
 import InputLayer from './input-layer.js';
 import * as Tools from '../../constants/tools.js';
-import { addTile, fillTilesWith, fillTileSelection,
+import { addTile, fillTileSelection,
   moveTileSelection, fillContiguousTiles } from '../../actions/layers.js';
 import Viewport from '../../lib/viewport.js';
 
@@ -29,13 +29,13 @@ class Layers extends Component {
 
     switch (filters.get('selectedToolId')) {
       case Tools.ERASER:
-        dispatch(fillTileSelection(selection));
+        dispatch(fillTileSelection(undefined, selection));
         return;
       case Tools.FILL:
-        dispatch(fillTileSelection(selection, tileId));
+        dispatch(fillTileSelection(tileId, selection));
         return;
       case Tools.FILL_EMPTY:
-        dispatch(fillTileSelection(selection, tileId, true));
+        dispatch(fillTileSelection(tileId, selection, true));
         return;
       case Tools.TILE_BRUSH:
         dispatch(addTile(position, tileId, selection));
@@ -61,10 +61,12 @@ class Layers extends Component {
         dispatch(addTile(position));
         return;
       case Tools.FILL:
-        dispatch(fillTilesWith(tileId));
+        //dispatch(fillTilesWith(tileId));
+        dispatch(fillTileSelection(tileId));
         return;
       case Tools.FILL_EMPTY:
-        dispatch(fillTilesWith(tileId, true));
+        //dispatch(fillTilesWith(tileId, true));
+        dispatch(fillTileSelection(tileId, true));
         return;
       case Tools.TILE_BRUSH:
         dispatch(addTile(position, tileId));

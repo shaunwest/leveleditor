@@ -77,15 +77,16 @@ export function fillAllTiles(tiles, tileId, emptyOnly = false) {
 }
 
 export function fillContiguousEmptyTiles(layerTiles, tileX, tileY, tileId, range, widthInTiles) {
-  recursiveTileFill(layerTiles, tileX, tileY, tileId, range, widthInTiles, tileValue => typeof tileValue === 'undefined');
+  tileFloodFill(layerTiles, tileX, tileY, tileId, range, widthInTiles, tileValue => typeof tileValue === 'undefined');
 }
 
 export function fillContiguousTargetTiles(layerTiles, tileX, tileY, tileId, range, widthInTiles) {
   const targetValue = layerTiles[flattenCoord(tileX, tileY, widthInTiles)];
-  recursiveTileFill(layerTiles, tileX, tileY, tileId, range, widthInTiles, tileValue => tileValue === targetValue);
+  tileFloodFill(layerTiles, tileX, tileY, tileId, range, widthInTiles, tileValue => tileValue === targetValue);
 }
 
-// TODO: JS is not optimized for this level of recursion. Make this NOT recursive.
+/*
+ * JS isn't optimized for recursion so don't use this
 export function recursiveTileFill(layerTiles, tileX, tileY, tileId, range, widthInTiles, predicate) {
   const tilePosition = flattenCoord(tileX, tileY, widthInTiles);
 
@@ -99,4 +100,27 @@ export function recursiveTileFill(layerTiles, tileX, tileY, tileId, range, width
   recursiveTileFill(layerTiles, tileX + 1, tileY, tileId, range, widthInTiles, predicate);
   recursiveTileFill(layerTiles, tileX, tileY - 1, tileId, range, widthInTiles, predicate);
   recursiveTileFill(layerTiles, tileX, tileY + 1, tileId, range, widthInTiles, predicate);
+}
+*/
+
+export function tileFloodFill(layerTiles, tileX, tileY, tileId, range, widthInTiles, predicate) {
+  const stack = [tileX, tileY];
+
+  while (stack.length > 0) {
+    const currentX = stack[stack.length - 2];
+    const currentY = stack[stack.length - 1];
+    const tilePosition = flattenCoord(currentX, currentY, widthInTiles);
+
+    stack.pop();
+    stack.pop();
+ 
+    if (predicate(layerTiles[tilePosition]) && tileInRange(currentX, currentY, range)) {
+      layerTiles[tilePosition] = tileId;
+
+      stack.push(currentX - 1, currentY);
+      stack.push(currentX + 1, currentY);
+      stack.push(currentX, currentY - 1);
+      stack.push(currentX, currentY + 1);
+    }
+  }
 }

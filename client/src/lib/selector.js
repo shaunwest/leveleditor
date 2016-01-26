@@ -7,63 +7,57 @@ export const RESIZE_LEFT = 'resizeLeft',
   RESIZE_RIGHT = 'resizeRight',
   RESIZE_NONE = '';
 
-export function ExpandableSelector() {
-  return function (newPointerPos, oldPointerPos) {
-    return rect(
-      snap(oldPointerPos.x),
-      snap(oldPointerPos.y),
-      snap(newPointerPos.x - oldPointerPos.x),
-      snap(newPointerPos.y - oldPointerPos.y)
-    );
-  };
+export function expandableSelector(newPointerPos, oldPointerPos) {
+  return rect(
+    snap(oldPointerPos.x),
+    snap(oldPointerPos.y),
+    snap(newPointerPos.x - oldPointerPos.x),
+    snap(newPointerPos.y - oldPointerPos.y)
+  );
 }
 
-export function MoveableSelector() {
-  return function (newPointerPosition, oldSelector, diff) {
-    return rect(
-      snap(newPointerPosition.x - diff.x),
-      snap(newPointerPosition.y - diff.y),
-      oldSelector.width,
-      oldSelector.height
-    );
-  };
+export function moveableSelector(newPointerPosition, oldSelector, diff) {
+  return rect(
+    snap(newPointerPosition.x - diff.x),
+    snap(newPointerPosition.y - diff.y),
+    oldSelector.width,
+    oldSelector.height
+  );
 }
 
-export function ResizableSelector() {
-  return function (pointerPos, oldSelector, side) {
-    switch(side) {
-      case RESIZE_LEFT:
-        return rect(
-          snap(pointerPos.x),
-          oldSelector.y,
-          oldSelector.width + (oldSelector.x - snap(pointerPos.x)),
-          oldSelector.height
-        );
-      case RESIZE_RIGHT:
-        return rect(
-          oldSelector.x,
-          oldSelector.y,
-          snap(pointerPos.x - oldSelector.x),
-          oldSelector.height
-        );
-      case RESIZE_TOP:
-        return rect(
-          oldSelector.x,
-          snap(pointerPos.y),
-          oldSelector.width,
-          oldSelector.height + (oldSelector.y - snap(pointerPos.y))
-        );
-      case RESIZE_BOTTOM:
-        return rect(
-          oldSelector.x,
-          oldSelector.y,
-          oldSelector.width,
-          snap(pointerPos.y - oldSelector.y)
-        );
-      default:
-        return oldSelector;
-    }
-  };
+export function resizableSelector(pointerPos, oldSelector, side) {
+  switch(side) {
+    case RESIZE_LEFT:
+      return rect(
+        snap(pointerPos.x),
+        oldSelector.y,
+        oldSelector.width + (oldSelector.x - snap(pointerPos.x)),
+        oldSelector.height
+      );
+    case RESIZE_RIGHT:
+      return rect(
+        oldSelector.x,
+        oldSelector.y,
+        snap(pointerPos.x - oldSelector.x),
+        oldSelector.height
+      );
+    case RESIZE_TOP:
+      return rect(
+        oldSelector.x,
+        snap(pointerPos.y),
+        oldSelector.width,
+        oldSelector.height + (oldSelector.y - snap(pointerPos.y))
+      );
+    case RESIZE_BOTTOM:
+      return rect(
+        oldSelector.x,
+        oldSelector.y,
+        oldSelector.width,
+        snap(pointerPos.y - oldSelector.y)
+      );
+    default:
+      return oldSelector;
+  }
 }
 
 function rectContains(rect, point) {

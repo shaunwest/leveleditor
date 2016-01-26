@@ -57,6 +57,7 @@ export function updateTile(layerId, tileIndex, tileId) {
   };
 }
 
+/*
 export function fillTilesWith(tileId, emptyOnly = false) {
   return (dispatch, getState) => {
     const state = getState();
@@ -66,6 +67,33 @@ export function fillTilesWith(tileId, emptyOnly = false) {
     fillAllTiles(newTiles, tileId, emptyOnly);
 
     return dispatch(fillTiles(layerId, newTiles));
+  };
+}
+*/
+
+export function fillTileSelection(tileId, selection, emptyOnly = false) {
+  return (dispatch, getState) => {
+    const state = getState();
+    const layerId = state.get('filters').get('activeLayerId');
+    const layer = state.get('layers').get(layerId);
+    const layout = layer.get('layout').toArray();
+    const layerWidth = layer.get('width');
+    const layerHeight = layer.get('height');
+
+    if (!selection) {
+      selection = rect(0, 0, layerWidth, layerHeight);
+    }
+
+    for (let x = selection.x; x < selection.x + selection.width; x++) {
+      for (let y = selection.y; y < selection.y + selection.height; y++) {
+        const layerTilePosition = getTilePosition(x, y, layerWidth);
+        if (!emptyOnly || typeof layout[layerTilePosition] === 'undefined') {
+          layout[layerTilePosition] = tileId;
+        }
+      }
+    }
+
+    return dispatch(updateTiles(layerId, layout));
   };
 }
 
@@ -124,7 +152,7 @@ export function moveTileSelection(fromPosition, toSelection) {
 
     const tileRegion = dispatch(copyTileSelection(fromSelection));
     if (!tileRegionIsEmpty(tileRegion)) {
-      dispatch(fillTileSelection(fromSelection));
+      dispatch(fillTileSelection(undefined, fromSelection));
       dispatch(pasteTileSelection(tileRegion, toSelection));
     }
   };
@@ -149,30 +177,6 @@ export function fillContiguousTiles(position, tileId, fillTarget = false, select
     }
     else {
       fillContiguousEmptyTiles(layout, tileX, tileY, tileId, range, widthInTiles);
-    }
-
-    return dispatch(updateTiles(layerId, layout));
-  };
-}
-
-// TODO: can probably be merged into fillTilesWith
-export function fillTileSelection(selection, tileId, emptyOnly = false) {
-  return (dispatch, getState) => {
-    const state = getState();
-    const layerId = state.get('filters').get('activeLayerId');
-    const layer = state.get('layers').get(layerId);
-    const layout = layer.get('layout').toArray();
-    const layerWidth = layer.get('width');
-
-    if (selection) {
-      for (let x = selection.x; x < selection.x + selection.width; x++) {
-        for (let y = selection.y; y < selection.y + selection.height; y++) {
-          const layerTilePosition = getTilePosition(x, y, layerWidth);
-          if (!emptyOnly || typeof layout[layerTilePosition] === 'undefined') {
-            layout[layerTilePosition] = tileId;
-          }
-        }
-      }
     }
 
     return dispatch(updateTiles(layerId, layout));
