@@ -2,7 +2,7 @@
  * Created by shaunwest on 12/20/15.
  */
 
-import { unFlattenXDimension, unFlattenYDimension } from './geom.js'; 
+import { unFlattenXDimension, unFlattenYDimension } from './util/geom.js'; 
 import Looper, { TARGET_FPS } from './looper.js';
 
 export default function spriteRenderer (context, width, height) {

@@ -4,7 +4,7 @@
 
 import 'isomorphic-fetch';
 import { DATA_PATH } from '../paths.js';
-import getImage from '../lib/image-loader.js';
+import getImage from '../lib/util/image-loader.js';
 import { processSprites } from '../lib/sprite-sheet-processor.js';
 
 // TODO: Probably should make these immutable Maps?

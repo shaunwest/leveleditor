@@ -1,4 +1,4 @@
-import { rect } from './geom.js';
+import { rect } from '../util/geom.js';
 import { snap } from './snap.js';
 
 export function Pointer(width, height) {

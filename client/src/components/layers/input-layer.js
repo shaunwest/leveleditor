@@ -6,10 +6,10 @@ import React, { Component } from 'react';
 import Inputer from '../../lib/inputer.js';
 
 import { drawRect } from '../../lib/draw.js';
-import { point, pointFromRect, rect, rectHasMinSize, dist, isMinDist } from '../../lib/geom.js';
+import { point, pointFromRect, rect, rectHasMinSize, dist, isMinDist } from '../../lib/util/geom.js';
 import { expandableSelector, resizableSelector, moveableSelector,
-  getResizeSide, RESIZE_NONE } from '../../lib/selector.js';
-import { Pointer } from '../../lib/pointer.js';
+  getResizeSide, RESIZE_NONE } from '../../lib/ui/selector.js';
+import { Pointer } from '../../lib/ui/pointer.js';
 import { clone } from '../../lib/obj.js';
 
 import CanvasRenderer from '../renderers/canvas.js';
@@ -35,7 +35,7 @@ export default class InputLayer extends Component {
       grabberDiff: null,
       pointer: null,
       selector: null,
-      tempSelector: null,
+      ghostSelector: null,
       allowResize: false
     };
   }
@@ -141,7 +141,7 @@ export default class InputLayer extends Component {
     if (previousState.selector) {
       this.setState({
         selector: moveableSelector(position, previousState.selector, grabberDiff),
-        tempSelector: previousState.tempSelector || clone(previousState.selector),
+        ghostSelector: previousState.ghostSelector || clone(previousState.selector),
         grabberDiff
       });
     }
@@ -168,7 +168,7 @@ export default class InputLayer extends Component {
       this.setState({ 
         pointer,
         resizeSide: RESIZE_NONE,
-        tempSelector: null,
+        ghostSelector: null,
         grabberDiff: null
       });
 
@@ -178,7 +178,7 @@ export default class InputLayer extends Component {
       this.setState({ 
         pointer: getPointer(input.position),
         resizeSide: RESIZE_NONE,
-        tempSelector: null,
+        ghostSelector: null,
         grabberDiff: null,
         allowResize: !!previousState.selector
       });
@@ -194,9 +194,10 @@ export default class InputLayer extends Component {
     const context = this.renderContext;
     const viewport = this.props.viewport;
     const canvasClass = 'inputLayerCanvas' + (this.props.resizing ? ' resize' : '');
-    const selectedToolId = this.props.selectedToolId;
 
     if (context) {
+      const selectedToolId = this.props.selectedToolId;
+
       context.clearRect(0, 0, viewport.width, viewport.height);
 
       if (state.pointer && PointerTools.findIndex(toolName => toolName === selectedToolId) !== -1) {
@@ -207,8 +208,8 @@ export default class InputLayer extends Component {
         drawRect(context, state.selector, SELECTED_COLOR, SELECTED_FILL_COLOR);
       }
 
-      if (state.tempSelector) {
-        drawRect(context, state.tempSelector, TEMP_SELECTOR_COLOR);
+      if (state.ghostSelector) {
+        drawRect(context, state.ghostSelector, TEMP_SELECTOR_COLOR);
       }
     }
 

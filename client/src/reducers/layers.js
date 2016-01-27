@@ -3,8 +3,8 @@
  */
 
 import { Map, List } from 'immutable';
-import { SELECT_LAYER, TOGGLE_LAYER, ADD_TILE,
-  REMOVE_TILE, FILL_TILES, UPDATE_TILE, UPDATE_TILES } from '../actions/layers.js';
+import { SELECT_LAYER, TOGGLE_LAYER, REMOVE_TILE, 
+  FILL_TILES, UPDATE_TILE, UPDATE_TILES } from '../actions/layers.js';
 import { INIT_LAYERS } from '../actions/levels.js';
 //import { create } from '../lib/rendering-grid.js';
 
@@ -13,8 +13,6 @@ export default function layers(state = Map({
   switch (action.type) {
     case INIT_LAYERS:
       return state.merge(action.layers);
-    case ADD_TILE:
-      return state.setIn([action.layerId, 'layout', action.tileIndex], action.tileId);
     case REMOVE_TILE:
       return state.setIn([action.layerId, 'layout', action.tileIndex], undefined);
     case UPDATE_TILE:

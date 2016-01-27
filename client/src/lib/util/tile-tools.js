@@ -85,24 +85,6 @@ export function fillContiguousTargetTiles(layerTiles, tileX, tileY, tileId, rang
   tileFloodFill(layerTiles, tileX, tileY, tileId, range, widthInTiles, tileValue => tileValue === targetValue);
 }
 
-/*
- * JS isn't optimized for recursion so don't use this
-export function recursiveTileFill(layerTiles, tileX, tileY, tileId, range, widthInTiles, predicate) {
-  const tilePosition = flattenCoord(tileX, tileY, widthInTiles);
-
-  if (!predicate(layerTiles[tilePosition]) || !tileInRange(tileX, tileY, range)) {
-    return;
-  }
-
-  layerTiles[tilePosition] = tileId;
-
-  recursiveTileFill(layerTiles, tileX - 1, tileY, tileId, range, widthInTiles, predicate);
-  recursiveTileFill(layerTiles, tileX + 1, tileY, tileId, range, widthInTiles, predicate);
-  recursiveTileFill(layerTiles, tileX, tileY - 1, tileId, range, widthInTiles, predicate);
-  recursiveTileFill(layerTiles, tileX, tileY + 1, tileId, range, widthInTiles, predicate);
-}
-*/
-
 export function tileFloodFill(layerTiles, tileX, tileY, tileId, range, widthInTiles, predicate) {
   const stack = [tileX, tileY];
 

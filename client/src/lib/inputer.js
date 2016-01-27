@@ -3,7 +3,7 @@
  */
 
 import getElementLocation from './get-element-location.js';
-import { point } from './geom.js';
+import { point } from './util/geom.js';
 
 export default class Inputer {
   constructor(targetElement) {

@@ -30,6 +30,7 @@ export default class TileRenderer extends Component {
     const spriteSequences = this.props.spriteSequences;
     const viewport = this.props.viewport;
 
+    // TODO: fix this unique name
     renderLoop('UNIQUENAME_FIXME', (fps, elapsed, vFrameCount, aFrameCount) => {
       const currentTiles = getCurrentFrames(spriteSequences, vFrameCount);
 

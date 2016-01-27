@@ -4,8 +4,8 @@
 
 import { getTilePosition, pixel2Tile, getTileRegion,
   setTileRegion, tileRegionIsEmpty, pixelRect2TileRect,
-  fillAllTiles, fillContiguousEmptyTiles, fillContiguousTargetTiles } from '../lib/tile-tools.js';
-import { rect, rectContainsPoint } from  '../lib/geom.js';
+  fillAllTiles, fillContiguousEmptyTiles, fillContiguousTargetTiles } from '../lib/util/tile-tools.js';
+import { rect, rectContainsPoint } from  '../lib/util/geom.js';
 
 export const UPDATE_TILES = 'UPDATE_TILES';
 export function updateTiles(layerId, tiles) {
@@ -13,17 +13,6 @@ export function updateTiles(layerId, tiles) {
     type: UPDATE_TILES,
     layerId,
     tiles
-  };
-}
-
-export const ADD_TILE = 'ADD_TILE';
-export function addTile(layerId, tileIndex, tileId, selection) {
-  return {
-    type: ADD_TILE,
-    layerId,
-    tileIndex,
-    tileId,
-    selection
   };
 }
 
@@ -56,20 +45,6 @@ export function updateTile(layerId, tileIndex, tileId) {
     tileId
   };
 }
-
-/*
-export function fillTilesWith(tileId, emptyOnly = false) {
-  return (dispatch, getState) => {
-    const state = getState();
-    const layerId = state.get('filters').get('activeLayerId');
-    const newTiles = state.get('layers').get(layerId).get('layout').toArray();
-
-    fillAllTiles(newTiles, tileId, emptyOnly);
-
-    return dispatch(fillTiles(layerId, newTiles));
-  };
-}
-*/
 
 export function fillTileSelection(tileId, selection, emptyOnly = false) {
   return (dispatch, getState) => {
@@ -109,6 +84,25 @@ export function addTile(position, tileId, selection) {
     }
   };
 }
+
+export function addTiles(positions, tileId, selection) {
+  return (dispatch, getState) => {
+    const state = getState();
+    const layerId = state.get('filters').get('activeLayerId');
+    const layer = state.get('layers').get(layerId);
+    const layout = layer.get('layout').toArray();
+    const layerWidth = layer.get('width');
+
+    if (!selection || rectContainsPoint(position, selection)) {
+      positions.forEach((position) => {
+        const layoutPosition = getTilePosition(position.x, position.y, layerWidth);
+        layout[layoutPosition] = tileId;
+      });
+      return dispatch(updateTiles(layerId, layout));
+    }
+  };
+}
+
 
 export function copyTileSelection(fromSelection) {
   return (dispatch, getState) => {

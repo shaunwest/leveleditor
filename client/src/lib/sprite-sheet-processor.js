@@ -2,6 +2,10 @@
  * Created by shaunwest on 9/13/15.
  */
 
+// Because this uses immutable, it might not be too useful
+// in a game engine context.
+// TODO: look into not using immutable here
+
 import { Map, Range } from 'immutable';
 
 // TODO: genericize

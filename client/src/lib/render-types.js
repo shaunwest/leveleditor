@@ -2,7 +2,7 @@
  * Created by shaunwest on 1/2/16.
  */
 
-import { unFlattenXDimension } from './geom.js'; 
+import { unFlattenXDimension } from './util/geom.js'; 
 
 export function fixed(spriteIdList, currentSpriteSet, spriteSize, regionWidth, spriteFunc) {
   const numSprites = (spriteIdList) ? spriteIdList.length : 0;

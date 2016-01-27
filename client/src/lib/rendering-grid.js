@@ -2,7 +2,7 @@
  * Created by shaunwest on 12/13/15.
  */
 
-import { flattenCoord } from './geom.js';
+import { flattenCoord } from './util/geom.js';
 
 const DEFAULT_CELL_SIZE = 128;
 

@@ -1,32 +1,30 @@
-// TODO: rename to sequenceTypes
 
-
-export function basic(tileSequence, targetFps, frameCount) {
-  const basicSequence = tileSequence.frames.basic;
+export function basic(sequence, targetFps, frameCount) {
+  const basicSequence = sequence.frames.basic;
   const keyFrame = getKeyFrame(targetFps, basicSequence.fps || targetFps);
-  return getSequenceTile(basicSequence.images, keyFrame, frameCount);
+  return getSequenceImage(basicSequence.images, keyFrame, frameCount);
 }
 
-export function waitThenCycle(tileSequence, targetFps, frameCount) {
-  const cycleSequence = tileSequence.frames.cycle;
+export function waitThenCycle(sequence, targetFps, frameCount) {
+  const cycleSequence = sequence.frames.cycle;
   const every = frameCount % cycleSequence.every;
 
   if (every === 0) {
-    tileSequence.cycling = true;
+    sequence.cycling = true;
   }
 
-  if (tileSequence.cycling) {
+  if (sequence.cycling) {
     const cycleImages = cycleSequence.images;
     const keyFrame = getKeyFrame(targetFps, cycleSequence.fps || targetFps);
     const index = getSequenceIndex(cycleImages.length + 1, keyFrame, frameCount);
     if (index === cycleImages.length) {
-      tileSequence.cycling = false;
-      return basic(tileSequence, targetFps, frameCount);
+      sequence.cycling = false;
+      return basic(sequence, targetFps, frameCount);
     } else {
       return cycleImages[index];
     }
   } else {
-    return basic(tileSequence, targetFps, frameCount);
+    return basic(sequence, targetFps, frameCount);
   }
 }
 
@@ -34,7 +32,7 @@ function getKeyFrame(targetFps, sequenceFps) {
   return targetFps / sequenceFps;
 }
 
-function getSequenceTile(images, keyFrame, frameCount) {
+function getSequenceImage(images, keyFrame, frameCount) {
   return (!images || !images.length) ?
     null : 
     images[getSequenceIndex(images.length, keyFrame, frameCount)];

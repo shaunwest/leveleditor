@@ -1,4 +1,4 @@
-import { point, rect } from './geom.js';
+import { point, rect } from '../util/geom.js';
 import { snap } from './snap.js';
 
 export const RESIZE_LEFT = 'resizeLeft',
