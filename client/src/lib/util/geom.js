@@ -2,6 +2,8 @@
  * Created by shaunwest on 11/27/15.
  */
 
+// TODO: not really performant for game engine due to GC caused by creating new objects
+
 export function point(x = 0, y = 0) {
   return {
     x,
@@ -34,6 +36,76 @@ export function rect(x = 0, y = 0, width = 100, height = 100) {
     width,
     height
   };
+}
+
+/*
+function range(start, end, handler) {
+  const result = [];
+
+  for (let i = start; i < end; i++) {
+    result.push(handler(i));
+  }
+
+  return result;
+}
+
+export function line(point1, point2) {
+  const distance = dist(point1, point2);
+  let points;
+
+  if (distance.x < distance.y) { 
+    const yStep = 1, xStep = distance.x / distance.y;
+
+    let x = point1.x;
+    points = range(point1.y, point2.y, (y) => {
+      return {x: Math.floor(x += xStep), y};
+    });
+  } else {
+    const y = distance.y / distance.x, const x = 1;
+  }
+}*/
+
+function range(start, end, handler) {
+  const result = [];
+  if (start <= end) {
+    for (let i = start; i <= end; i++) {
+      result.push(handler(i));
+    }
+  } else {
+    for (let i = start; i >= end; i--) {
+      result.push(handler(i));
+    }
+  }
+  
+  return result;
+}
+
+export function line(point1, point2) {
+  const distance = dist(point1, point2);
+  let points;
+
+  if (distance.x === distance.y) {
+    let y = point1.y;
+    points = range(point1.x, point2.x, (x) => {
+      return {x: x, y: y++};
+    });
+  }
+  else if (distance.x < distance.y) {
+    const xStep = (distance.x / distance.y);
+    let x = point1.x;
+    points = range(point1.y, point2.y, (y) => {
+      return {x: (Math.sign(point2.x - point1.x) >= 0) ? Math.floor(x += xStep) : Math.ceil(x -= xStep), y};
+    });
+  } 
+  else {
+    const yStep = (distance.y / distance.x);
+    let y = point1.y;
+    points = range(point1.x, point2.x, (x) => {
+      return {x, y: (Math.sign(point2.y - point1.y) >= 0) ? Math.floor(y += yStep) : Math.ceil(y -= yStep)};
+    });
+  }
+  
+  return points;
 }
 
 export function rectHasMinSize(rect, width, height) {

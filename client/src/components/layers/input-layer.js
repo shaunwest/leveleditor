@@ -79,21 +79,23 @@ export default class InputLayer extends Component {
     }
   }
 
-  fireAction(position) {
+  fireAction(position, lastPosition) {
     if (this.state.selector) {
       this.props.onSelectorAction(position, this.state.selector);
     }
     else {
-      this.props.onPointerAction(position);
+      this.props.onPointerAction(position, lastPosition);
     }
   }
 
   pointerDrag(position) {
+    const lastPointer = this.state.pointer;
+
     this.setState({
       pointer: getPointer(position)
     });
    
-    this.fireAction(position);
+    this.fireAction(position, lastPointer);
   }
 
   selectorDrag(position, initialPressPosition) {

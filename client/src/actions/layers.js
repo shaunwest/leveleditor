@@ -2,10 +2,10 @@
  * Created by shaunwest on 1/16/16.
  */
 
-import { getTilePosition, pixel2Tile, getTileRegion,
+import { getTilePosition, pixel2Tile, pixel2TilePoint, getTileRegion,
   setTileRegion, tileRegionIsEmpty, pixelRect2TileRect,
   fillAllTiles, fillContiguousEmptyTiles, fillContiguousTargetTiles } from '../lib/util/tile-tools.js';
-import { rect, rectContainsPoint } from  '../lib/util/geom.js';
+import { rect, line, rectContainsPoint, flattenCoord } from  '../lib/util/geom.js';
 
 export const UPDATE_TILES = 'UPDATE_TILES';
 export function updateTiles(layerId, tiles) {
@@ -85,21 +85,30 @@ export function addTile(position, tileId, selection) {
   };
 }
 
-export function addTiles(positions, tileId, selection) {
+// Seems like it's working -- probably needs some more testing
+// TODO:
+// I think some perf considerations need to be taken with this concept of
+// updating the entire layout array and merging it back into the data store
+// maybe only update relevant chunks?
+// AND/OR throttle updates to the data store
+export function addTiles(startPosition, destPosition, tileId, selection) {
   return (dispatch, getState) => {
     const state = getState();
     const layerId = state.get('filters').get('activeLayerId');
     const layer = state.get('layers').get(layerId);
     const layout = layer.get('layout').toArray();
-    const layerWidth = layer.get('width');
+    const layerWidth = pixel2Tile(layer.get('width'));
+    const positions = line(pixel2TilePoint(startPosition), pixel2TilePoint(destPosition));
+    console.log('POSITIONS', positions);
 
-    if (!selection || rectContainsPoint(position, selection)) {
-      positions.forEach((position) => {
-        const layoutPosition = getTilePosition(position.x, position.y, layerWidth);
-        layout[layoutPosition] = tileId;
-      });
-      return dispatch(updateTiles(layerId, layout));
-    }
+    //if (!selection || rectContainsPoint(position, selection)) {
+    positions.forEach((position) => {
+      const layoutPosition = flattenCoord(position.x, position.y, layerWidth);
+      layout[layoutPosition] = tileId;
+    });
+
+    return dispatch(updateTiles(layerId, layout));
+    //}
   };
 }
 

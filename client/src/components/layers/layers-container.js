@@ -8,7 +8,7 @@ import LayerToolbar from '../toolbars/layer-toolbar.js';
 import Layer from './layer.js';
 import InputLayer from './input-layer.js';
 import * as Tools from '../../constants/tools.js';
-import { addTile, fillTileSelection,
+import { addTile, addTiles, fillTileSelection,
   moveTileSelection, fillContiguousTiles } from '../../actions/layers.js';
 import Viewport from '../../lib/viewport.js';
 
@@ -52,24 +52,23 @@ class Layers extends Component {
     }
   }
 
-  triggerPointerAction(position) {
+  triggerPointerAction(position, lastPosition) {
     const { dispatch, filters } = this.props,
       tileId = filters.get('selectedTileIndex');
 
     switch (filters.get('selectedToolId')) {
+      case Tools.TILE_BRUSH:
+        //dispatch(addTile(position, tileId));
+        dispatch(addTiles(lastPosition, position, tileId));
+        return;
       case Tools.ERASER:
         dispatch(addTile(position));
         return;
       case Tools.FILL:
-        //dispatch(fillTilesWith(tileId));
         dispatch(fillTileSelection(tileId));
         return;
       case Tools.FILL_EMPTY:
-        //dispatch(fillTilesWith(tileId, true));
         dispatch(fillTileSelection(tileId, true));
-        return;
-      case Tools.TILE_BRUSH:
-        dispatch(addTile(position, tileId));
         return;
       case Tools.FILL_CONTIGUOUS:
         dispatch(fillContiguousTiles(position, tileId, true));

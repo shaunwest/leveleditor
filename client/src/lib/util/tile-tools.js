@@ -82,6 +82,9 @@ export function fillContiguousEmptyTiles(layerTiles, tileX, tileY, tileId, range
 
 export function fillContiguousTargetTiles(layerTiles, tileX, tileY, tileId, range, widthInTiles) {
   const targetValue = layerTiles[flattenCoord(tileX, tileY, widthInTiles)];
+  if (targetValue === tileId) {
+    return;
+  }
   tileFloodFill(layerTiles, tileX, tileY, tileId, range, widthInTiles, tileValue => tileValue === targetValue);
 }
 
