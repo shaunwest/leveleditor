@@ -13,14 +13,14 @@ export default class LayerSelect extends Component {
     return (
       <ul>
       { 
-        layers
-          .map((layer, index) => {
-            const layerId = layer.get('id');
+        Object.keys(layers)
+          .map(layerId => {
+            const layer = layers[layerId];
             const isActive = activeLayerId === layerId;
             const isVisible = visibleLayers[layerId];
             return (
               <li key={ layerId }>
-                { layer.get('label') }
+                { layer.label }
                 <ul>
                   <li><input type="checkbox" onChange={ e => this.props.onToggle(e.target.checked, index) } checked={ isVisible } /> Visible</li>
                   <li><input type="radio" onChange={ e => this.props.onSelect(index) } checked={ isActive }/> Active</li>
@@ -28,7 +28,6 @@ export default class LayerSelect extends Component {
               </li>
             );
           })
-          .valueSeq() 
       }
       </ul>
     );

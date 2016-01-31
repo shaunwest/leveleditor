@@ -8,8 +8,8 @@ import LayerToolbar from '../toolbars/layer-toolbar.js';
 import Layer from './layer.js';
 import InputLayer from './input-layer.js';
 import * as Tools from '../../constants/tools.js';
-import { addTile, addTiles, fillTileSelection,
-  moveTileSelection, fillContiguousTiles } from '../../actions/layers.js';
+import { addTiles, fillTileSelection, updateTiles,
+  moveTileSelection, fillContiguousTiles } from '../../lib/layers.js';
 import Viewport from '../../lib/viewport.js';
 
 class Layers extends Component {
@@ -23,64 +23,71 @@ class Layers extends Component {
     };
   }
 
-  triggerSelectorAction(position, lastPosition, selection) {
-    const { dispatch, filters } = this.props,
+  triggerSelectorAction(layout, layerWidth, position, lastPosition, selection) {
+    const { filters } = this.props,
       tileId = filters.get('selectedTileIndex');
 
     switch (filters.get('selectedToolId')) {
       case Tools.ERASER:
-        dispatch(fillTileSelection(undefined, selection));
+        fillTileSelection(layout, layerWidth, undefined, selection);
         return;
       case Tools.FILL:
-        dispatch(fillTileSelection(tileId, selection));
+        fillTileSelection(layout, layerWidth, tileId, selection);
         return;
       case Tools.FILL_EMPTY:
-        dispatch(fillTileSelection(tileId, selection, true));
+        fillTileSelection(layout, layerWidth, tileId, selection, true);
         return;
       case Tools.TILE_BRUSH:
-        dispatch(addTiles(lastPosition, position, tileId, selection));
+        addTiles(layout, layerWidth, lastPosition, position, tileId, selection);
         return;
       case Tools.FILL_CONTIGUOUS:
-        dispatch(fillContiguousTiles(position, tileId, true, selection));
+        fillContiguousTiles(layout, layerWidth, position, tileId, true, selection);
         return;
       case Tools.FILL_CONTIGUOUS_EMPTY:
-        dispatch(fillContiguousTiles(position, tileId, false, selection));
+        fillContiguousTiles(layout, layerWidth, position, tileId, false, selection);
         return;
       case Tools.GRABBER:
-        dispatch(moveTileSelection(position, selection));
+        moveTileSelection(layout, layerWidth, position, selection);
         return; 
     }
   }
 
-  triggerPointerAction(position, lastPosition) {
-    const { dispatch, filters } = this.props,
+  triggerPointerAction(layout, layerWidth, position, lastPosition) {
+    const { filters } = this.props,
       tileId = filters.get('selectedTileIndex');
 
     switch (filters.get('selectedToolId')) {
       case Tools.TILE_BRUSH:
-        dispatch(addTiles(lastPosition, position, tileId));
+        addTiles(layout, layerWidth, lastPosition, position, tileId);
         return;
       case Tools.ERASER:
-        dispatch(addTiles(lastPosition, position));
+        addTiles(layout, layerWidth, lastPosition, position);
         return;
       case Tools.FILL:
-        dispatch(fillTileSelection(tileId));
+        fillTileSelection(layout, layerWidth, tileId);
         return;
       case Tools.FILL_EMPTY:
-        dispatch(fillTileSelection(tileId, true));
+        fillTileSelection(layout, layerWidth, tileId, true);
         return;
       case Tools.FILL_CONTIGUOUS:
-        dispatch(fillContiguousTiles(position, tileId, true));
+        fillContiguousTiles(layout, layerWidth, position, tileId, true);
         return;
       case Tools.FILL_CONTIGUOUS_EMPTY:
-        dispatch(fillContiguousTiles(position, tileId));
+        fillContiguousTiles(layout, layerWidth, position, tileId);
         return;
     }
   }
 
+  syncLayout(layout) {
+    const { filters } = this.props;
+
+    const activeLayerId = filters.get('activeLayerId');
+    dispatch(updateTiles(layout, activeLayerId));
+  }
+
   render() {
     const { layers, filters } = this.props;
-    const activeLayer = layers[filters.get('activeLayerId')];
+    const activeLayer = layers.get(filters.get('activeLayerId'));
     const viewport = this.state.viewport;
 
     return (
@@ -88,8 +95,9 @@ class Layers extends Component {
         <LayerToolbar activeLayer={ activeLayer } />
         <ul className="layersContainer">
         {
-          Object.keys(layers)
-            .map(layerId => {
+          layers
+            .map(layer => {
+              const layerId = layer.get('id');
               return (
                 <li className="layer" key={ layerId }>
                   <Layer
@@ -100,6 +108,7 @@ class Layers extends Component {
                 </li>
               );
             })
+            .valueSeq()
         }
           <InputLayer
             ref="inputLayer"

@@ -16,12 +16,18 @@ export default class Layer extends Component {
     const viewport = this.props.viewport;
 
     const visible = filters.get('layerVisibility').get(layerId);
-    const layer = layers.get(layerId);
+    const layer = layers[layerId];
     const activeTileSet = tileSheets.get(filters.get('activeTileSetId'));
     const tileImages = (activeTileSet) ? activeTileSet.get('tileImages') : null;
-    const layout = layer.get('layout');
-    const spritesArray = (layout && layout.size) ? layout.toArray() : null;
+    const layout = layer.layout;
+    const spritesArray = (layout && layout.length) ? layout : null;
     const spriteSequences = (tileImages && tileImages.size) ? tileImages.toJS() : null;
+
+    /*
+    if (layout.size && this.intervalId) {
+      initSync(layout);
+    }
+    */
 
     return (
       <div
@@ -31,13 +37,29 @@ export default class Layer extends Component {
           renderLoop={ renderLoop }
           spritesArray={ spritesArray }
           spriteSequences={ spriteSequences }
-          tileSize={ layer.get('tileSize') }
+          tileSize={ layer.tileSize }
           viewport={ viewport }
-          regionWidth={ layer.get('width') }
+          regionWidth={ layer.width }
         />
       </div>
     );
   }
+
+  /*
+  initSync() {
+    this.layout = layout.toArray();
+
+    this.intervalId = setInterval(() => {
+      const { layers, filters } = this.props;
+      const activeLayerId = filters.get('activeLayerId');
+      const activeLayer = layers.get(activeLayerId);
+      const layout = activeLayer.get('layout');
+      const layerWidth = activeLayer.get('width');
+
+      this.layout = layout.toArray();
+    }, 100);
+  }
+  */
 }
 
 function select(state) {

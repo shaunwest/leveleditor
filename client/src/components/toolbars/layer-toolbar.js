@@ -11,8 +11,8 @@ export default class LayerToolbar extends Component {
     if (activeLayer) {
       return (
         <ul>
-          <li>Width <input type="text" value={ activeLayer.get('width') } readOnly /></li>
-          <li>Height <input type="text" value={ activeLayer.get('height') } readOnly /></li>
+          <li>Width <input type="text" value={ activeLayer.width } readOnly /></li>
+          <li>Height <input type="text" value={ activeLayer.height } readOnly /></li>
           <li>Repeating <input type="checkbox" onChange={ e => {} } /></li>
           <li><button>Save</button></li>
         </ul>

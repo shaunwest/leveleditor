@@ -50,10 +50,10 @@ export function fillTileSelection(tileId, selection, emptyOnly = false) {
   return (dispatch, getState) => {
     const state = getState();
     const layerId = state.get('filters').get('activeLayerId');
-    const layer = state.get('layers').get(layerId);
-    const layout = layer.get('layout').toArray();
-    const layerWidth = layer.get('width');
-    const layerHeight = layer.get('height');
+    const layer = state.get('layers')[layerId];
+    const layout = layer.layout;
+    const layerWidth = layer.width;
+    const layerHeight = layer.height;
 
     if (!selection) {
       selection = rect(0, 0, layerWidth, layerHeight);
@@ -76,8 +76,8 @@ export function addTile(position, tileId, selection) {
   return (dispatch, getState) => {
     const state = getState();
     const layerId = state.get('filters').get('activeLayerId');
-    const layer = state.get('layers').get(layerId);
-    const layerWidth = layer.get('width');
+    const layer = state.get('layers')[layerId];
+    const layerWidth = layer.width;
 
     if (!selection || rectContainsPoint(position, selection)) {
       return dispatch(updateTile(layerId, getTilePosition(position.x, position.y, layerWidth), tileId));
@@ -95,11 +95,10 @@ export function addTiles(startPosition, destPosition, tileId, selection) {
   return (dispatch, getState) => {
     const state = getState();
     const layerId = state.get('filters').get('activeLayerId');
-    const layer = state.get('layers').get(layerId);
-    const layout = layer.get('layout').toArray();
-    const layerWidth = pixel2Tile(layer.get('width'));
+    const layer = state.get('layers')[layerId];
+    const layout = layer.layout;
+    const layerWidth = pixel2Tile(layer.width);
     const positions = line(pixel2TilePoint(startPosition), pixel2TilePoint(destPosition));
-    console.log('POSITIONS', positions);
 
     //if (!selection || rectContainsPoint(position, selection)) {
     positions.forEach((position) => {
@@ -117,9 +116,9 @@ export function copyTileSelection(fromSelection) {
   return (dispatch, getState) => {
     const state = getState();
     const layerId = state.get('filters').get('activeLayerId');
-    const layer = state.get('layers').get(layerId);
-    const layout = layer.get('layout').toArray();
-    const layerWidth = layer.get('width');
+    const layer = state.get('layers')[layerId];
+    const layout = layer.layout;
+    const layerWidth = layer.width;
     const fromSelectionInTiles = pixelRect2TileRect(fromSelection);
 
     return getTileRegion(fromSelectionInTiles, layout, pixel2Tile(layerWidth));
@@ -130,9 +129,9 @@ export function pasteTileSelection(tiles, toSelection) {
   return (dispatch, getState) => {
     const state = getState();
     const layerId = state.get('filters').get('activeLayerId');
-    const layer = state.get('layers').get(layerId);
-    const layout = layer.get('layout').toArray();
-    const layerWidth = layer.get('width');
+    const layer = state.get('layers')[layerId];
+    const layout = layer.layout;
+    const layerWidth = layer.width;
     const toSelectionInTiles = pixelRect2TileRect(toSelection);
 
     setTileRegion(tiles, toSelectionInTiles, layout, pixel2Tile(layerWidth));
@@ -144,8 +143,8 @@ export function moveTileSelection(fromPosition, toSelection) {
   return (dispatch, getState) => {
     const state = getState();
     const layerId = state.get('filters').get('activeLayerId');
-    const layer = state.get('layers').get(layerId);
-    const layerWidth = layer.get('width');
+    const layer = state.get('layers')[layerId];
+    const layerWidth = layer.width;
     const fromSelection = rect(
       fromPosition.x,
       fromPosition.y,
@@ -166,14 +165,14 @@ export function fillContiguousTiles(position, tileId, fillTarget = false, select
   return (dispatch, getState) => {
     const state = getState();
     const layerId = state.get('filters').get('activeLayerId');
-    const layer = state.get('layers').get(layerId);
-    const layout = layer.get('layout').toArray();
+    const layer = state.get('layers')[layerId];
+    const layout = layer.layout;
     const range = (selection) ?
       pixelRect2TileRect(selection) : 
-      pixelRect2TileRect(rect(0, 0, layer.get('width'), layer.get('height')));
+      pixelRect2TileRect(rect(0, 0, layer.width, layer.height));
     const tileX = pixel2Tile(position.x);
     const tileY = pixel2Tile(position.y);
-    const widthInTiles = pixel2Tile(layer.get('width'));
+    const widthInTiles = pixel2Tile(layer.width);
 
     if (fillTarget) {
       fillContiguousTargetTiles(layout, tileX, tileY, tileId, range, widthInTiles);

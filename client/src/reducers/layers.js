@@ -8,18 +8,21 @@ import { SELECT_LAYER, TOGGLE_LAYER, REMOVE_TILE,
 import { INIT_LAYERS } from '../actions/levels.js';
 //import { create } from '../lib/rendering-grid.js';
 
-export default function layers(state = Map({
-}), action = {}) {
+export default function layers(state = {
+}, action = {}) {
   switch (action.type) {
     case INIT_LAYERS:
-      return state.merge(action.layers);
+      return action.layers;
     case REMOVE_TILE:
-      return state.setIn([action.layerId, 'layout', action.tileIndex], undefined);
+      state[action.layerId]['layout'][action.tileIndex] = undefined;
+      return state;
     case UPDATE_TILE:
-      return state.setIn([action.layerId, 'layout', action.tileIndex], action.tileId);
+      state[action.layerId]['layout'][action.tileIndex] = action.tileId;
+      return state;
     case FILL_TILES:
     case UPDATE_TILES:
-      return state.mergeIn([action.layerId, 'layout'], action.tiles);
+      state[action.layerId]['layout'] = action.tiles;
+      return state;
     default:
       return state;
   }

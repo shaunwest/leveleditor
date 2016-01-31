@@ -75,13 +75,13 @@ export default class InputLayer extends Component {
       this.grabberDrag(input.position);
     }
     else if (this.toolIsSelected(Tools.FILL, Tools.FILL_EMPTY, Tools.FILL_CONTIGUOUS, Tools.FILL_CONTIGUOUS_EMPTY)) {
-      this.fireAction(input.position);
+      this.fireAction(input.position, this.state.pointer);
     }
   }
 
   fireAction(position, lastPosition) {
     if (this.state.selector) {
-      this.props.onSelectorAction(position, this.state.selector);
+      this.props.onSelectorAction(position, lastPosition, this.state.selector);
     }
     else {
       this.props.onPointerAction(position, lastPosition);
@@ -119,7 +119,7 @@ export default class InputLayer extends Component {
       }
     }
 
-    this.props.onSelectorAction(position, this.state.selector);
+    this.props.onSelectorAction(position, this.state.pointer, this.state.selector);
   }
 
 
@@ -162,6 +162,7 @@ export default class InputLayer extends Component {
       });
     }
     else if (this.toolIsSelected(Tools.GRABBER) && previousState.grabberDiff) {
+      const lastPosition = this.state.pointer;
       const pointer = getPointer(point(
         input.initialPressPosition.x - previousState.grabberDiff.x,
         input.initialPressPosition.y - previousState.grabberDiff.y
@@ -174,7 +175,7 @@ export default class InputLayer extends Component {
         grabberDiff: null
       });
 
-      this.props.onSelectorAction(pointer, previousState.selector);
+      this.props.onSelectorAction(pointer, lastPosition, previousState.selector);
     }
     else {
       this.setState({ 
