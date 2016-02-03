@@ -46,7 +46,8 @@ export default class Inputer {
       const mouseLocation = getMouseLocation(event.clientX, event.clientY, targetElement);
 
       values.isActive = false; 
-      //values.position = null;
+      values.position = mouseLocation;
+      //values.isPressed = false;
       
       this.cb(values);
     });
@@ -55,7 +56,6 @@ export default class Inputer {
     targetElement.addEventListener('mousemove', event => {
       const values = this.values;
       const mouseLocation = getMouseLocation(event.clientX, event.clientY, targetElement);
-
       values.isActive = true;
       values.lastPosition = (values.position || mouseLocation);
       values.position = mouseLocation;

@@ -10,19 +10,9 @@ import InputLayer from './input-layer.js';
 import * as Tools from '../../constants/tools.js';
 import { addTile, addTiles, fillTileSelection,
   moveTileSelection, fillContiguousTiles } from '../../actions/layers.js';
-import Viewport from '../../lib/viewport.js';
+import { updateViewport } from '../../actions/viewport.js';
 
 class Layers extends Component {
-  constructor(props) {
-    super(props);
-
-    // FIXME: viewport size should be in the datastore
-    // But maybe not viewport position?
-    this.state = {
-      viewport: Viewport(0, 0, 400, 256)
-    };
-  }
-
   triggerSelectorAction(position, lastPosition, selection) {
     const { dispatch, filters } = this.props,
       tileId = filters.get('selectedTileIndex');
@@ -78,14 +68,24 @@ class Layers extends Component {
     }
   }
 
+  triggerViewportUpdate(viewport) {
+    const { dispatch } = this.props;
+    dispatch(updateViewport(viewport));
+  }
+
   render() {
-    const { layers, filters } = this.props;
+    const { layers, filters, viewport } = this.props;
     const activeLayer = layers[filters.get('activeLayerId')];
-    const viewport = this.state.viewport;
+    const viewportObj = viewport.toObject();
 
     return (
       <div>
-        <LayerToolbar activeLayer={ activeLayer } />
+        <h3>Layer Properties</h3>
+        <LayerToolbar
+          activeLayer={ activeLayer }
+          viewport={ viewportObj }
+          onViewportUpdate={ this.triggerViewportUpdate.bind(this) }
+        />
         <ul className="layersContainer">
         {
           Object.keys(layers)
@@ -94,7 +94,6 @@ class Layers extends Component {
                 <li className="layer" key={ layerId }>
                   <Layer
                     layerId={ layerId }
-                    viewport={ viewport }
                     renderLoop={ this.props.renderLoop }
                   />
                 </li>
@@ -103,7 +102,7 @@ class Layers extends Component {
         }
           <InputLayer
             ref="inputLayer"
-            viewport={ viewport }
+            viewport={ viewportObj }
             selectedToolId={ filters.get('selectedToolId') }
             renderLoop={ this.props.renderLoop }
             onSelectorAction={ this.triggerSelectorAction.bind(this) }
@@ -118,7 +117,8 @@ class Layers extends Component {
 function select(state) {
   return { 
     layers: state.get('layers'),
-    filters: state.get('filters')
+    filters: state.get('filters'),
+    viewport: state.get('viewport')
   };
 }
 

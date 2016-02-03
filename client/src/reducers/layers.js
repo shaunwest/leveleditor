@@ -8,6 +8,9 @@ import { SELECT_LAYER, TOGGLE_LAYER, REMOVE_TILE,
 import { INIT_LAYERS } from '../actions/levels.js';
 //import { create } from '../lib/rendering-grid.js';
 
+// NOTE: layers is mutable for perf reasons.
+// TODO: layers could probably be immutable. It's layout
+// that needs to be mutable
 export default function layers(state = {
 }, action = {}) {
   switch (action.type) {

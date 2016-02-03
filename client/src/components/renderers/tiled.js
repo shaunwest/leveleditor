@@ -30,13 +30,13 @@ export default class TileRenderer extends Component {
     const spriteSequences = this.props.spriteSequences;
     const viewport = this.props.viewport;
 
-    // TODO: fix this unique name
+    // FIXME: fix this unique name
     renderLoop('UNIQUENAME_FIXME', (fps, elapsed, vFrameCount, aFrameCount) => {
       const currentTiles = getCurrentFrames(spriteSequences, vFrameCount);
 
       renderContext.clearRect(0, 0, viewport.width, viewport.height);
 
-      fixed(spritesArray, currentTiles, tileSize, regionWidth, function (spriteImage, x, y) {
+      fixed(spritesArray, currentTiles, tileSize, regionWidth, viewport, function (spriteImage, x, y) {
         renderContext.drawImage(spriteImage, x, y);
       });
     });

@@ -50,10 +50,7 @@ export default class InputLayer extends Component {
 
     inputer.onUpdate((input) => {
       if (!input.isActive) {
-        this.setState({ 
-          pointer: null,
-          resizeSide: RESIZE_NONE
-        });
+        this.onOut(input);
       }
       else if (input.isPressed) {
         this.onPressed(input);
@@ -62,21 +59,6 @@ export default class InputLayer extends Component {
         this.onReleased(input);
       }
     });
-  }
-
-  onPressed(input) {
-    if (this.toolIsSelected(Tools.TILE_BRUSH, Tools.ERASER)) {
-      this.pointerDrag(input.position);
-    }
-    else if (this.toolIsSelected(Tools.SELECTOR)) {
-      this.selectorDrag(input.position, input.initialPressPosition);
-    }
-    else if (this.toolIsSelected(Tools.GRABBER)) {
-      this.grabberDrag(input.position);
-    }
-    else if (this.toolIsSelected(Tools.FILL, Tools.FILL_EMPTY, Tools.FILL_CONTIGUOUS, Tools.FILL_CONTIGUOUS_EMPTY)) {
-      this.fireAction(input.position, this.state.pointer);
-    }
   }
 
   fireAction(position, lastPosition) {
@@ -88,14 +70,42 @@ export default class InputLayer extends Component {
     }
   }
 
+  onOut(input) {
+    const selector = (!input.isPressed && this.state.selector) ||
+      (this.state.selector && expandableSelector(input.position, input.initialPressPosition)) ||
+      null;
+      
+    this.setState({ 
+      pointer: null,
+      selector,
+      resizeSide: RESIZE_NONE
+    });
+  }
+
+  onPressed(input) {
+    if (this.toolIsSelected(Tools.TILE_BRUSH, Tools.ERASER)) {
+      this.pointerDrag(input.position);
+    }
+    else if (this.toolIsSelected(Tools.SELECTOR)) {
+      this.selectorDrag(input.position, input.initialPressPosition);
+    }
+    else if (this.toolIsSelected(Tools.GRABBER)) {
+      this.grabberDrag(input.position, input.initialPressPosition);
+    }
+    else if (this.toolIsSelected(Tools.FILL, Tools.FILL_EMPTY, Tools.FILL_CONTIGUOUS, Tools.FILL_CONTIGUOUS_EMPTY)) {
+      this.fireAction(input.position, this.state.pointer);
+    }
+  }
+
   pointerDrag(position) {
     const lastPointer = this.state.pointer;
-
+    const pointer = getPointer(position);
+    
     this.setState({
-      pointer: getPointer(position)
+      pointer
     });
    
-    this.fireAction(position, lastPointer);
+    this.fireAction(pointer, lastPointer || clone(pointer));
   }
 
   selectorDrag(position, initialPressPosition) {
@@ -106,7 +116,7 @@ export default class InputLayer extends Component {
         selector: resizableSelector(position, previousState.selector, previousState.resizeSide) 
       });
     }
-    else { 
+    else {
       const resizeSide = getResizeSide(position, previousState.selector);
 
       if (previousState.allowResize && resizeSide) {
@@ -115,15 +125,12 @@ export default class InputLayer extends Component {
         });
       }
       else {
-        this.makeExpandableSelector(position, initialPressPosition);
+        this.selectorDragExpand(position, initialPressPosition);
       }
     }
-
-    this.props.onSelectorAction(position, this.state.pointer, this.state.selector);
   }
 
-
-  makeExpandableSelector(position, initialPressPosition) {
+  selectorDragExpand(position, initialPressPosition) {
     const selectorDistance = dist(position, initialPressPosition);
     const newSelector = isMinDist(selectorDistance, POINTER_WIDTH, POINTER_HEIGHT) ? 
       expandableSelector(position, initialPressPosition) : null;
@@ -134,8 +141,19 @@ export default class InputLayer extends Component {
     });
   }
 
+  selectorReleasedResize() {
+    this.setState({
+      pointer: null,
+      grabberDiff: null,
+      allowResize: true
+    });
+  }
+
+/*
   grabberDrag(position) {
     const previousState = this.state;
+    // grabber diff is the distqnce between the TL corner of the selector and the 
+    // intial mouse click position
     const grabberDiff = (previousState.grabberDiff) ?
       previousState.grabberDiff :
       point(position.x - previousState.selector.x, position.y - previousState.selector.y);
@@ -148,6 +166,41 @@ export default class InputLayer extends Component {
       });
     }
   }
+*/
+
+  grabberDrag(position, initialPosition) {
+    const previousState = this.state;
+    const ghostSelector = previousState.ghostSelector || clone(previousState.selector);
+    // grabber diff is the distqnce between the TL corner of the selector and the 
+    // intial mouse click position
+    const grabberDiff = point(initialPosition.x - ghostSelector.x, initialPosition.y - ghostSelector.y);
+
+    if (previousState.selector) {
+      this.setState({
+        selector: moveableSelector(position, previousState.selector, grabberDiff),
+        ghostSelector
+      });
+    }
+  }
+
+  grabberReleased(pointer) {
+    this.setState({ 
+      pointer,
+      resizeSide: RESIZE_NONE,
+      ghostSelector: null,
+      grabberDiff: null
+    });
+  }
+ 
+  defaultReleased(pointer, allowResize) {
+    this.setState({ 
+      pointer,
+      resizeSide: RESIZE_NONE,
+      ghostSelector: null,
+      grabberDiff: null,
+      allowResize
+    });
+  }
 
   onReleased(input) {
     const previousState = this.state;
@@ -155,12 +208,9 @@ export default class InputLayer extends Component {
     if (this.toolIsSelected(Tools.SELECTOR) &&
         previousState.selector &&
         getResizeSide(input.position, previousState.selector)) {
-      this.setState({
-        pointer: null,
-        grabberDiff: null,
-        allowResize: true
-      });
+      this.selectorReleasedResize();
     }
+    /*
     else if (this.toolIsSelected(Tools.GRABBER) && previousState.grabberDiff) {
       const lastPosition = this.state.pointer;
       const pointer = getPointer(point(
@@ -168,23 +218,18 @@ export default class InputLayer extends Component {
         input.initialPressPosition.y - previousState.grabberDiff.y
       ));
 
-      this.setState({ 
-        pointer,
-        resizeSide: RESIZE_NONE,
-        ghostSelector: null,
-        grabberDiff: null
-      });
-
+      this.grabberReleased(pointer);
       this.props.onSelectorAction(pointer, lastPosition, previousState.selector);
     }
+    */
+    else if (this.toolIsSelected(Tools.GRABBER) && previousState.ghostSelector) {
+      const lastPosition = this.state.pointer;
+
+      this.grabberReleased(getPointer(input.position));
+      this.props.onSelectorAction(getPointer(previousState.ghostSelector), lastPosition, previousState.selector);
+    }
     else {
-      this.setState({ 
-        pointer: getPointer(input.position),
-        resizeSide: RESIZE_NONE,
-        ghostSelector: null,
-        grabberDiff: null,
-        allowResize: !!previousState.selector
-      });
+      this.defaultReleased(getPointer(input.position), !!previousState.selector);
     }
   }
 
@@ -203,7 +248,7 @@ export default class InputLayer extends Component {
 
       context.clearRect(0, 0, viewport.width, viewport.height);
 
-      if (state.pointer && PointerTools.findIndex(toolName => toolName === selectedToolId) !== -1) {
+      if (state.pointer && this.toolIsSelected(...PointerTools)) {
         drawRect(context, state.pointer, POINTER_COLOR);
       }
 

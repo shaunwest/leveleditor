@@ -27,14 +27,16 @@ html, body {
   position: absolute;
   top: 0;
   left: 0;
-  width: 400px;
-  height: 400px;
 }
 
 .layerContainer {
   position: absolute;
   top: 0;
   left: 0;
+}
+
+.layerCanvas {
+  background-color: grey;
 }
 
 .layerCanvas, .inputLayerCanvas {

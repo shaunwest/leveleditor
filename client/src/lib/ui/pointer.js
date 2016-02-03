@@ -3,11 +3,15 @@ import { snap } from './snap.js';
 
 export function Pointer(width, height) {
   return function (pointerPos) {
-    return rect(
-      snap(pointerPos.x),
-      snap(pointerPos.y), 
-      width,
-      height
-    );
+    return getPointer(pointerPos.x, pointerPos.y, width, height);
   };
+}
+
+export function getPointer(x, y, width, height) {
+  return rect(
+    snap(x),
+    snap(y), 
+    width,
+    height
+  );
 }

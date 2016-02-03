@@ -10,6 +10,7 @@ import routes from './routes.js';
 import layers from './layers.js';
 import filters from './filters.js';
 import statuses from './statuses.js';
+import viewport from './viewport.js';
 
 import { Map } from 'immutable';
 
@@ -19,7 +20,8 @@ const rootReducer = combineReducers(Map({
   layers,
   tileSheets,
   filters,
-  statuses
+  statuses,
+  viewport
 }));
 
 export default rootReducer;
