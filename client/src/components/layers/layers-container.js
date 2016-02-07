@@ -13,6 +13,15 @@ import { addTile, addTiles, fillTileSelection,
 import { updateViewport } from '../../actions/viewport.js';
 
 class Layers extends Component {
+  triggerInputAction(position, lastPosition, selection) {
+    if (selection) {
+      this.triggerSelectorAction(position, lastPosition, selection);
+    }
+    else {
+      this.triggerPointerAction(position, lastPosition);
+    }
+  } 
+
   triggerSelectorAction(position, lastPosition, selection) {
     const { dispatch, filters } = this.props,
       tileId = filters.get('selectedTileIndex');
@@ -108,8 +117,7 @@ class Layers extends Component {
             viewport={ viewportObj }
             selectedToolId={ filters.get('selectedToolId') }
             renderLoop={ this.props.renderLoop }
-            onSelectorAction={ this.triggerSelectorAction.bind(this) }
-            onPointerAction={ this.triggerPointerAction.bind(this) }
+            onInputAction={ this.triggerInputAction.bind(this) }
           />
         </ul>
       </div>

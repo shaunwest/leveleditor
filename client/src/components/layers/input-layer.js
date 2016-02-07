@@ -69,12 +69,7 @@ export default class InputLayer extends Component {
   }
 
   fireAction(position, lastPosition) {
-    if (this.state.selector) {
-      this.props.onSelectorAction(position, lastPosition, this.state.selector);
-    }
-    else {
-      this.props.onPointerAction(position, lastPosition);
-    }
+    this.props.onInputAction(position, lastPosition, this.state.selector);
   }
 
   onOut(input) {
@@ -177,7 +172,7 @@ export default class InputLayer extends Component {
       this.setState({
         lastViewport: viewport
       });
-      this.props.onPointerAction(newViewport);
+      this.fireAction(newViewport);
     }
   }
 
@@ -213,7 +208,7 @@ export default class InputLayer extends Component {
       this.grabberReleased(getPointer(input.position));
 
       if (previousState.ghostSelector) {
-        this.props.onSelectorAction(getPointer(previousState.ghostSelector), lastPosition, previousState.selector);
+        this.fireAction(getPointer(previousState.ghostSelector), lastPosition, previousState.selector);
       }
     }
     else {
