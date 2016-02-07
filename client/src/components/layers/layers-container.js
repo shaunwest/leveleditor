@@ -4,7 +4,7 @@
 
 import React, { Component } from 'react';
 import { connect } from 'react-redux';
-import LayerToolbar from '../toolbars/layer-toolbar.js';
+import LayerProperties from './layer-properties.js';
 import Layer from './layer.js';
 import InputLayer from './input-layer.js';
 import * as Tools from '../../constants/tools.js';
@@ -53,6 +53,9 @@ class Layers extends Component {
       case Tools.ERASER:
         dispatch(addTiles(lastPosition, position));
         return;
+      case Tools.GRABBER:
+        dispatch(updateViewport(position));
+        return;
       case Tools.FILL:
         dispatch(fillTileSelection(tileId));
         return;
@@ -81,7 +84,7 @@ class Layers extends Component {
     return (
       <div>
         <h3>Layer Properties</h3>
-        <LayerToolbar
+        <LayerProperties
           activeLayer={ activeLayer }
           viewport={ viewportObj }
           onViewportUpdate={ this.triggerViewportUpdate.bind(this) }

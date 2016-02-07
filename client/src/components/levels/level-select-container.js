@@ -8,7 +8,7 @@ import { connect } from 'react-redux';
 import { fetchAll as fetchAllLevels } from '../../actions/levels.js';
 import { navigateTo } from '../../actions/routes.js';
 
-import LevelSelect from '../selectors/level-select.js';
+import LevelSelect from './level-select.js';
 
 class LevelSelectContainer extends Component {
   componentDidMount() {

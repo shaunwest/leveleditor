@@ -2,16 +2,18 @@
  * Created by shaunwest on 9/7/15.
  */
 
-import React, { Component, PropTypes } from 'react';
+import React, { Component } from 'react';
 import { connect } from 'react-redux';
 
 import { DATA_PATH } from '../../paths.js';
 
-import LayerSelect from '../selectors/layer-select.js';
-import ToolSelect from '../selectors/tool-select.js';
-import TileSheetSelect from '../selectors/tile-sheet-select.js';
-import TileSelect from '../selectors/tile-select.js';
 import LayersContainer from '../layers/layers-container.js';
+import LayerSelect from '../layers/layer-select.js';
+import ToolSelect from '../layers/tool-select.js';
+
+import TileSheetSelect from '../tiles/tile-sheet-select.js';
+import TileSelect from '../tiles/tile-select.js';
+import TileEdit from '../tiles/tile-edit.js';
 
 import { fetchAndSelectLevel } from '../../actions/levels.js';
 
@@ -33,7 +35,6 @@ class LevelEditContainer extends Component {
       levelId = filters.get('currentLevelId');
 
     this.dispatch = dispatch;
-    //this.renderLoop = Looper();
 
     dispatch(fetchAndSelectLevel(levelId));
     dispatch(fetchAllTileSheets(DATA_PATH + '/tile-sheets.json'));
@@ -83,7 +84,7 @@ class LevelEditContainer extends Component {
 
         <LayersContainer renderLoop={ this.renderLoop } />
 
-        <h3>Tools</h3>
+        <h3>Level Tools</h3>
 
         <ToolSelect
           onToolSelect={ this.onToolSelect.bind(this) }
@@ -91,17 +92,27 @@ class LevelEditContainer extends Component {
 
         <h3>Tiles</h3>
 
+        <h4>Tile Set Select</h4>
         <TileSheetSelect
           onTileSheetSelect={ this.onTileSheetSelect.bind(this) }
           tileSheets={ tileSheets }
           selectedTileSheetId={ filters.get('activeTileSetId') } />
-
+        
+        <h4>Tile Select</h4>
         { (activeTileSet) ?
           <TileSelect
             onTileSelect={ this.onTileSelect.bind(this) }
             selectedTileId={ filters.get('selectedTileIndex') }
             tileImages={ activeTileSet.get('tileImages') } /> : null
-         }
+        }
+
+        <h4>Tile Edit</h4>
+        { (activeTileSet) ?
+          <TileEdit
+            selectedTileId={ filters.get('selectedTileIndex') }
+            tileImages={ activeTileSet.get('tileImages') } /> : null
+        }
+
       </div>
     );
   }

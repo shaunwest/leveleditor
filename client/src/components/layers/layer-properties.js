@@ -4,7 +4,7 @@
 
 import React, { Component } from 'react';
 
-export default class LayerToolbar extends Component {
+export default class LayerProperties extends Component {
   render() {
     const activeLayer = this.props.activeLayer,
       viewport = this.props.viewport;

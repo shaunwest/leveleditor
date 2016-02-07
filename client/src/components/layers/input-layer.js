@@ -11,8 +11,10 @@ import { expandableSelector, resizableSelector, moveableSelector,
   getResizeSide, RESIZE_NONE } from '../../lib/ui/selector.js';
 import { Pointer } from '../../lib/ui/pointer.js';
 import { clone } from '../../lib/obj.js';
+import { snap } from '../../lib/ui/snap.js';
+import getElementLocation from '../../lib/get-element-location.js';
 
-import CanvasRenderer from '../renderers/canvas.js';
+import CanvasRenderer from '../renderers/canvas-renderer.js';
 
 import * as Tools from '../../constants/tools.js';
 
@@ -26,13 +28,17 @@ const POINTER_WIDTH = 16,
 
 const getPointer = Pointer(POINTER_WIDTH, POINTER_HEIGHT);
 
+function getMouseLocation(clientX, clientY, element) {
+  const elementLocation = getElementLocation(element);
+  return point(clientX - elementLocation.x, clientY - elementLocation.y);
+}
+
 export default class InputLayer extends Component {
   constructor(props) {
     super(props);
 
     this.state = {
       resizeSide: RESIZE_NONE,
-      grabberDiff: null,
       pointer: null,
       selector: null,
       ghostSelector: null,
@@ -41,24 +47,25 @@ export default class InputLayer extends Component {
   }
 
   componentDidMount() {
-    const props = this.props,
-      canvas = this.refs.renderer.getCanvas();
+    const canvas = this.refs.renderer.getCanvas();
 
     this.renderContext = canvas.getContext('2d');
 
-    const inputer = new Inputer(canvas);
-
-    inputer.onUpdate((input) => {
-      if (!input.isActive) {
-        this.onOut(input);
-      }
-      else if (input.isPressed) {
-        this.onPressed(input);
-      }
-      else {
-        this.onReleased(input);
-      }
-    });
+    Inputer(
+      canvas,
+      (input) => {
+        if (!input.isActive) {
+          this.onOut(input);
+        }
+        else if (input.isPressed) {
+          this.onPressed(input);
+        }
+        else {
+          this.onReleased(input);
+        }
+      },
+      getMouseLocation
+    );
   }
 
   fireAction(position, lastPosition) {
@@ -144,42 +151,33 @@ export default class InputLayer extends Component {
   selectorReleasedResize() {
     this.setState({
       pointer: null,
-      grabberDiff: null,
       allowResize: true
     });
   }
 
-/*
-  grabberDrag(position) {
-    const previousState = this.state;
-    // grabber diff is the distqnce between the TL corner of the selector and the 
-    // intial mouse click position
-    const grabberDiff = (previousState.grabberDiff) ?
-      previousState.grabberDiff :
-      point(position.x - previousState.selector.x, position.y - previousState.selector.y);
-
-    if (previousState.selector) {
-      this.setState({
-        selector: moveableSelector(position, previousState.selector, grabberDiff),
-        ghostSelector: previousState.ghostSelector || clone(previousState.selector),
-        grabberDiff
-      });
-    }
-  }
-*/
-
   grabberDrag(position, initialPosition) {
     const previousState = this.state;
-    const ghostSelector = previousState.ghostSelector || clone(previousState.selector);
-    // grabber diff is the distqnce between the TL corner of the selector and the 
-    // intial mouse click position
-    const grabberDiff = point(initialPosition.x - ghostSelector.x, initialPosition.y - ghostSelector.y);
 
     if (previousState.selector) {
+      const ghostSelector = previousState.ghostSelector || clone(previousState.selector);
+      const grabberDiff = point(initialPosition.x - ghostSelector.x, initialPosition.y - ghostSelector.y);
+
       this.setState({
         selector: moveableSelector(position, previousState.selector, grabberDiff),
         ghostSelector
       });
+    }
+    else {
+      const viewport = previousState.lastViewport || this.props.viewport;
+      const grabberDiff = point(position.x - initialPosition.x, position.y - initialPosition.y);
+      const newViewport = {
+        x: snap(viewport.x - grabberDiff.x),
+        y: snap(viewport.y - grabberDiff.y)
+      };
+      this.setState({
+        lastViewport: viewport
+      });
+      this.props.onPointerAction(newViewport);
     }
   }
 
@@ -188,7 +186,7 @@ export default class InputLayer extends Component {
       pointer,
       resizeSide: RESIZE_NONE,
       ghostSelector: null,
-      grabberDiff: null
+      lastViewport: null
     });
   }
  
@@ -197,7 +195,6 @@ export default class InputLayer extends Component {
       pointer,
       resizeSide: RESIZE_NONE,
       ghostSelector: null,
-      grabberDiff: null,
       allowResize
     });
   }
@@ -210,23 +207,14 @@ export default class InputLayer extends Component {
         getResizeSide(input.position, previousState.selector)) {
       this.selectorReleasedResize();
     }
-    /*
-    else if (this.toolIsSelected(Tools.GRABBER) && previousState.grabberDiff) {
-      const lastPosition = this.state.pointer;
-      const pointer = getPointer(point(
-        input.initialPressPosition.x - previousState.grabberDiff.x,
-        input.initialPressPosition.y - previousState.grabberDiff.y
-      ));
-
-      this.grabberReleased(pointer);
-      this.props.onSelectorAction(pointer, lastPosition, previousState.selector);
-    }
-    */
-    else if (this.toolIsSelected(Tools.GRABBER) && previousState.ghostSelector) {
+    else if (this.toolIsSelected(Tools.GRABBER)) {
       const lastPosition = this.state.pointer;
 
       this.grabberReleased(getPointer(input.position));
-      this.props.onSelectorAction(getPointer(previousState.ghostSelector), lastPosition, previousState.selector);
+
+      if (previousState.ghostSelector) {
+        this.props.onSelectorAction(getPointer(previousState.ghostSelector), lastPosition, previousState.selector);
+      }
     }
     else {
       this.defaultReleased(getPointer(input.position), !!previousState.selector);

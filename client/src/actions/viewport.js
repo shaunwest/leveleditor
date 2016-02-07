@@ -9,3 +9,15 @@ export function updateViewport(viewport) {
     viewport
   };
 }
+
+/*
+export function shiftViewport(delta) {
+  return (dispatch, getState) => {
+    const viewport = getState().get('viewport').toObject();
+    viewport.x -= delta.x;
+    viewport.y -= delta.y;
+
+    dispatch(updateViewport(viewport));    
+  };
+}
+*/

@@ -5,6 +5,9 @@
 import { flattenCoord, unFlattenXDimension } from './util/geom.js'; 
 import { pixel2Tile } from './util/tile-tools.js';
 
+// NOTE: currently it's impossible to shift the viewport into a 
+// "non-snapped" position
+
 export function fixed(spriteIdList, currentSpriteSet, spriteSize, regionWidth, viewport, spriteFunc) {
   const numSprites = (spriteIdList) ? spriteIdList.length : 0;
   const spriteListLength = numSprites * spriteSize;
