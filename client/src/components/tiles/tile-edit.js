@@ -38,7 +38,7 @@ export default class TileEdit extends Component {
                 return (
                   <Canvas 
                     key={ imageIndex } 
-                    image={ image } 
+                    draw={ (c, width, height) => draw(c, image, width, height) } 
                     width={ width }
                     height={ height }
                     scale={ scale }
@@ -55,4 +55,14 @@ export default class TileEdit extends Component {
       </ul>
     );
   }
+}
+
+function draw(canvas, image, width, height) {
+  if (!canvas) {
+    return;
+  }
+
+  const context = canvas.getContext('2d');
+  context.imageSmoothingEnabled = false;
+  context.drawImage(image, 0, 0, width, height);
 }

@@ -37,10 +37,10 @@ export default function compose(ChildComponent, pointerWidth, pointerHeight) {
     }
 
     componentDidMount() {
-      const renderer = this.refs.childComponent.getRenderer();
-
+      //const renderer = this.refs.childComponent.getRenderer();
       Inputer(
-        renderer,
+        //renderer,
+        this.refs.container,
         (input) => {
           if (!input.isActive) {
             this.onOut(input);
@@ -211,12 +211,14 @@ export default function compose(ChildComponent, pointerWidth, pointerHeight) {
     render() {
       const state = this.state;
       return (
-        <ChildComponent {...this.props}
-          pointer={ state.pointer }
-          selector={ state.selector }
-          ghostSelector={ state.ghostSelector }
-          ref="childComponent"
-        />
+        <div ref="container">
+          <ChildComponent {...this.props}
+            pointer={ state.pointer }
+            selector={ state.selector }
+            ghostSelector={ state.ghostSelector }
+            ref="childComponent"
+          />
+        </div>
       );
     }
   }

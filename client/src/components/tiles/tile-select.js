@@ -13,6 +13,16 @@ export default class TileSelect extends Component {
   }
 }
 
+function draw(canvas, image, width, height) {
+  if (!canvas) {
+    return;
+  }
+
+  const context = canvas.getContext('2d');
+  context.imageSmoothingEnabled = false;
+  context.drawImage(image, 0, 0, width, height);
+}
+
 function getTiles(tileImages, props) {
   if (!tileImages) {
     return (<li>...</li>);
@@ -42,7 +52,12 @@ function getTiles(tileImages, props) {
               <li key={ frameSetIndex }>
               {
                 images.map((image, imageIndex) => { 
-                  return (<Canvas key={ imageIndex } image={ image } />);
+                  return (
+                    <Canvas
+                      key={ imageIndex } 
+                      draw={ (c, width, height) => draw(c, image, width, height) } 
+                    />
+                  );
                 })
                 .valueSeq()
               }

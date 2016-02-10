@@ -13,20 +13,11 @@ export default class Canvas extends Component {
 
     return (
       <canvas 
+        className={ this.props.canvasClass }
         width={ sWidth }
         height={ sHeight }
-        ref={ (c) => drawToCanvas(c, this.props.image, sWidth, sHeight) }
+        ref={ (c) => this.props.draw(c, sWidth, sHeight) }
       />
     );
   }
-}
-
-function drawToCanvas(canvas, image, width, height) {
-  if (!canvas) {
-    return;
-  }
-
-  const context = canvas.getContext('2d');
-  context.imageSmoothingEnabled = false;
-  context.drawImage(image, 0, 0, width, height);
 }

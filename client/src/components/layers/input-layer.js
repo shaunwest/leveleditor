@@ -8,7 +8,7 @@ import composeInputOverlay from '../overlays/input-overlay.js';
 
 import { drawRect } from '../../lib/draw.js';
 
-import CanvasRenderer from '../renderers/canvas-renderer.js';
+import Canvas from '../renderers/canvas.js';
 
 import * as Tools from '../../constants/tools.js';
 
@@ -21,47 +21,45 @@ const POINTER_WIDTH = 16,
   PointerTools = [Tools.SELECTOR, Tools.TILE_BRUSH, Tools.ERASER];
 
 class InputLayer extends Component {
-  componentDidMount() {
-    this.renderContext = this.getRenderer().getContext('2d');
-  }
-
-  getRenderer() {
-    return this.refs.renderer.getCanvas();
-  }
-
   toolIsSelected(...toolIds) {
     return toolIds.find(toolId => this.props.selectedToolId === toolId);
   }
 
-  render() {
-    const props = this.props;
-    const context = this.renderContext;
-    const viewport = props.viewport;
-    const canvasClass = 'inputLayerCanvas' + (props.resizing ? ' resize' : '');
-
-    if (context) {
-      const selectedToolId = props.selectedToolId;
-
-      context.clearRect(0, 0, viewport.width, viewport.height);
-
-      if (props.pointer && this.toolIsSelected(...PointerTools)) {
-        drawRect(context, props.pointer, POINTER_COLOR);
-      }
-
-      if (props.selector) {
-        drawRect(context, props.selector, SELECTED_COLOR, SELECTED_FILL_COLOR);
-      }
-
-      if (props.ghostSelector) {
-        drawRect(context, props.ghostSelector, TEMP_SELECTOR_COLOR);
-      }
+  draw(canvas, width, height) {
+    if (!canvas) {
+      return;
     }
 
+    const props = this.props;
+    const viewport = props.viewport;
+    const context = canvas.getContext('2d');
+    const selectedToolId = props.selectedToolId;
+
+    context.clearRect(0, 0, viewport.width, viewport.height);
+
+    if (props.pointer && this.toolIsSelected(...PointerTools)) {
+      drawRect(context, props.pointer, POINTER_COLOR);
+    }
+
+    if (props.selector) {
+      drawRect(context, props.selector, SELECTED_COLOR, SELECTED_FILL_COLOR);
+    }
+
+    if (props.ghostSelector) {
+      drawRect(context, props.ghostSelector, TEMP_SELECTOR_COLOR);
+    }
+  }
+  
+  render() {
+    const viewport = this.props.viewport;
+    const canvasClass = 'inputLayerCanvas' + (this.props.resizing ? ' resize' : '');
+
     return (
-      <CanvasRenderer
+      <Canvas
         canvasClass={ canvasClass }
         width={ viewport.width }
         height={ viewport.height }
+        draw={ this.draw.bind(this) }
         ref="renderer"
       />
     );
